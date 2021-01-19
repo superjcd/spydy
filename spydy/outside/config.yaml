@@ -1,0 +1,18 @@
+# pupeline = ['url']
+
+Pipeline:
+  Url: RedisListUrl
+
+  Request: AioHttpRequest
+  Pasers: 
+  Store: 
+    - CsvStore: 
+        OutputPath: "test.csv"
+
+ 
+    
+
+        # self.url = RedisListUrls(list_name="/spider/testurls")
+        # self.request = LinearRequest()
+        # self.parser = DmozParser()
+        # self.store = CsvStore("dmoz.csv")
