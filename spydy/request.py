@@ -7,7 +7,7 @@ __all__ = ["LinearHttpGetRequest", "AsyncHttpGetRequest"]
 
 class Request(abc.ABC):
     @abc.abstractmethod
-    def get_html():...
+    def get_html(self):...
 
 
 class LinearHttpGetRequest(Request):
@@ -36,7 +36,6 @@ class LinearHttpGetRequest(Request):
         return self.__repr__()
     
 
-
 class AsyncHttpGetRequest(Request):
     def __init__(self, headers=None, proxy=None):
         self.Async = ""
@@ -63,7 +62,6 @@ class AsyncHttpGetRequest(Request):
 
     def __str__(self):
         return self.__repr__()
-
 
 
 if __name__ == "__main__":

@@ -4,9 +4,9 @@ from .parsers import *
 from .store import *
 
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
-LOGO = '''
+LOGO = r'''
   ____                     _
  / ___|  _ __   _   _   __| | _   _
  \___ \ | '_ \ | | | | / _` || | | |

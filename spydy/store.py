@@ -2,11 +2,11 @@ import abc
 import csv
 import asyncio
 
-__all__ = ["CsvStore", "AsyncCsvStore", "StdOutStore"]
+__all__ = ["CsvStore", "AsyncCsvStore", "StdOutStore", "DbStore"]
 
 class Store(abc.ABC):
     @abc.abstractmethod
-    def store():...
+    def store(self):...
 
 
 class StdOutStore(Store):
@@ -44,7 +44,6 @@ class CsvStore(Store):
     def __str__(self):
         return self.__repr__()     
 
-
 class AsyncCsvStore(Store):
     def __init__(self, file_name):
         self.Async = ""
@@ -67,9 +66,10 @@ class AsyncCsvStore(Store):
     def __str__(self):
         return self.__repr__()  
 
- 
+
+class DbStore(Store):
+    def __init__(self):...
 
 
-if __name__ == "__main__":
-    cs = CsvStore(file_name="test.csv")
-    cs.store(items={"a":"1", "b":"2"})
+class AsyncDbStore(Store):
+    def __init__(self):...

@@ -2,7 +2,8 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
-__version__ = '0.1.0'
+
+__version__ = '0.1.1'
 
 here = path.abspath(path.dirname(__file__))
 
@@ -21,8 +22,8 @@ setup(
     name='spydy',
     version=__version__,
     description='基于Pipeline的快速爬虫框架（支持异步）',
-    long_description=long_description,
-    long_description_content_type='text/markdown',
+    # long_description=long_description,
+    # long_description_content_type='text/markdown',
     url='https://github.com/superjcd/spydy',
     download_url='https://github.com/superjcd/spydy/tarball/' + __version__,
     license='BSD',

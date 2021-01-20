@@ -37,5 +37,8 @@ output/*/index.html
 # Sphinx
 docs/_build
 
+# mkdocs
+docs/docs/site
+
 # Cookiecutter
 output/

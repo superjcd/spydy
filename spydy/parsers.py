@@ -9,13 +9,12 @@ class Cleaner(object):
         return text.strip()
 
 
-
 class Parser(abc.ABC):
     @abc.abstractmethod
-    def rules():...
+    def rules(self):...
 
     @abc.abstractmethod
-    def parse():...
+    def parse(self):...
     
 
 class XpathParser(Parser):
@@ -45,18 +44,15 @@ class XpathParser(Parser):
         return self.__repr__()
 
 
-#Parser for test  
+#Parser for tests
 class DmozParser(XpathParser):
-    title = "//a[@class='logo']/span/text()"
     editors = "//div[@class='editors']/h3/text()[1]"
+    categories = "//div[@class='categories']/h3/text()[1]"
+    sites = "//div[@class='sites']/h3/text()[1]"
+    languages = "//div[@class='languages']/h3/text()[1]"
 
     def __repr__(self):
         return self.__class__.__name__
 
     def __str__(self):
         return self.__repr__()
-
-
-
-if __name__ == "__main__":
-    dp = DmozParser()

@@ -3,7 +3,7 @@ from requests_html import HTML
 
 class Filter(abc.ABC):
     @abc.abstractmethod
-    def filter(parsed:dict):...
+    def filter(self, parsed:dict):...
     
 
 class CommonFilter(Filter):

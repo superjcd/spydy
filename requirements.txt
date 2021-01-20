@@ -1,6 +1,9 @@
 # Dev/Deployment
-sphinx
-sphinx_rtd_theme
-nose
-coverage
-pypi-publisher
+# sphinx
+# sphinx_rtd_theme
+# nose
+# coverage
+# pypi-publisher
+requests
+requests_html
+aiohttp

@@ -1,6 +1,6 @@
 from functools import reduce
 import importlib
-import crawler
+import spydy
 from .defaults import RUNMODES
 
 
@@ -21,7 +21,7 @@ def class_dispatcher(user_provide_classname:str):
 
 def get_class_from_spydy(class_name):  
     try:
-        step_class = getattr(crawler, class_name)
+        step_class = getattr(spydy, class_name)
     except AttributeError:
         msg = "{!r} not found in spydy".format(class_name)
         raise AttributeError(msg)

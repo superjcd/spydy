@@ -41,7 +41,6 @@ class Engine():
                     temp_result = cur_step(temp_result)
             return temp_result
 
-
     async def async_run_forever(self):
         while True:
             await self.async_run_once()

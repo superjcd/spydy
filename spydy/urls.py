@@ -1,14 +1,37 @@
 import abc
+import os
 import redis
 from .exceptions import UrlCompleted
 
-__all__ = ["RedisListUrls"]
-
+__all__ = ["FileUrls", "RedisListUrls"]
 
 
 class Urls(abc.ABC):
     @abc.abstractmethod
-    def pop():...
+    def pop(self):...
+
+
+class FileUrls(Urls):
+    def __init__(self, file_name=None):
+        self._filename = file_name
+        self._lines = self._readlines(file_name)
+         
+    def pop(self):
+        try:
+            item = self._lines.pop(0)
+        except IndexError:
+            import sys
+            sys.tracebacklimit = 0
+            raise UrlCompleted("No more item in file: {!r};Task will be shutdown in seconds..".format(self._filename))
+        return item
+        
+    def _readlines(self, file_name):
+        if not os.path.exists(file_name):
+            raise FileExistsError("No such file: {!r}".format(file_name))
+        with open(file_name, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+        return [line.strip() for line in lines]
+
 
 class RedisListUrls(Urls):
     def __init__(self, list_name, host="localhost", port=6379):
