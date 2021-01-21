@@ -1,5 +1,4 @@
 # Spydy
----
 目前虽然有很多的开源的爬虫框架和工具， 但是它们大多无法同时兼顾**用户友好**以及**良好性能**这两个特性。以目前较为流行的爬虫框架scrapy为例， 
 虽然支持高并发地爬取网站信息， 但是对于很多新用户来说， 使用门槛还是比较高的， scrapy的整个工作流没有那么直观， 意味着用户需要非常了解scrapy  
 的运行机制和生命周期， 同时开发量也并不少。 
@@ -9,7 +8,6 @@
 $ pip install spydy
 ```
 ## 一个简单的例子
----
 作为演示， 我们将爬取网站[dmoz](https://dmoz-odp.org/)首页下方的一些统计数据， 如图所示：
 
 ![dmoz](../img/dmoz.png)
@@ -66,8 +64,8 @@ FileUrls -> LinearHttpGetRequest -> DmozParser -> CsvStore
 
 配置文件中[Globals]下面可以设置spydy的全局参数， 比如这里的run_mode被设置了*once*， 所以在上面例子中， spydy只会将整个工作流执行一次。
 
-### What's Next
----
+## What's Next
+
 在真实开发场景中， 我们希望爬虫能够做到：
 * 兼容使用者的自定义模块&功能， 比如兼容用户自定的parser模块以及log功能
 * 支持并发&异步
