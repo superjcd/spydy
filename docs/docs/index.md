@@ -1,17 +1,19 @@
-# Welcome to MkDocs
+## 为什么要使用spydy？
+---
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+目前虽然有很多的开源的爬虫框架和工具， 但是它们大多无法同时兼顾**用户友好**以及**良好性能**这两个特性。  
+所以对于为什么要使用spydy这个问题， 简而言之， Spydy可以帮助使用者以最快的速度以及更为直观的方式， 开发和部署高性能的网络爬虫。
 
-## Commands
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
 
-## Project layout
+## 安装spydy
+---
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+使用pip进行安装：
+
+```
+$ pip install spydy
+```
+
+## 源码位置
+github项目地址: [spydy](https://github.com/superjcd/spydy)

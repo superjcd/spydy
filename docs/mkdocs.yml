@@ -1,6 +1,7 @@
 site_name: Spydy
 
 nav:
+  - 首页: index.md
   - 快速开始: quickstart.md
 
 theme:

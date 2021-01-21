@@ -1,4 +1,5 @@
 import abc
+import copy
 from requests_html import HTML
 
 
@@ -14,8 +15,8 @@ class CommonFilter(Filter):
         self._outputs = None
 
     def filter(self, to_filter):
-        self._to_filter = to_filter
-        self._outputs = to_filter
+        self._to_filter = copy.deepcopy(to_filter)
+        self._outputs = copy.deepcopy(to_filter)
 
         if hasattr(self, "drops"):
             drop_items = getattr(self, "drops")()
@@ -45,7 +46,7 @@ class CommonFilter(Filter):
                     )
 
         if hasattr(self, "mutates"):
-            mutate_items = getattr(self, "mutates")(self._to_filter)
+            mutate_items = getattr(self, "mutates")(self._outputs)
             if mutate_items:
                 if isinstance(mutate_items, dict):
                     self._outputs.update(mutate_items)

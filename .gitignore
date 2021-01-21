@@ -17,6 +17,7 @@ parts
 bin
 var
 sdist
+dist
 develop-eggs
 .installed.cfg
 lib
