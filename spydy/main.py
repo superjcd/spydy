@@ -9,8 +9,11 @@ from .defaults import *
 
 def fire():
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument("configfile", type=str, 
-        help="Please provide your configfile, then spydy will start soon.")
+    arg_parser.add_argument(
+        "configfile",
+        type=str,
+        help="Please provide your configfile, then spydy will start soon.",
+    )
     args = arg_parser.parse_args()
     configfile = args.configfile
     if not os.path.exists(configfile):
@@ -21,7 +24,9 @@ def fire():
     configs_assertion(config_parser)
     engine = Engine(config_parser)
 
-    run_mode = config_parser["Globals"].get("run_mode", RUNMODE)   # choose run mode: once, forever, async: 
+    run_mode = config_parser["Globals"].get(
+        "run_mode", RUNMODE
+    )  # choose run mode: once, forever, async:
     if run_mode == "once":
         engine.run_once()
     if run_mode == "forever":
@@ -38,7 +43,9 @@ def _fire_for_test(configfile):
     configs_assertion(config_parser)
     engine = Engine(config_parser)
 
-    run_mode = config_parser["Globals"].get("run_mode", RUNMODE)   # choose run mode: once, forever, async: 
+    run_mode = config_parser["Globals"].get(
+        "run_mode", RUNMODE
+    )  # choose run mode: once, forever, async:
     if run_mode == "once":
         engine.run_once()
     if run_mode == "forever":
@@ -47,4 +54,3 @@ def _fire_for_test(configfile):
         nworkers = int(config_parser["Globals"].get("nworkers", NWORKERS))
         loop = asyncio.get_event_loop()
         engine.run_async(loop, nworkers)
-

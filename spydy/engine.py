@@ -2,13 +2,19 @@ import asyncio
 from functools import reduce
 from configparser import ConfigParser
 from requests_html import HTML
-from .utils import configs_assertion, class_dispatcher, linear_pipelinefunc,  print_pipeline, parse_arguments
+from .utils import (
+    configs_assertion,
+    class_dispatcher,
+    linear_pipelinefunc,
+    print_pipeline,
+    parse_arguments,
+)
 
 
-class Engine():
-    def __init__(self, configs:ConfigParser):  
-        self._configs = configs  
-        self._pipeline = []  
+class Engine:
+    def __init__(self, configs: ConfigParser):
+        self._configs = configs
+        self._pipeline = []
         self.setup()
         print_pipeline(self._pipeline)
 
@@ -46,33 +52,31 @@ class Engine():
             await self.async_run_once()
 
     def run_async(self, eventloop, nworkers):
-        tasks = [asyncio.ensure_future(self.async_run_forever()) for _ in range(nworkers)]
+        tasks = [
+            asyncio.ensure_future(self.async_run_forever()) for _ in range(nworkers)
+        ]
         eventloop.run_until_complete(asyncio.wait(tasks))
 
     def setup(self):
-        for k, v in self._configs['PipeLine'].items():
+        for k, v in self._configs["PipeLine"].items():
             step_class = class_dispatcher(v)
             if v in self._configs:
-                arguments = parse_arguments(self._configs[v])# arguments 对应的是一个键值对， 可能是 file
+                arguments = parse_arguments(
+                    self._configs[v]
+                )  # arguments 对应的是一个键值对， 可能是 file
                 try:
                     self._pipeline.append(step_class(**arguments))
                 except TypeError as e:
-                    err_msg = "Class {!r} encounter an error when instantiating: {}".format(step_class, e.args)
+                    err_msg = (
+                        "Class {!r} encounter an error when instantiating: {}".format(
+                            step_class, e.args
+                        )
+                    )
                     raise TypeError(err_msg)
             else:
                 self._pipeline.append(step_class())
 
 
-
 if __name__ == "__main__":
     eg = Engine()
     print(eg.setup())
-
-        
-    
-
-
-
-
-
-    

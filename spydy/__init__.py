@@ -6,7 +6,7 @@ from .store import *
 
 __version__ = "0.1.1"
 
-LOGO = r'''
+LOGO = r"""
   ____                     _
  / ___|  _ __   _   _   __| | _   _
  \___ \ | '_ \ | | | | / _` || | | |
@@ -14,6 +14,8 @@ LOGO = r'''
  |____/ | .__/  \__, | \__,_| \__, |
         |_|     |___/         |___/   {!r}
 
-'''.format(__version__)
+""".format(
+    __version__
+)
 
 print(LOGO)

@@ -11,5 +11,3 @@ for arg, value in config["PipeLine"].items():
     print(arg)
 
 print("PipeLine" in config)
-
-
