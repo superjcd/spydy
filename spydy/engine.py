@@ -51,7 +51,10 @@ class Engine:
         while True:
             await self.async_run_once()
 
-    def run_async(self, eventloop, nworkers):
+    def run_async_once(self):
+        asyncio.run(self.async_run_once())
+
+    def run_async_forever(self, eventloop, nworkers):
         tasks = [
             asyncio.ensure_future(self.async_run_forever()) for _ in range(nworkers)
         ]
@@ -75,8 +78,3 @@ class Engine:
                     raise TypeError(err_msg)
             else:
                 self._pipeline.append(step_class())
-
-
-if __name__ == "__main__":
-    eg = Engine()
-    print(eg.setup())

@@ -31,10 +31,12 @@ def fire():
         engine.run_once()
     if run_mode == "forever":
         engine.run_forever()
-    if run_mode == "async":
+    if run_mode == "async_once":
+        engine.run_async_once()
+    if run_mode == "async_forever":
         nworkers = int(config_parser["Globals"].get("nworkers", NWORKERS))
         loop = asyncio.get_event_loop()
-        engine.run_async(loop, nworkers)
+        engine.run_async_forever(loop, nworkers)
 
 
 def _fire_for_test(configfile):

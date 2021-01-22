@@ -6,7 +6,7 @@ from threading import RLock
 
 # from sqlalchemy.ext.asyncio import create_async_engine
 
-__all__ = ["CsvStore", "AsyncCsvStore", "StdOutStore", "DbStore"]
+__all__ = ["CsvStore", "AsyncCsvStore", "DbStore"]
 
 
 class Store(abc.ABC):
@@ -15,21 +15,21 @@ class Store(abc.ABC):
         ...
 
 
-class StdOutStore(Store):
-    def __init__(self):
-        ...
+# class StdOutStore(Store):
+#     def __init__(self):
+#         ...
 
-    def store(self, items: dict):
-        print(items)
+#     def store(self, items: dict):
+#         print(items)
 
-    def __call__(self, *args, **kwargs):
-        self.store(*args, **kwargs)
+#     def __call__(self, *args, **kwargs):
+#         self.store(*args, **kwargs)
 
-    def __repr__(self):
-        return "StdOutStore"
+#     def __repr__(self):
+#         return "StdOutStore"
 
-    def __str__(self):
-        return self.__repr__()
+#     def __str__(self):
+#         return self.__repr__()
 
 
 class CsvStore(Store):
@@ -41,9 +41,10 @@ class CsvStore(Store):
         with open(self._filename, "a+", newline="") as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=fileds)
             writer.writerow(items)
+        return items
 
     def __call__(self, *args, **kwargs):
-        self.store(*args, **kwargs)
+        return self.store(*args, **kwargs)
 
     def __repr__(self):
         return self.__class__.__name__
@@ -64,9 +65,10 @@ class AsyncCsvStore(Store):
             writer = csv.DictWriter(csvfile, fieldnames=fileds)
             with await asyncio.Lock():
                 writer.writerow(items)
+        return items
 
     def __call__(self, *args, **kwargs):
-        self.store(*args, **kwargs)
+        return self.store(*args, **kwargs)
 
     def __repr__(self):
         return self.__class__.__name__
@@ -90,9 +92,10 @@ class DbStore(Store):
         dblock.acquire()
         self.engine.execute(self.metadata.tables[self._table_name].insert(), items)
         dblock.release()
+        return items
 
     def __call__(self, *args, **kwargs):
-        self.store(*args, **kwargs)
+        return self.store(*args, **kwargs)
 
     def __repr__(self):
         return self.__class__.__name__

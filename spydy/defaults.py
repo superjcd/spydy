@@ -1,4 +1,4 @@
-RUNMODES = ["once", "forever", "async"]
+RUNMODES = ["once", "forever", "async_once", "async_forever"]
 
 RUNMODE = "once"
 
