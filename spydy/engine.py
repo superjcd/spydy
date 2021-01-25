@@ -2,6 +2,7 @@ import asyncio
 from functools import reduce
 from configparser import ConfigParser
 from requests_html import HTML
+from .defaults import *
 from .utils import (
     configs_assertion,
     class_dispatcher,
@@ -18,7 +19,7 @@ class Engine:
         self.setup()
         print_pipeline(self._pipeline)
 
-    def run(self, run_mode):
+    def run(self, run_mode):  # 在这里我也需要套一层err-handling
         if run_mode == "once":
             self.run_once()
         if run_mode == "forever":
@@ -26,12 +27,31 @@ class Engine:
         if run_mode == "async_once":
             self.run_async_once()
         if run_mode == "async_forever":
-            nworkers = int(config_parser["Globals"].get("nworkers", NWORKERS))
+            nworkers = int(self._configs["Globals"].get("nworkers", NWORKERS))
             loop = asyncio.get_event_loop()
             self.run_async_forever(loop, nworkers)        
 
     def run_once(self):
         return reduce(linear_pipelinefunc, self._pipeline)
+
+    def run_once2(self):
+        nsteps = len(self._pipeline)
+        final_result = None
+        if nsteps == 1:
+            step = self._pipeline[0]
+            try:  # 出现问题如何处理？
+                final_result = step() 
+            except:
+                pass   # 比如在parser这一步出错， 同步任务很简单，只要把中间结果放到self中即可{type(stepclass):result}，异步任务的话{id of ayncio.current_task():}，  并且直接return None
+            return final_result
+        if nsteps > 1:
+            first_step = self._pipeline[0]
+            temp_result = first_step()
+            for nth in range(1, nsteps):
+                cur_step = self._pipeline[nth]
+                temp_result = cur_step(temp_result)
+            return temp_result
+        
 
     def run_forever(self):
         while True:
@@ -39,6 +59,7 @@ class Engine:
 
     async def async_run_once(self):
         nsteps = len(self._pipeline)
+        # print("async task name:", asyncio.current_task())
         if nsteps == 1:
             step = self._pipeline[0]
             if step.Async:
@@ -48,7 +69,7 @@ class Engine:
         if nsteps > 1:
             first_step = self._pipeline[0]
             if hasattr(first_step, "Async"):
-                temp_result = await self._pipeline[0]()
+                temp_result = await self._pipeline[0]()  # 改成first_step()
             else:
                 temp_result = self._pipeline[0]()
             for nth in range(1, nsteps):
