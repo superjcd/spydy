@@ -18,6 +18,18 @@ class Engine:
         self.setup()
         print_pipeline(self._pipeline)
 
+    def run(self, run_mode):
+        if run_mode == "once":
+            self.run_once()
+        if run_mode == "forever":
+            self.run_forever()
+        if run_mode == "async_once":
+            self.run_async_once()
+        if run_mode == "async_forever":
+            nworkers = int(config_parser["Globals"].get("nworkers", NWORKERS))
+            loop = asyncio.get_event_loop()
+            self.run_async_forever(loop, nworkers)        
+
     def run_once(self):
         return reduce(linear_pipelinefunc, self._pipeline)
 

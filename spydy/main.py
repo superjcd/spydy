@@ -7,7 +7,7 @@ from .utils import configs_assertion
 from .defaults import *
 
 
-def fire():
+def fire():   
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument(
         "configfile",
@@ -26,17 +26,10 @@ def fire():
 
     run_mode = config_parser["Globals"].get(
         "run_mode", RUNMODE
-    )  # choose run mode: once, forever, async:
-    if run_mode == "once":
-        engine.run_once()
-    if run_mode == "forever":
-        engine.run_forever()
-    if run_mode == "async_once":
-        engine.run_async_once()
-    if run_mode == "async_forever":
-        nworkers = int(config_parser["Globals"].get("nworkers", NWORKERS))
-        loop = asyncio.get_event_loop()
-        engine.run_async_forever(loop, nworkers)
+    )  
+    engine.run(run_mode)
+
+
 
 
 def _fire_for_test(configfile):

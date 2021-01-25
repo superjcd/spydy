@@ -61,7 +61,7 @@ class CommonFilter(Filter):
     def __call__(self, *args, **kwargs):
         return self.filter(*args, **kwargs)
 
-    def __repr__(self):  # 这里需要改一下， 和xpather， 尽量使用子类自己的名字
+    def __repr__(self):  
         return self.__class__.__name__
 
     def __str__(self):
