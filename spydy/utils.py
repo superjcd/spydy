@@ -1,7 +1,10 @@
+from typing import List
 from functools import reduce
 import importlib
 import spydy
+from spydy.urls import Urls
 from .defaults import RUNMODES
+from .adpaters import url_for_request
 
 
 def class_dispatcher(user_provide_classname: str):
@@ -111,3 +114,64 @@ def linear_pipelinefunc(a, b):
 def print_pipeline(pipeline: list):
     msg = "Your pipeline looks like :\n" + " ⇨ ".join([str(item) for item in pipeline])
     print(msg + "\n")
+
+
+def get_step_from_pipeline(pipeline, step_type="urls"):
+    """
+    get a step from pipeline by a given step_type
+    """
+    if step_type == "url":
+        for step in pipeline:
+            if isinstance(step, Urls):
+                return step
+        raise StepNotFoundError
+    else:
+        raise StepTypeNotSupported
+
+
+def get_temp_result(step_type, temp_results, coroutine_id=None):
+    """
+    get temp results by step_type and coroutine_id
+    """
+    if coroutine_id:
+        return temp_results[coroutine_id][step_type]
+    else:
+        return temp_results[step_type]
+
+
+def handle_exceptions(
+    run_mode,
+    temp_results,
+    pipleline: List,
+    coroutine_id=None,
+    handle_type="url_back_last",
+):
+    """
+    Args:
+      :run_mode: spydy running mode, one of the following modes: once, async_once, forever, async_forever
+      :temp_results: temporary results stored by spydy engine after each step
+      :coroutine_id: id of a coroutine, got by executes id(asyncio.current_task()), which can distinguish a coroutine from others
+      :pipeline: list of spydy pipeline components instance
+      :handle_type: choose a way to deal with the exception when encountered an exception
+    """
+    if run_mode == "once":
+        if handle_type in ("url_back_first", "url_back_last"):
+            url_step = get_step_from_pipeline(pipleline, step_type="url")
+            if hasattr(url_step, "handle_exception"):
+                url = get_temp_result(type(url_step), temp_results, coroutine_id)
+                url_step.handle_exception(
+                    handle_type=handle_type, url=url_for_request(url)
+                )
+        else:
+            return None
+
+    if run_mode == "async_once":
+        if handle_type in ("url_back_first", "url_back_last"):
+            url_step = get_step_from_pipeline(pipleline, step_type="url")
+            if hasattr(url_step, "handle_exception"):
+                url = get_temp_result(type(url_step), temp_results, coroutine_id)
+                url_step.handle_exception(
+                    handle_type=handle_type, url=url_for_request(url)
+                )
+        else:
+            return None

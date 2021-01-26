@@ -7,7 +7,7 @@ from .utils import configs_assertion
 from .defaults import *
 
 
-def fire():   
+def fire():
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument(
         "configfile",
@@ -24,12 +24,8 @@ def fire():
     configs_assertion(config_parser)
     engine = Engine(config_parser)
 
-    run_mode = config_parser["Globals"].get(
-        "run_mode", RUNMODE
-    )  
+    run_mode = config_parser["Globals"].get("run_mode", RUNMODE)
     engine.run(run_mode)
-
-
 
 
 def _fire_for_test(configfile):

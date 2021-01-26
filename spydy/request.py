@@ -22,9 +22,10 @@ class LinearHttpGetRequest(Request):
             self._proxy = None
 
     def get_html(self, url):
-        url = url_for_request(url)
-        with requests.session() as session:
-            return session.get(url, headers=self._headers, proxies=self._proxy)
+        if url:
+            url = url_for_request(url)
+            with requests.session() as session:
+                return session.get(url, headers=self._headers, proxies=self._proxy)
 
     def __call__(self, *args, **kwargs):
         return self.get_html(*args, **kwargs)

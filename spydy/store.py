@@ -15,33 +15,17 @@ class Store(abc.ABC):
         ...
 
 
-# class StdOutStore(Store):
-#     def __init__(self):
-#         ...
-
-#     def store(self, items: dict):
-#         print(items)
-
-#     def __call__(self, *args, **kwargs):
-#         self.store(*args, **kwargs)
-
-#     def __repr__(self):
-#         return "StdOutStore"
-
-#     def __str__(self):
-#         return self.__repr__()
-
-
 class CsvStore(Store):
     def __init__(self, file_name):
         self._filename = file_name
 
     def store(self, items: dict):
-        fileds = list(items)
-        with open(self._filename, "a+", newline="") as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=fileds)
-            writer.writerow(items)
-        return items
+        if items:
+            fileds = list(items)
+            with open(self._filename, "a+", newline="") as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=fileds)
+                writer.writerow(items)
+            return items
 
     def __call__(self, *args, **kwargs):
         return self.store(*args, **kwargs)
@@ -107,3 +91,9 @@ class DbStore(Store):
 class AsyncDbStore(Store):
     def __init__(self, connection_url=None, table_name=None):
         self.Async = ""
+
+
+if __name__ == "__main__":
+    ds = DbStore()
+    print(type(ds))
+    print(isinstance(ds, Store))

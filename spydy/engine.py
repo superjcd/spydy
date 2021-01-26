@@ -3,25 +3,31 @@ from functools import reduce
 from configparser import ConfigParser
 from requests_html import HTML
 from .defaults import *
+from .exceptions import TaskWrong
 from .utils import (
     configs_assertion,
     class_dispatcher,
     linear_pipelinefunc,
     print_pipeline,
     parse_arguments,
+    handle_exceptions,
 )
+
+
+Exceptions_To_Handle = TaskWrong
 
 
 class Engine:
     def __init__(self, configs: ConfigParser):
         self._configs = configs
         self._pipeline = []
+        self._temp_results = {}
         self.setup()
         print_pipeline(self._pipeline)
 
     def run(self, run_mode):  # 在这里我也需要套一层err-handling
         if run_mode == "once":
-            self.run_once()
+            self.run_once2()
         if run_mode == "forever":
             self.run_forever()
         if run_mode == "async_once":
@@ -29,55 +35,69 @@ class Engine:
         if run_mode == "async_forever":
             nworkers = int(self._configs["Globals"].get("nworkers", NWORKERS))
             loop = asyncio.get_event_loop()
-            self.run_async_forever(loop, nworkers)        
+            self.run_async_forever(loop, nworkers)
 
     def run_once(self):
         return reduce(linear_pipelinefunc, self._pipeline)
 
     def run_once2(self):
-        nsteps = len(self._pipeline)
         final_result = None
-        if nsteps == 1:
-            step = self._pipeline[0]
-            try:  # 出现问题如何处理？
-                final_result = step() 
-            except:
-                pass   # 比如在parser这一步出错， 同步任务很简单，只要把中间结果放到self中即可{type(stepclass):result}，异步任务的话{id of ayncio.current_task():}，  并且直接return None
-            return final_result
+        nsteps = len(self._pipeline)
+        assert nsteps >= 1 
+        first_step = self._pipeline[0]
+        if nsteps == 1:  
+            return first_step()
         if nsteps > 1:
             first_step = self._pipeline[0]
             temp_result = first_step()
+            self._temp_results[
+                type(first_step)
+            ] = temp_result  # add temp_result to self._temp_results
             for nth in range(1, nsteps):
                 cur_step = self._pipeline[nth]
-                temp_result = cur_step(temp_result)
-            return temp_result
-        
+                try:
+                    temp_result = cur_step(temp_result)
+                except Exceptions_To_Handle:
+                    handle_exceptions(run_mode="once", temp_results=self._temp_results, pipleline=self._pipeline)
+                    temp_result = None
+                self._temp_results[type(cur_step)] = temp_result
+            final_result = temp_result
+            return final_result
 
     def run_forever(self):
         while True:
             self.run_once()
 
     async def async_run_once(self):
+        final_result = None
         nsteps = len(self._pipeline)
-        # print("async task name:", asyncio.current_task())
+        assert nsteps >= 1
+        first_step = self._pipeline[0]
+        _coroutine_id = id(asyncio.current_task())
         if nsteps == 1:
-            step = self._pipeline[0]
             if step.Async:
-                return await step()
+                return await first_step()
             else:
                 return step()
         if nsteps > 1:
             first_step = self._pipeline[0]
             if hasattr(first_step, "Async"):
-                temp_result = await self._pipeline[0]()  # 改成first_step()
+                temp_result = await first_step()
             else:
                 temp_result = self._pipeline[0]()
+            self._temp_results[type(first_step)] = temp_result
             for nth in range(1, nsteps):
                 cur_step = self._pipeline[nth]
-                if hasattr(cur_step, "Async"):
-                    temp_result = await cur_step(temp_result)
-                else:
-                    temp_result = cur_step(temp_result)
+                try:
+                    if hasattr(cur_step, "Async"):
+                        temp_result = await cur_step(temp_result)
+                    else:
+                        temp_result = cur_step(temp_result)
+                except Exceptions_To_Handle:
+                    handle_exceptions(run_mode="async_once", temp_results=self._temp_results, pipleline=self._pipeline, coroutine_id=_coroutine_id)
+                    temp_result = None
+                self._temp_results[type(cur_step)] = temp_result
+            final_result = temp_result
             return temp_result
 
     async def async_run_forever(self):

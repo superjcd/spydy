@@ -1,7 +1,7 @@
 import abc
 import os
 import redis
-from .exceptions import UrlCompleted
+from .exceptions import UrlCompleted, UnExpectedHandleType
 
 __all__ = ["FileUrls", "RedisListUrls"]
 
@@ -67,8 +67,20 @@ class RedisListUrls(Urls):
                 )
             )
 
-    def push(self, item):
+    def rpush(self, item):
         return self._conn.rpush(self.list_name, item)
+
+    def lpush(slef, item):
+        return self._conn.lpush(self.list_name, item)
+
+    def handle_exception(self, handle_type, url):
+        if handle_type == "url_back_last":
+            self.rpush(url)
+        elif handle_type == "url_back_first":
+            self.lpush(url)
+        else:
+            raise UnExpectedHandleType
+        return None
 
     def complete(self):
         print(

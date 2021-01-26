@@ -1,5 +1,6 @@
 import abc
 from requests_html import HTML
+from .exceptions import TaskWrong
 
 
 class Cleaner(object):
@@ -32,14 +33,17 @@ class XpathParser(Parser):
         return self._rules
 
     def parse(self, response) -> dict:
-        # breakpoint()
-        html = HTML(html=response.text)
-        _ = self.rules()
-        if self._rules:
-            for item, rule in self._rules.items():
-                self._result[item] = Cleaner.clean(html.xpath(rule, first=True))
-            return self._result
-        return {}
+        if response:
+            html = HTML(html=response.text)
+            _ = self.rules()
+            if self._rules:
+                for item, rule in self._rules.items():
+                    try:
+                        self._result[item] = Cleaner.clean(html.xpath(rule, first=True))
+                    except:
+                        raise TaskWrong
+                return self._result
+            return {}
 
     def __call__(self, *args, **kwargs):
         return self.parse(*args, **kwargs)
