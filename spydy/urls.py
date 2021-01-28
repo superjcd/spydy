@@ -11,11 +11,13 @@ class Urls(abc.ABC):
     def pop(self):
         ...
 
+
 class DummyUrls(Urls):
-    '''
+    """
     Genertae one url for given times
-    '''
-    def __init__(self, url=None, repeat:int=1):
+    """
+
+    def __init__(self, url=None, repeat: int = 1):
         if not url:
             raise DummyUrlNotGiven
         self._url = url
@@ -31,7 +33,7 @@ class DummyUrls(Urls):
                     self._filename
                 )
             )
-  
+
     def __call__(self, *args, **kwargs):
         return self.pop(*args, **kwargs)
 
@@ -52,6 +54,7 @@ class FileUrls(Urls):
             item = self._lines.pop(0)
         except IndexError:
             import sys
+
             sys.tracebacklimit = 0
             raise UrlCompleted(
                 "No more item in file: {!r};Task will be shutdown in seconds..".format(
@@ -95,6 +98,7 @@ class RedisListUrls(Urls):
                     self.list_name
                 )
             )
+
     def push(self, item):
         return self.rpush(item)
 

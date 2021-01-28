@@ -117,11 +117,13 @@ def print_pipeline(pipeline: list):
     msg = "Your pipeline looks like :\n" + " ⇨ ".join([str(item) for item in pipeline])
     print(msg + "\n")
 
-def print_msg(msg, info_header="INFO",  time_format="%Y-%m-%d %H:%M:%S", verbose=False):
+
+def print_msg(msg, info_header="INFO", time_format="%Y-%m-%d %H:%M:%S", verbose=False):
     msg = msg if verbose else repr(msg)
     time_info = datetime.now().strftime(time_format)
     message = "|".join([info_header, time_info, msg])
     print(message)
+
 
 def get_step_from_pipeline(pipeline, step_type="urls"):
     """
@@ -182,5 +184,3 @@ def handle_exceptions(
                 )
         else:
             return None
-
-
