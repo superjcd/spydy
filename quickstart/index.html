@@ -57,7 +57,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#_1" class="md-skip">
+        <a href="#spydy" class="md-skip">
           Skip to content
         </a>
       
@@ -200,6 +200,13 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#spydy" class="md-nav__link">
+    安装spydy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     一个简单的例子
   </a>
@@ -235,21 +242,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#spydy" class="md-nav__link">
-    spydy无缝兼容用户自定义模块
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#spydy_1" class="md-nav__link">
-    spydy支持并发
+    spydy可以无缝兼容用户的自定义模块
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#spydy_2" class="md-nav__link">
+    spydy可以支持并发
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spydy_3" class="md-nav__link">
     spydy提供便利的组件
   </a>
   
@@ -289,6 +296,13 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#spydy" class="md-nav__link">
+    安装spydy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     一个简单的例子
   </a>
@@ -324,21 +338,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#spydy" class="md-nav__link">
-    spydy无缝兼容用户自定义模块
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#spydy_1" class="md-nav__link">
-    spydy支持并发
+    spydy可以无缝兼容用户的自定义模块
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#spydy_2" class="md-nav__link">
+    spydy可以支持并发
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spydy_3" class="md-nav__link">
     spydy提供便利的组件
   </a>
   
@@ -364,10 +378,16 @@
                 
                   <h1>快速开始</h1>
                 
-                <h2 id="_1">一个简单的例子</h2>
+                <p><img alt="logo" src="./docs/docs/img/spydy.svg" />  </p>
 <hr />
-<p>作为演示， 我们将爬取网站<a href="https://dmoz-odp.org/">dmoz</a>首页下方的一些统计数据， 如图所示：</p>
-<p><img alt="dmoz" src="../img/dmoz.png" /></p>
+<p>目前虽然有很多的开源的爬虫框架和工具， 但是它们大多无法同时兼顾<strong>用户友好</strong>以及<strong>良好性能</strong>这两个特性。
+所以对于为什么要使用<a href="https://superjcd.github.io/spydy/">spydy</a>这个问题， 简而言之， spydy可以帮助使用者以最快的速度以及更为直观的方式， 开发和部署高性能的网络爬虫。</p>
+<h2 id="spydy">安装spydy</h2>
+<pre><code>$ pip install spydy
+</code></pre>
+<h2 id="_1">一个简单的例子</h2>
+<p>作为演示， 我们将爬取网站<a href="https://dmoz-odp.org/">dmoz</a>首页(可能需要梯子)下方的一些统计数据， 如图所示：</p>
+<p><img alt="dmoz" src="./docs/docs/img/dmoz.png" /> </p>
 <p>首先准备好需要爬取的链接，我们把目标连接放入到urls.txt中:</p>
 <pre><code>https://dmoz-odp.org
 </code></pre>
@@ -377,7 +397,7 @@ run_mode = once
 
 [PipeLine]
 url = FileUrls
-request = LinearHttpGetRequest
+request = HttpGetRequest
 parser = DmozParser
 store = CsvStore
 
@@ -391,30 +411,31 @@ file_name = dmoz.csv
 <pre><code>$ spydy myconfig.cfg
 
 Your pipeline looks like :
-FileUrls ⇨ LinearHttpGetRequest ⇨ DmozParser ⇨ CsvStore
+FileUrls ⇨ HttpGetRequest ⇨ DmozParser ⇨ CsvStore
 </code></pre>
 <p>接着， 你会发现在当前目录下面出现了dmoz.csv，并且在dmoz.csv文件中多了一行我们想要获取的数据。</p>
 <h3 id="_2">发生了什么？</h3>
-<hr />
-<p>spydy的工作流在设计上参考了Unix管道， 定义在配置文件[PipeLine]下面的参数其实就是我们spydy会<strong>顺序执行</strong>的各个步骤,  比如在上面的例子中， spydy的工作流是这样的：</p>
-<pre><code>FileUrls -&gt; LinearHttpGetRequest -&gt; DmozParser -&gt; CsvStore
+<p>spydy的工作流在设计上参考了Unix管道， 定义在配置文件[PipeLine]下面的参数其实就是我们spydy会<strong>顺序执行</strong>的各个步骤,  比如在上面的例子中，<br />
+spydy的工作流是这样的：</p>
+<pre><code>FileUrls -&gt; HttpGetRequest -&gt; DmozParser -&gt; CsvStore
 </code></pre>
 <p>每个步骤的产出就是下一步的输入。</p>
-<p>当然， 每个步骤可能需要一些参数， 比如FileUrls需要<em>file_name</em>参数， 所以需要单独地在[FileUrls]下面配置好<em>file_name</em>参数， 如果用户没有提供相应参数， 那么spydy将使用默认参数。</p>
-<p>配置文件中[Globals]下面可以设置spydy的全局参数， 比如这里的run_mode被设置了<em>once</em>， 所以在上面例子中， spydy只会将整个工作流执行一次。</p>
+<p>当然， 每个步骤可能需要一些参数， 比如FileUrls需要<code>file_name</code>参数， 所以需要单独地在[FileUrls]下面配置好<code>file_name</code>参数， 如果用户没有提供相应参数，<br />
+那么spydy将使用默认参数。</p>
+<p>配置文件中[Globals]下面可以设置spydy的全局参数， 比如这里的<code>run_mode</code>被设置了<code>once</code>， 所以在上面例子中spydy只会将整个工作流执行一次。</p>
 <h2 id="_3">一个复杂点的例子</h2>
-<hr />
-<p>在真实开发中， 我们希望爬虫能够做到：
-* 兼容使用者的自定义模块&amp;功能， 比如兼容用户自定的parser模块以及log功能
+<p>在真实开发开发场景中， 我们希望爬虫能够做到：
+* 兼容使用者的自定义模块&amp;功能， 比如兼容用户自定义网页解析模块
 * 支持并发&amp;异步
-* 支持数据持久化， 比如将数据写入数据库</p>
-<p>OK， 以上这些spydy都可以做到。进入正题之前， 请确保：  </p>
+* 支持数据持久化， 比如将数据写入数据库
+...</p>
+<p>OK， 以上这些spydy都可以支持。我们再来看一个稍微复杂一点的例子作为演示， 在此之前请确保：  </p>
 <ul>
 <li>有一个可以访问的redis键值存储数据库，当然我们需要在Redis中写入一些URL：  </li>
 </ul>
 <pre><code>from spydy.urls import RedisListUrls
 
-r = RedisListUrls(list_name=&quot;/spider/testurls&quot;)
+r = RedisListUrls(list_name=&quot;/spider/testurls&quot;)  # 默认localhost
 for _ in range(10):
     r.push(&quot;https://www.dmoz-odp.org/&quot;)  
 </code></pre>
@@ -465,7 +486,7 @@ list_name = /spider/testurls
 connection_url = sqlite:///./tests/files/dmoz.db
 table_name = stats
 </code></pre>
-<p>当然， 你的redis连接和数据库连接(使用sqlalchemy的定义方式)和上面的未必相同， 请根据自己的情况进行修改。</p>
+<p>当然， 你的redis连接和数据库连接(使用<a href="https://docs.sqlalchemy.org/en/13/core/connections.html">sqlalchemy</a>的定义方式)和上面的未必相同， 请根据自己的情况进行修改。</p>
 <p>万事俱备， 让我们运行spydy吧：</p>
 <pre><code>$ spydy myconfig2.cfg
 
@@ -481,18 +502,19 @@ after_mutate: {'categories': '1,031,722', 'languages': '90', 'sites': '0'}
 befor_mutate: {'categories': '1,031,722', 'languages': '90', 'sites': '3,861,202'}
 after_mutate: {'categories': '1,031,722', 'languages': '90', 'sites': '0'}
 ...
+
 </code></pre>
 <h3 id="_4">发生了什么？</h3>
-<hr />
-<h3 id="spydy">spydy无缝兼容用户自定义模块</h3>
-<hr />
-<p>在PipeLine中我们加入了自定义的过滤模块（继承自spydy.filters.CommonFilter），由于filter被定义在parser的后面， 所以filter会处理parsers的结果。在这个过程中如上面日志中显示的那样， 结果数据发生了改变（字段editor没了， sites变成了0）。</p>
-<h3 id="spydy_1">spydy支持并发</h3>
-<hr />
-<p>在<em>myconfig2.cfg</em>配置文件的[Globals]全局变量中， 我们将run_mode设置成了<em>async</em>， 同时将<em>num_workers</em>设置成了4， 意味着spydy将并发执行四个异步任务， 这也就是为什么上面的这个任务会被快速执行完成。</p>
-<h3 id="spydy_2">spydy提供便利的组件</h3>
-<hr />
-<p>利用spdydy自带的持久化组件， 只要在配置文件中简单的配置参数就能够实现对数据的存储。</p>
+<h3 id="spydy_1">spydy可以无缝兼容用户的自定义模块</h3>
+<p>我们在<em>PipeLine</em>中我们加入了自定义的过滤模块(继承自<code>spydy.filters.CommonFilter</code>)，由于<strong>filter</strong>被定义在<strong>parser</strong>的后面， 所以<strong>filter</strong>会处理从<strong>parsers</strong>返回的结果。在这个过程中, 如上面日志中显示的那样， 结果数据发生了改变(sites变成了0).</p>
+<h3 id="spydy_2">spydy可以支持并发</h3>
+<p>spydy通过<strong>协程</strong>支持并发。在<em>myconfig2.cfg</em>配置文件的<em>[Globals]</em>部分下， 我们将run_mode设置成了<code>async</code>， 同时将<code>num_workers</code>设置成了4，同时我们把<strong>request</strong>过程从<code>HttpGetRequest</code>改为<code>AsyncHttpGetRequest</code>, 意味着spydy将并发执行四个异步任务。这样网络请求就会以异步的方式进行。</p>
+<pre><code>Tips:
+   通常可以通过spydy组件的名称来确定一个组件是不是支持异步的， 如果组件带有Async前缀， 那么该组件就是支持异步的。
+</code></pre>
+<h3 id="spydy_3">spydy提供便利的组件</h3>
+<p>在上面的例子中， 我们使用了spydy的<em>RedisListUrls</em>来获取url, 同时利用spdydy自带的持久化组件，来快速的存储数据。spydy为使用者提供常见的组件， 来大大简化使用者
+的工作。</p>
                 
               
               
