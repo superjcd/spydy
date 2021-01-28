@@ -1,15 +1,45 @@
 import abc
 import os
 import redis
-from .exceptions import UrlCompleted, UnExpectedHandleType
+from .exceptions import UrlCompleted, UnExpectedHandleType, DummyUrlNotGiven
 
-__all__ = ["FileUrls", "RedisListUrls"]
+__all__ = ["DummyUrls", "FileUrls", "RedisListUrls"]
 
 
 class Urls(abc.ABC):
     @abc.abstractmethod
     def pop(self):
         ...
+
+class DummyUrls(Urls):
+    '''
+    Genertae one url for given times
+    '''
+    def __init__(self, url=None, repeat:int=1):
+        if not url:
+            raise DummyUrlNotGiven
+        self._url = url
+        self._repeat = repeat
+
+    def pop(self):
+        try:
+            return next(self._url for _ in range(self._repeat))
+        except StopIteration:
+            print("Wrong")
+            raise UrlCompleted(
+                "No more item in file: {!r};Task will be shutdown in seconds..".format(
+                    self._filename
+                )
+            )
+  
+    def __call__(self, *args, **kwargs):
+        return self.pop(*args, **kwargs)
+
+    def __repr__(self):
+        return self.__class__.__name__
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class FileUrls(Urls):
@@ -22,7 +52,6 @@ class FileUrls(Urls):
             item = self._lines.pop(0)
         except IndexError:
             import sys
-
             sys.tracebacklimit = 0
             raise UrlCompleted(
                 "No more item in file: {!r};Task will be shutdown in seconds..".format(
@@ -66,6 +95,8 @@ class RedisListUrls(Urls):
                     self.list_name
                 )
             )
+    def push(self, item):
+        return self.rpush(item)
 
     def rpush(self, item):
         return self._conn.rpush(self.list_name, item)
@@ -97,3 +128,8 @@ class RedisListUrls(Urls):
 
     def __str__(self):
         return self.__repr__()
+
+
+# if __name__ == "__main__":
+#     du = DummyUrls(url="https://dmoz-odp.org/", repeat=10)
+#     print(du.pop())

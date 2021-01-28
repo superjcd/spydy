@@ -38,10 +38,7 @@ class XpathParser(Parser):
             _ = self.rules()
             if self._rules:
                 for item, rule in self._rules.items():
-                    try:
-                        self._result[item] = Cleaner.clean(html.xpath(rule, first=True))
-                    except:
-                        raise TaskWrong
+                    self._result[item] = Cleaner.clean(html.xpath(rule, first=True))
                 return self._result
             return {}
 

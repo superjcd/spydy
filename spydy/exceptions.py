@@ -18,6 +18,9 @@ class UrlCompleted(TaskDone):
     def __repr__(self):
         return "UrlCompleted: {}".format(self.msg)
 
+    def __str__(self):
+        return self.__repr__()
+
 
 class TaskWrong(Exception):
     """
@@ -40,4 +43,10 @@ class StepNotFoundError(Exception):
 class StepTypeNotSupported(Exception):
     """
     Step type is not stupported
+    """
+
+
+class DummyUrlNotGiven(Exception):
+    """
+    Url for DummyUrl is not given
     """

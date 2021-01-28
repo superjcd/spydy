@@ -4,7 +4,7 @@ import requests
 from requests_html import HTML, AsyncHTMLSession
 from .adpaters import url_for_request
 
-__all__ = ["LinearHttpGetRequest", "AsyncHttpGetRequest"]
+__all__ = ["HttpGetRequest", "AsyncHttpGetRequest"]
 
 
 class Request(abc.ABC):
@@ -13,7 +13,7 @@ class Request(abc.ABC):
         ...
 
 
-class LinearHttpGetRequest(Request):
+class HttpGetRequest(Request):
     def __init__(self, headers=None, proxy=None):  # 把method去掉
         self._headers = headers
         if proxy:

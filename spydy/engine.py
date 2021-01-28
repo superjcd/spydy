@@ -3,18 +3,20 @@ from functools import reduce
 from configparser import ConfigParser
 from requests_html import HTML
 from .defaults import *
-from .exceptions import TaskWrong
+from .exceptions import TaskWrong, UrlCompleted
 from .utils import (
     configs_assertion,
     class_dispatcher,
     linear_pipelinefunc,
     print_pipeline,
+    print_msg,
     parse_arguments,
     handle_exceptions,
 )
 
 
-Exceptions_To_Handle = TaskWrong
+Exceptions_To_Handle = (TaskWrong, )
+Exceptions_To_Ignore = (UrlCompleted, )
 
 
 class Engine:
@@ -25,22 +27,32 @@ class Engine:
         self.setup()
         print_pipeline(self._pipeline)
 
-    def run(self, run_mode):  # 在这里我也需要套一层err-handling
+    def run(self, run_mode):  
         if run_mode == "once":
-            self.run_once2()
+            self.run_once()
+            print_msg(msg="Task Done", info_header="SUCCESS")
         if run_mode == "forever":
             self.run_forever()
+            print_msg(msg="Task Done", info_header="SUCCESS")
         if run_mode == "async_once":
             self.run_async_once()
+            print_msg(msg="Task Done", info_header="SUCCESS")
         if run_mode == "async_forever":
             nworkers = int(self._configs["Globals"].get("nworkers", NWORKERS))
             loop = asyncio.get_event_loop()
-            self.run_async_forever(loop, nworkers)
+            tasks = self.run_async_forever(loop, nworkers)
+            for task in tasks:  # Hanle exceptions(Message only)
+                exception = task.exception()
+                for ignore_exception in Exceptions_To_Ignore:
+                    # breakpoint()
+                    if isinstance(exception, ignore_exception):
+                        print_msg(msg='Task Done, Details:' + str(exception), info_header="SUCCESS", verbose=True)
+                
+
+    # def run_once(self):
+    #     return reduce(linear_pipelinefunc, self._pipeline)
 
     def run_once(self):
-        return reduce(linear_pipelinefunc, self._pipeline)
-
-    def run_once2(self):
         final_result = None
         nsteps = len(self._pipeline)
         assert nsteps >= 1 
@@ -52,7 +64,7 @@ class Engine:
             temp_result = first_step()
             self._temp_results[
                 type(first_step)
-            ] = temp_result  # add temp_result to self._temp_results
+            ] = temp_result  
             for nth in range(1, nsteps):
                 cur_step = self._pipeline[nth]
                 try:
@@ -107,11 +119,12 @@ class Engine:
     def run_async_once(self):
         asyncio.run(self.async_run_once())
 
-    def run_async_forever(self, eventloop, nworkers):
+    def run_async_forever(self, eventloop, nworkers):  
         tasks = [
             asyncio.ensure_future(self.async_run_forever()) for _ in range(nworkers)
         ]
         eventloop.run_until_complete(asyncio.wait(tasks))
+        return tasks
 
     def setup(self):
         for k, v in self._configs["PipeLine"].items():
@@ -119,7 +132,7 @@ class Engine:
             if v in self._configs:
                 arguments = parse_arguments(
                     self._configs[v]
-                )  # arguments 对应的是一个键值对， 可能是 file
+                )  
                 try:
                     self._pipeline.append(step_class(**arguments))
                 except TypeError as e:
