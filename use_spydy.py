@@ -12,3 +12,12 @@ fire()
 
 
 
+# import sys
+# import time
+# for i in range(100):
+#     print("noise")
+#     sys.stdout.write("Download progress: %d%%   \r" % (i))
+#     time.sleep(0.2)
+#     sys.stdout.flush()
+
+
