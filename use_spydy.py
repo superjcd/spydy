@@ -2,17 +2,13 @@ from spydy.main import fire
 from spydy.urls import RedisListUrls, DummyUrls
 
 # 添加urls
-# r = RedisListUrls(list_name="/spider/testurls")
+r = RedisListUrls(list_name="/spider/testurls")
 
-# for _ in range(10):
-#     r.push("https://www.dmoz-odp.org/")
+for _ in range(10):
+    r.push("https://www.dmoz-odp.org/")
 
-# fire()
-
-
-du = DummyUrls(url="https://dmoz-odp.org/", repeat=10)
+# print(r.total)
+fire()
 
 
-for i in range(12):
-    print(du())
-    
+

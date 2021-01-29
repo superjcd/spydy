@@ -19,17 +19,15 @@ class DummyUrls(Urls):
         if not url:
             raise DummyUrlNotGiven
         self._url = url
-        self._repeat = repeat
+        self._repeat = int(repeat)
+        self._urls = (self._url for _ in range(self._repeat))
 
     def pop(self):
         try:
-            return next(self._url for _ in range(self._repeat))
+            return next(self._urls)
         except StopIteration:
-            print("Wrong")
             raise UrlCompleted(
-                "No more item in file: {!r};Task will be shutdown in seconds..".format(
-                    self._filename
-                )
+                "No more item in DummyUrls"             
             )
   
     def __call__(self, *args, **kwargs):
@@ -81,6 +79,13 @@ class RedisListUrls(Urls):
     def __init__(self, list_name, host="localhost", port=6379):
         self.list_name = list_name
         self._conn = redis.Redis(host=host, port=port)
+
+    @property
+    def total(self):
+        '''
+          Return  count of all urls.
+        '''
+        return self._conn.llen(self.list_name)
 
     def pop(self):
         item = self._conn.lpop(self.list_name)

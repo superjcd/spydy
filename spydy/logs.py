@@ -44,3 +44,21 @@ class MessageLog(Log):
 
     def __str__(self):
         return self.__repr__()
+
+
+class StatsReportLog(Log):
+    def __init__(self, every=1):
+        self._every = every
+        self._urls_instance = None  
+        self._N = 0   # add 1 while call tge log fuction
+        self._position_in_pipeline = None
+        self._urls_consumed = 0  #
+        self._urls_remain = None
+        self._work_speed = None
+
+    def log(self, items):
+        self._N += 1 
+        if self._N % self._every == 0:
+            total = get_total_from_urls(urls_instance=self._urls_instance, position)
+        return items
+    
