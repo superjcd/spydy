@@ -1,6 +1,7 @@
 import asyncio
 from functools import reduce
 from configparser import ConfigParser
+from requests.exceptions import RequestException 
 from requests_html import HTML
 from .defaults import *
 from .exceptions import TaskWrong, UrlCompleted
@@ -15,8 +16,8 @@ from .utils import (
 )
 
 
-Exceptions_To_Handle = (TaskWrong, )
-Exceptions_To_Ignore = (UrlCompleted, )
+Exceptions_To_Handle = (TaskWrong, RequestException)  
+Exceptions_Of_Success = (UrlCompleted,)
 
 
 class Engine:
@@ -27,7 +28,7 @@ class Engine:
         self.setup()
         print_pipeline(self._pipeline)
 
-    def run(self, run_mode):  
+    def run(self, run_mode):
         if run_mode == "once":
             self.run_once()
             print_msg(msg="Task Done", info_header="SUCCESS")
@@ -47,6 +48,14 @@ class Engine:
                     if isinstance(exception, ignore_exception):
                         print_msg(msg='Task Done, Details:' + str(exception), info_header="SUCCESS", verbose=True)
                 
+                exception = task.exception()
+                for success_exception in Exceptions_Of_Success:
+                    if isinstance(exception, success_exception):
+                        print_msg(
+                            msg="Task Done, Details:" + str(exception),
+                            info_header="SUCCESS",
+                            verbose=True,
+                        )
 
     # def run_once(self):
     #     return reduce(linear_pipelinefunc, self._pipeline)
@@ -54,22 +63,24 @@ class Engine:
     def run_once(self):
         final_result = None
         nsteps = len(self._pipeline)
-        assert nsteps >= 1 
+        assert nsteps >= 1
         first_step = self._pipeline[0]
-        if nsteps == 1:  
+        if nsteps == 1:
             return first_step()
         if nsteps > 1:
             first_step = self._pipeline[0]
             temp_result = first_step()
-            self._temp_results[
-                type(first_step)
-            ] = temp_result  
+            self._temp_results[type(first_step)] = temp_result
             for nth in range(1, nsteps):
                 cur_step = self._pipeline[nth]
                 try:
                     temp_result = cur_step(temp_result)
                 except Exceptions_To_Handle:
-                    handle_exceptions(run_mode="once", temp_results=self._temp_results, pipleline=self._pipeline)
+                    handle_exceptions(
+                        run_mode="once",
+                        temp_results=self._temp_results,
+                        pipleline=self._pipeline,
+                    )
                     temp_result = None
                 self._temp_results[type(cur_step)] = temp_result
             final_result = temp_result
@@ -78,6 +89,7 @@ class Engine:
     def run_forever(self):
         while True:
             self.run_once()
+        print_msg(msg="Task Done!", info_header="SUCCESS")
 
     async def async_run_once(self):
         final_result = None
@@ -105,7 +117,12 @@ class Engine:
                     else:
                         temp_result = cur_step(temp_result)
                 except Exceptions_To_Handle:
-                    handle_exceptions(run_mode="async_once", temp_results=self._temp_results, pipleline=self._pipeline, coroutine_id=_coroutine_id)
+                    handle_exceptions(
+                        run_mode="async_once",
+                        temp_results=self._temp_results,
+                        pipleline=self._pipeline,
+                        coroutine_id=_coroutine_id,
+                    )
                     temp_result = None
                 self._temp_results[type(cur_step)] = temp_result
             final_result = temp_result
@@ -118,7 +135,7 @@ class Engine:
     def run_async_once(self):
         asyncio.run(self.async_run_once())
 
-    def run_async_forever(self, eventloop, nworkers):  
+    def run_async_forever(self, eventloop, nworkers):
         tasks = [
             asyncio.ensure_future(self.async_run_forever()) for _ in range(nworkers)
         ]
@@ -129,9 +146,7 @@ class Engine:
         for k, v in self._configs["PipeLine"].items():
             step_class = class_dispatcher(v)
             if v in self._configs:
-                arguments = parse_arguments(
-                    self._configs[v]
-                )  
+                arguments = parse_arguments(self._configs[v])
                 try:
                     self._pipeline.append(step_class(**arguments))
                 except TypeError as e:

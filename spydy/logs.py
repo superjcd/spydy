@@ -9,6 +9,7 @@ class Log(abc.ABC):
     def log(self):
         ...
 
+
 class SimplePrintLog(Log):
     def __init__(self):
         ...
