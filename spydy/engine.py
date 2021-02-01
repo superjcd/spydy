@@ -1,7 +1,7 @@
 import asyncio
 from functools import reduce
 from configparser import ConfigParser
-from requests.exceptions import RequestException 
+from requests.exceptions import RequestException
 from requests_html import HTML
 from .defaults import *
 from .exceptions import TaskWrong, UrlCompleted
@@ -16,7 +16,7 @@ from .utils import (
 )
 
 
-Exceptions_To_Handle = (TaskWrong, RequestException)  
+Exceptions_To_Handle = (TaskWrong, RequestException)
 Exceptions_Of_Success = (UrlCompleted,)
 
 
@@ -42,12 +42,16 @@ class Engine:
             nworkers = int(self._configs["Globals"].get("nworkers", NWORKERS))
             loop = asyncio.get_event_loop()
             tasks = self.run_async_forever(loop, nworkers)
-            for task in tasks: 
+            for task in tasks:
                 exception = task.exception()
                 for ignore_exception in Exceptions_To_Ignore:
                     if isinstance(exception, ignore_exception):
-                        print_msg(msg='Task Done, Details:' + str(exception), info_header="SUCCESS", verbose=True)
-                
+                        print_msg(
+                            msg="Task Done, Details:" + str(exception),
+                            info_header="SUCCESS",
+                            verbose=True,
+                        )
+
                 exception = task.exception()
                 for success_exception in Exceptions_Of_Success:
                     if isinstance(exception, success_exception):

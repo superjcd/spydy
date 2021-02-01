@@ -1,7 +1,7 @@
 import abc
 import sys
 import time
-from .utils import print_msg
+from .utils import print_msg, convert_seconds_to_formal, get_total_from_urls
 
 __all__ = ["SimplePrintLog", "MessageLog"]
 
@@ -55,27 +55,27 @@ class StatsReportLog(Log):
         self._urls_instance = None  
         self._N = 0  
         self._position_in_pipeline = None
-        self._total = get_total_from_urls(urls_instance=self._urls_instance, position) # 获取一次
-        self._trigger_time = time.time()  # 或有细微误差
+        self._total = get_total_from_urls(urls_instance=self._urls_instance) 
+        self._trigger_time = time.time()  # There is a very small bias(cuz this is called before Urls pop method), but samll enough to ignore
         self._stats = {}
 
     def log(self, items):
         self._N += 1 
         if self._N % self._every == 0 and self._total != None:
-            total_now = get_total_from_urls(urls_instance=self._urls_instance, position) #根据position 决定要不要+1
+            total_now = get_total_from_urls(urls_instance=self._urls_instance)
             urls_consumed = self._total - total_now
             time_elapsed = time.time() - self._trigger_time()
-            processing_speed = round(self._N /time_elapsed, 2)
+            processing_speed = round(self._N / time_elapsed, 2)
             consuming_speed = round(urls_consumed /time_elapsed, 2)
-            efficency = round(urls_consumed/self._N, 2)
-            eta = convert_seconds_to_formal(self._total / consuming_speed)  # convert to %h%m%s
-            self._stats["Elapsed"] = round(time_elapsed, 2)
+            efficency = round(urls_consumed / self._N, 2)
+            eta = convert_seconds_to_formal(total_now / consuming_speed) 
+            self._stats["Elapsed"] = convert_seconds_to_formal(time_elapsed)
             self._stats["Processed"] = self._N
             self._stats["Consumed"] = urls_consumed
             self._stats["Remained"] = total_now
             self._stats["Processing Speed"] = processing_speed
             self._stats["Effiency"] = efficency
-            print_stats_log()  
-            
+            sel._stats["Eta"] = eta
+            print_stats_log(self._stats)  
         return items
     

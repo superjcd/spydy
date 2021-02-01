@@ -28,9 +28,7 @@ class DummyUrls(Urls):
         try:
             return next(self._urls)
         except StopIteration:
-            raise UrlCompleted(
-                "No more item in DummyUrls"             
-            )
+            raise UrlCompleted("No more item in DummyUrls")
 
     def __call__(self, *args, **kwargs):
         return self.pop(*args, **kwargs)
@@ -85,9 +83,9 @@ class RedisListUrls(Urls):
 
     @property
     def total(self):
-        '''
-          Return  count of all urls.
-        '''
+        """
+        Return  count of all urls.
+        """
         return self._conn.llen(self.list_name)
 
     def pop(self):

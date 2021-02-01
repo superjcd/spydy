@@ -3,6 +3,7 @@ from typing import List
 from functools import reduce
 from reprlib import repr
 import importlib
+import sys
 import spydy
 from spydy.urls import Urls
 from .defaults import RUNMODES
@@ -181,7 +182,60 @@ def handle_exceptions(
         url_step = get_step_from_pipeline(pipleline, step_type="url")
         if hasattr(url_step, "handle_exception"):
             url = get_temp_result(type(url_step), temp_results, coroutine_id)
-            url_step.handle_exception(
-                handle_type=handle_type, url=url_for_request(url)
-            )
+            url_step.handle_exception(handle_type=handle_type, url=url_for_request(url))
+
+
+def get_total_from_urls(urls_instance):
+    """
+    Call 'total' property of a 'Urls' instance to get current remainning number of urls
+
+    Args:
+      :urls_instance: instance of a 'Urls' object
+    """
+    if hasattr(urls_instance, "total"):
+        current_total = urls_instance.total
+        return current_total
+    else:
+        return None
+
+
+def convert_seconds_to_formal(seconds):
+    """
+    Convert  seconds to a formal time format
+    """
+    H = seconds // 3600 # Hours
+    M = 0 # Minitues
+    S = 0 # Seconds
+    
+    if H > 0:
+        M = (seconds - 3600*H) // 60
+        if M > 0 : 
+            S = (seconds - 3600*H - 60*M)
+        else:
+            S = (seconds - 3600*H)
+    else:
+        M = seconds // 60
+        if M > 0 : 
+            S = (seconds - 60*M)
+        else:
+            S = seconds 
+    return "{}h:{}m:{}s".format(H, M, S)   
+
+
+def print_stats_log(stats:dict):
+    """
+    Print table-formatted infomations 
+
+    Args:
+    :stats: A dict object
+    """
+    output =  " {}: {}|" * len(stats)
+    output += "\r"
+    infos = []
+    for h, c in stats.items():
+        infos.append(h)
+        infos.append(c)
+    info_table = output.format(*infos)
+    sys.stdout.write(info_table)
+    sys.stdout.flush()
 
