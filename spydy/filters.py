@@ -68,17 +68,3 @@ class CommonFilter(Filter):
     def __str__(self):
         return self.__repr__()
 
-
-class MyFilter(CommonFilter):
-    def __init__(self):
-        ...
-
-    def drops(self):
-        ...
-
-    def keeps(self):
-        ...
-
-    def mutates(self, items):
-        res = items["item1"] + items["item2"]
-        return [1]

@@ -41,15 +41,6 @@ class Engine:
             tasks = self.run_async_forever(loop, nworkers)
             for task in tasks:
                 exception = task.exception()
-                for ignore_exception in Exceptions_Of_Success:
-                    if isinstance(exception, ignore_exception):
-                        print_msg(
-                            msg="Task Done, Details:" + str(exception),
-                            info_header="SUCCESS",
-                            verbose=True,
-                        )
-
-                exception = task.exception()
                 for success_exception in Exceptions_Of_Success:
                     if isinstance(exception, success_exception):
                         print_msg(
@@ -57,6 +48,8 @@ class Engine:
                             info_header="SUCCESS",
                             verbose=True,
                         )
+                    else:
+                        raise 
 
     # def run_once(self):
     #     return reduce(linear_pipelinefunc, self._pipeline)

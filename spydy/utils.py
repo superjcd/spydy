@@ -210,7 +210,7 @@ def convert_seconds_to_formal(seconds):
     """
     Convert  seconds to a formal time format
     """
-    H = seconds // 3600  # Hours
+    H = int(seconds // 3600)  # Hours
     M = 0  # Minitues
     S = 0  # Seconds
 
@@ -245,3 +245,5 @@ def print_stats_log(stats: dict):
     info_table = output.format(*infos)
     sys.stdout.write(info_table)
     sys.stdout.flush()
+
+
