@@ -6,8 +6,9 @@ import importlib
 import sys
 import spydy
 from spydy.urls import Urls
-from .defaults import RUNMODES
-from .adpaters import url_for_request
+from spydy.defaults import RUNMODES
+from spydy.adpaters import url_for_request
+from spydy.exceptions import UrlsStepNotFound
 
 
 def class_dispatcher(user_provide_classname: str):
@@ -134,7 +135,13 @@ def get_step_from_pipeline(pipeline, step_type="urls"):
         for step in pipeline:
             if isinstance(step, Urls):
                 return step
-        raise StepNotFoundError
+        raise UrlsStepNotFound
+    if step_type == "statsLog":
+        from spydy.logs import StatsReportLog
+        for step in pipeline:
+            if isinstance(step, StatsReportLog):
+                return step
+        return None  # StatsReportLog not found in pipeline     
     else:
         raise StepTypeNotSupported
 
@@ -203,33 +210,33 @@ def convert_seconds_to_formal(seconds):
     """
     Convert  seconds to a formal time format
     """
-    H = seconds // 3600 # Hours
-    M = 0 # Minitues
-    S = 0 # Seconds
-    
+    H = seconds // 3600  # Hours
+    M = 0  # Minitues
+    S = 0  # Seconds
+
     if H > 0:
-        M = (seconds - 3600*H) // 60
-        if M > 0 : 
-            S = (seconds - 3600*H - 60*M)
+        M = int((seconds - 3600 * H) // 60)
+        if M > 0:
+            S = int(seconds - 3600 * H - 60 * M)
         else:
-            S = (seconds - 3600*H)
+            S = int(seconds - 3600 * H)
     else:
-        M = seconds // 60
-        if M > 0 : 
-            S = (seconds - 60*M)
+        M = int(seconds // 60)
+        if M > 0:
+            S = int(seconds - 60 * M)
         else:
-            S = seconds 
-    return "{}h:{}m:{}s".format(H, M, S)   
+            S = int(seconds)
+    return "{}h:{}m:{}s".format(H, M, S)
 
 
-def print_stats_log(stats:dict):
+def print_stats_log(stats: dict):
     """
-    Print table-formatted infomations 
+    Print table-formatted infomations
 
     Args:
     :stats: A dict object
     """
-    output =  " {}: {}|" * len(stats)
+    output = " {}: {}|" * len(stats)
     output += "\r"
     infos = []
     for h, c in stats.items():
@@ -238,4 +245,3 @@ def print_stats_log(stats:dict):
     info_table = output.format(*infos)
     sys.stdout.write(info_table)
     sys.stdout.flush()
-

@@ -4,7 +4,7 @@ from configparser import ConfigParser
 from requests.exceptions import RequestException
 from requests_html import HTML
 from .defaults import *
-from .exceptions import TaskWrong, UrlCompleted
+from .exceptions import Exceptions_To_Handle, Exceptions_Of_Success
 from .utils import (
     configs_assertion,
     class_dispatcher,
@@ -13,11 +13,8 @@ from .utils import (
     print_msg,
     parse_arguments,
     handle_exceptions,
+    get_step_from_pipeline
 )
-
-
-Exceptions_To_Handle = (TaskWrong, RequestException)
-Exceptions_Of_Success = (UrlCompleted,)
 
 
 class Engine:
@@ -44,7 +41,7 @@ class Engine:
             tasks = self.run_async_forever(loop, nworkers)
             for task in tasks:
                 exception = task.exception()
-                for ignore_exception in Exceptions_To_Ignore:
+                for ignore_exception in Exceptions_Of_Success:
                     if isinstance(exception, ignore_exception):
                         print_msg(
                             msg="Task Done, Details:" + str(exception),
@@ -162,3 +159,10 @@ class Engine:
                     raise TypeError(err_msg)
             else:
                 self._pipeline.append(step_class())
+        
+        # Prepare statsReportLog if exists
+        statsReportLog_instance = get_step_from_pipeline(self._pipeline, step_type="statsLog")
+        if statsReportLog_instance:
+            ulrs_instance = get_step_from_pipeline(self._pipeline, step_type="url")
+            statsReportLog_instance._urls_instance = ulrs_instance 
+            statsReportLog_instance.init()

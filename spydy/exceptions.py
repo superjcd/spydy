@@ -1,5 +1,30 @@
 from typing import List
 
+from requests.exceptions import (
+    HTTPError,
+    ConnectionError,
+    ProxyError,
+    SSLError,
+    Timeout,
+    ConnectTimeout,
+    ReadTimeout,
+)
+
+_requests_request_exceptions = (
+    HTTPError,
+    ConnectionError,
+    ProxyError,
+    SSLError,
+    Timeout,
+    ConnectTimeout,
+    ReadTimeout,
+)
+
+
+"""
+    Successful Exceptions
+"""
+
 
 class TaskDone(Exception):
     """
@@ -22,6 +47,11 @@ class UrlCompleted(TaskDone):
         return self.__repr__()
 
 
+"""
+  Different kinds of erroneous exceptions
+"""
+
+
 class TaskWrong(Exception):
     """
     Task Encounter an error
@@ -33,10 +63,14 @@ class UnExpectedHandleType(Exception):
     Exception Type not be supported yet
     """
 
+class StepNotFound(Exception):
+    '''
+     Step not found in pipeline
+    '''
 
-class StepNotFoundError(Exception):
+class UrlsStepNotFound(StepNotFound):
     """
-    Step not found in pipeline
+    Step of urls not found in pipeline
     """
 
 
@@ -50,3 +84,7 @@ class DummyUrlNotGiven(Exception):
     """
     Url for DummyUrl is not given
     """
+
+
+Exceptions_To_Handle = (TaskWrong, ) + _requests_request_exceptions
+Exceptions_Of_Success = (UrlCompleted,)

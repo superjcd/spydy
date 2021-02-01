@@ -10,6 +10,10 @@ class Urls(abc.ABC):
     @abc.abstractmethod
     def pop(self):
         ...
+    
+    @abc.abstractmethod
+    def total(self):
+        ...
 
 
 class DummyUrls(Urls):
@@ -45,9 +49,13 @@ class FileUrls(Urls):
         self._filename = file_name
         self._lines = self._readlines(file_name)
 
+    @property
+    def total(self):
+        return len(self._lines)
+
     def pop(self):
         try:
-            item = self._lines.pop(0)
+            item = self._lines.pop(0)  # pop first out
         except IndexError:
             import sys
 
