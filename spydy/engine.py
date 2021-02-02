@@ -6,7 +6,6 @@ from requests_html import HTML
 from .defaults import *
 from .exceptions import Exceptions_To_Handle, Exceptions_Of_Success
 from .utils import (
-    configs_assertion,
     class_dispatcher,
     linear_pipelinefunc,
     print_pipeline,

@@ -3,7 +3,7 @@ import argparse
 import configparser
 import asyncio
 from .engine import Engine
-from .utils import configs_assertion
+from .utils import check_configs
 from .defaults import *
 
 
@@ -21,7 +21,7 @@ def fire():
 
     config_parser = configparser.ConfigParser()
     config_parser.read(configfile, encoding="utf-8")
-    configs_assertion(config_parser)
+    check_configs(config_parser)
     engine = Engine(config_parser)
 
     run_mode = config_parser["Globals"].get("run_mode", RUNMODE)

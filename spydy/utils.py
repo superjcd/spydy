@@ -6,7 +6,7 @@ import importlib
 import sys
 import spydy
 from spydy.urls import Urls
-from spydy.defaults import RUNMODES
+from spydy.defaults import RUNMODES, LEGAL_GLOBALS
 from spydy.adpaters import url_for_request
 from spydy.exceptions import UrlsStepNotFound
 
@@ -82,8 +82,11 @@ def get_file_value(value):
     user_value = file_and_value_parts[-1].strip()
     return get_value_from_moulde(module=user_package, value=user_value)
 
+def check_globals(configs):
+    ...
 
-def configs_assertion(configs):
+
+def check_configs(configs):
     """
     Confirm if the configs have the right forms
     """
@@ -106,6 +109,7 @@ def configs_assertion(configs):
                 RUNMODES
             )
         )
+
 
 
 def linear_pipelinefunc(a, b):
