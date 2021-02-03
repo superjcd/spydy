@@ -6,7 +6,7 @@ import importlib
 import sys
 import spydy
 from spydy.urls import Urls
-from spydy.defaults import RUNMODES, LEGAL_GLOBALS
+from spydy.defaults import RUNMODES, LEGAL_GLOBALS, LEGAL_RECOVERYS
 from spydy.adpaters import url_for_request
 from spydy.exceptions import UrlsStepNotFound
 
@@ -82,9 +82,6 @@ def get_file_value(value):
     user_value = file_and_value_parts[-1].strip()
     return get_value_from_moulde(module=user_package, value=user_value)
 
-def check_globals(configs):
-    ...
-
 
 def check_configs(configs):
     """
@@ -110,6 +107,23 @@ def check_configs(configs):
             )
         )
 
+    global_arguments = configs["Globals"]
+    for argument in global_arguments:
+        if argument not in LEGAL_GLOBALS:
+            raise ValueError(
+                "{!r} under [Global] section is not right.Spydy only allows the following settings: {}".format(
+                    argument, LEGAL_GLOBALS
+                )
+            )
+
+
+def check_recovery_type(recovery_type):
+    if recovery_type not in LEGAL_RECOVERYS:
+        raise ValueError(
+            "{!r} not in allowed spydy, spydy only supports following recovery types: {}".format(
+                recovery_type, LEGAL_RECOVERYS
+            )
+        )
 
 
 def linear_pipelinefunc(a, b):
@@ -142,10 +156,11 @@ def get_step_from_pipeline(pipeline, step_type="urls"):
         raise UrlsStepNotFound
     if step_type == "statsLog":
         from spydy.logs import StatsReportLog
+
         for step in pipeline:
             if isinstance(step, StatsReportLog):
                 return step
-        return None  # StatsReportLog not found in pipeline     
+        return None  # StatsReportLog not found in pipeline
     else:
         raise StepTypeNotSupported
 
@@ -177,7 +192,7 @@ def handle_exceptions(
     temp_results,
     pipleline: List,
     coroutine_id=None,
-    handle_type="url_back_last",
+    recovery_type="url_back_last",
 ):
     """
     Handle exception during workflow by handle_type
@@ -189,11 +204,14 @@ def handle_exceptions(
       :pipeline: list of spydy pipeline components instance
       :handle_type: choose a way to deal with the exception when encountered an exception
     """
+    check_recovery_type(recovery_type)
     if run_mode == "once":
         url_step = get_step_from_pipeline(pipleline, step_type="url")
         if hasattr(url_step, "handle_exception"):
             url = get_temp_result(type(url_step), temp_results, coroutine_id)
-            url_step.handle_exception(handle_type=handle_type, url=url_for_request(url))
+            url_step.handle_exception(
+                recovery_type=recovery_type, url=url_for_request(url)
+            )
 
 
 def get_total_from_urls(urls_instance):
@@ -249,5 +267,3 @@ def print_stats_log(stats: dict):
     info_table = output.format(*infos)
     sys.stdout.write(info_table)
     sys.stdout.flush()
-
-

@@ -63,10 +63,12 @@ class UnExpectedHandleType(Exception):
     Exception Type not be supported yet
     """
 
+
 class StepNotFound(Exception):
-    '''
-     Step not found in pipeline
-    '''
+    """
+    Step not found in pipeline
+    """
+
 
 class UrlsStepNotFound(StepNotFound):
     """
@@ -86,5 +88,5 @@ class DummyUrlNotGiven(Exception):
     """
 
 
-Exceptions_To_Handle = (TaskWrong, ) + _requests_request_exceptions
+Exceptions_To_Handle = (TaskWrong,) + _requests_request_exceptions
 Exceptions_Of_Success = (UrlCompleted,)

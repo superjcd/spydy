@@ -10,7 +10,7 @@ class Urls(abc.ABC):
     @abc.abstractmethod
     def pop(self):
         ...
-    
+
     @abc.abstractmethod
     def total(self):
         ...
@@ -119,11 +119,13 @@ class RedisListUrls(Urls):
     def lpush(slef, item):
         return self._conn.lpush(self.list_name, item)
 
-    def handle_exception(self, handle_type, url):
-        if handle_type == "url_back_last":
+    def handle_exception(self, recovery_type, url):
+        if recovery_type == "url_back_last":
             self.rpush(url)
-        elif handle_type == "url_back_first":
+        elif recovery_type == "url_back_first":
             self.lpush(url)
+        elif recovery_type == "skip": # do nothing if skip 
+            pass
         else:
             raise UnExpectedHandleType
         return None

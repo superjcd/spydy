@@ -1,5 +1,7 @@
 import asyncio
 from functools import reduce
+from collections import defaultdict
+from typing import Union
 from configparser import ConfigParser
 from requests.exceptions import RequestException
 from requests_html import HTML
@@ -12,19 +14,21 @@ from .utils import (
     print_msg,
     parse_arguments,
     handle_exceptions,
-    get_step_from_pipeline
+    get_step_from_pipeline,
 )
 
 
 class Engine:
-    def __init__(self, configs: ConfigParser):
+    def __init__(self, configs: Union[ConfigParser, dict]):
         self._configs = configs
         self._pipeline = []
         self._temp_results = {}
+        self._exceptions_records = defaultdict(int)
         self.setup()
         print_pipeline(self._pipeline)
 
     def run(self, run_mode):
+        run_mode = self._configs["Globals"].get("run_mode", RUNMODE)
         if run_mode == "once":
             self.run_once()
             print_msg(msg="Task Done", info_header="SUCCESS")
@@ -48,7 +52,9 @@ class Engine:
                             verbose=True,
                         )
                     else:
-                        raise 
+                        raise
+
+        self.close()
 
     # def run_once(self):
     #     return reduce(linear_pipelinefunc, self._pipeline)
@@ -68,7 +74,8 @@ class Engine:
                 cur_step = self._pipeline[nth]
                 try:
                     temp_result = cur_step(temp_result)
-                except Exceptions_To_Handle:
+                except Exceptions_To_Handle as e:
+                    self._exceptions_records[e] += 0
                     handle_exceptions(
                         run_mode="once",
                         temp_results=self._temp_results,
@@ -109,7 +116,8 @@ class Engine:
                         temp_result = await cur_step(temp_result)
                     else:
                         temp_result = cur_step(temp_result)
-                except Exceptions_To_Handle:
+                except Exceptions_To_Handle as e:
+                    self._exceptions_records[e] += 1
                     handle_exceptions(
                         run_mode="async_once",
                         temp_results=self._temp_results,
@@ -151,10 +159,15 @@ class Engine:
                     raise TypeError(err_msg)
             else:
                 self._pipeline.append(step_class())
-        
+
         # Prepare statsReportLog if exists
-        statsReportLog_instance = get_step_from_pipeline(self._pipeline, step_type="statsLog")
+        statsReportLog_instance = get_step_from_pipeline(
+            self._pipeline, step_type="statsLog"
+        )
         if statsReportLog_instance:
             ulrs_instance = get_step_from_pipeline(self._pipeline, step_type="url")
-            statsReportLog_instance._urls_instance = ulrs_instance 
+            statsReportLog_instance._urls_instance = ulrs_instance  # TODO： exceptions records into here
             statsReportLog_instance.init()
+
+    def close(self):
+        print(self._exceptions_records)

@@ -2,7 +2,12 @@ import abc
 import sys
 import time
 from .exceptions import UrlsStepNotFound
-from .utils import print_msg, convert_seconds_to_formal, get_total_from_urls, print_stats_log
+from .utils import (
+    print_msg,
+    convert_seconds_to_formal,
+    get_total_from_urls,
+    print_stats_log,
+)
 
 __all__ = ["SimplePrintLog", "MessageLog", "StatsReportLog"]
 
@@ -74,9 +79,9 @@ class StatsReportLog(Log):
             processing_speed = round(self._N / time_elapsed, 2)
             consuming_speed = round(urls_consumed / time_elapsed, 2)
             _efficiency = round(urls_consumed / self._N, 2)
-            efficiency = 1 if _efficiency>1 else _efficiency
+            efficiency = 1 if _efficiency > 1 else _efficiency
             eta = convert_seconds_to_formal(total_now / consuming_speed)
-            self._stats["Elapsed"] = convert_seconds_to_formal(time_elapsed)                    
+            self._stats["Elapsed"] = convert_seconds_to_formal(time_elapsed)
             self._stats["Processed"] = self._N
             self._stats["Consumed"] = urls_consumed
             self._stats["Remained"] = total_now
