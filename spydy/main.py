@@ -23,4 +23,4 @@ def fire():
     config_parser.read(configfile, encoding="utf-8")
     check_configs(config_parser)
     engine = Engine(config_parser)
-    engine.run(run)
+    engine.run()

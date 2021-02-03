@@ -27,7 +27,7 @@ class Engine:
         self.setup()
         print_pipeline(self._pipeline)
 
-    def run(self, run_mode):
+    def run(self):
         run_mode = self._configs["Globals"].get("run_mode", RUNMODE)
         if run_mode == "once":
             self.run_once()
