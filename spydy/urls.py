@@ -84,6 +84,66 @@ class FileUrls(Urls):
         return self.__repr__()
 
 
+class RedisSetUrls(Urls):
+    def __init__(self, set_name, host="localhost", port=6379):
+        self.set_name = set_name
+        self._conn = redis.Redis(host=host, port=port)
+
+    @property
+    def total(self):
+        """
+        Return count of all urls in the set.
+        """
+        return self._conn.scard(self.set_name)
+
+    def pop(self):
+        ''''
+         Using redis spop, randomly get a member from set
+        '''
+        item = self._conn.spop(self.set_name)
+        if item:
+            return item
+        else:
+            import sys
+
+            sys.tracebacklimit = 0
+            raise UrlCompleted(
+                "No value in redis set: {!r};Task will be shutdown in seconds..".format(
+                    self.set_name
+                )
+            )
+
+    def add(self, item):
+        return self._conn.sadd(item)
+
+    def handle_exception(self, recovery_type, url):
+        if recovery_type == "url_back_last":
+            self.sadd(url)
+        elif recovery_type == "url_back_first":
+            self.sadd(url)
+        elif recovery_type == "skip": 
+            pass
+        else:
+            raise UnExpectedHandleType
+        return None
+
+    def complete(self):
+        print(
+            "No value in redis set: {!r}; Task will be shutdown in seconds...".format(
+                self.list_name
+            )
+        )
+
+    def __call__(self, *args, **kwargs):
+        return self.pop(*args, **kwargs)
+
+    def __repr__(self):
+        return self.__class__.__name__
+
+    def __str__(self):
+        return self.__repr__()
+
+
 class RedisListUrls(Urls):
     def __init__(self, list_name, host="localhost", port=6379):
         self.list_name = list_name
@@ -147,6 +207,4 @@ class RedisListUrls(Urls):
         return self.__repr__()
 
 
-# if __name__ == "__main__":
-#     du = DummyUrls(url="https://dmoz-odp.org/", repeat=10)
-#     print(du.pop())
+

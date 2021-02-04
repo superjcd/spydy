@@ -75,7 +75,7 @@ class Engine:
                 try:
                     temp_result = cur_step(temp_result)
                 except Exceptions_To_Handle as e:
-                    self._exceptions_records[e] += 0
+                    self._exceptions_records[type(e)] += 0
                     handle_exceptions(
                         run_mode="once",
                         temp_results=self._temp_results,
@@ -117,7 +117,7 @@ class Engine:
                     else:
                         temp_result = cur_step(temp_result)
                 except Exceptions_To_Handle as e:
-                    self._exceptions_records[e] += 1
+                    self._exceptions_records[type(e)] += 1
                     handle_exceptions(
                         run_mode="async_once",
                         temp_results=self._temp_results,

@@ -7,8 +7,17 @@ from .utils import check_configs
 from .defaults import *
 
 
+long_description = '''
+'''
+
+
 def fire():
-    arg_parser = argparse.ArgumentParser()
+    arg_parser = argparse.ArgumentParser(
+        prog="spydy",
+        description="High level spider framework for web crawling based on pipleline",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=long_description
+    )
     arg_parser.add_argument(
         "configfile",
         type=str,
