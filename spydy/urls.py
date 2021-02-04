@@ -27,6 +27,10 @@ class DummyUrls(Urls):
         self._url = url
         self._repeat = int(repeat)
         self._urls = (self._url for _ in range(self._repeat))
+    
+    @property
+    def total(self):
+        return len(self._urls)    
 
     def pop(self):
         try:
