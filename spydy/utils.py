@@ -75,9 +75,9 @@ def get_file_value(value):
     user_file_value = value.split("file:")[-1]
     file_and_value_parts = user_file_value.split(".")
     try:
-        assert (len(file_and_value_parts)) > 2
+        assert (len(file_and_value_parts)) > 1
     except AssertionError:
-        raise AssertionError("The value {!} you provided seems like has a wrong form.")
+        raise AssertionError("The value {!r} you provided seems like has a wrong form.")
     user_package = ".".join(file_and_value_parts[:-1]).strip()
     user_value = file_and_value_parts[-1].strip()
     return get_value_from_moulde(module=user_package, value=user_value)
@@ -85,7 +85,7 @@ def get_file_value(value):
 
 def check_configs(configs):
     """
-    Confirm if the configs have the right forms
+    Check if the configs have the right forms
     """
     try:
         assert "PipeLine" in configs
