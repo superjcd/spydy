@@ -5,11 +5,27 @@
 - **[Globals](#globals)**： 设置spdydy的全局参数， 比如运行方式和并发量等。
 - **[Pipeline](#pipeline)**： 定义各个spydy的工作流， 注意这个是按有序来， 靠前的组件将被率先执行。
 - **[组件参数配置](#组件参数配置)**：  定义spydy组件或者用户自定义组件的参数。
-作为例子， 可以参考[快速开始](quickstart.md)中的衣蛾写配置文件。
+作为例子， 可以参考[快速开始](quickstart.md)中的写好的写配置文件。
 
 ## Globals
+定义控制spydy运行的全局变量：
+
+`run_mode`: 这是必须要填写的， 可选项包括：
+- `once`:  仅运行一次
+- `forever`: 单线程， 一直运行
+- `async_once`: 使用异步的方式， 但是只运行一次
+- `async_forever`: 使用异步的方式一直运行
+
+`nworkers`: 同时运行的协程数量， 不过只要到`run_mode`为`async_forever`的时候才有效果。
+`interval`: 爬虫每次运行间的等待时间。
+`recovery_type`: 当程序报错的时候， `urls`[组件](components.md)处理当前url的方式， 目前支持：
+ - `skip`: 不做任何事情， 意味着发生错误的url不会被执行第二次， 通常不是理想的选择
+ - `url_back_last`: 把出错的url放回队列的最后， 当然前提是`urls`组件是有序的队列， 例如`RedisListUrls`。
+ - `url_back_first`: 把出错的url放回队列的z最前面， 同样，前提是`urls`组件是有序的队列。
+
 
 ## Pipeline
+在这里我们需要定义我们的整个工作流， 在强调一次， pipeline中的组件是按照定义的先后顺序有序执行的。定义的方式通常是将spydy组件名称（或者是自定义组件， 区分大小写）赋给一个自定义的步骤名称， 这里的步骤名称可以是任意的， 没有特别的限制， 但是简易使用符合步骤类别的名称， 比如`urls=RedisUrlsList`的方式，虽然可以不适用`urls`， 但是显然， 使用urls能够是工作流更加清晰易懂。
 
 ## 组件参数配置
 
@@ -25,8 +41,8 @@ configs = {
     "PipeLine": {
         "url": "DummyUrls",
         "request": "AsyncHttpGetRequest",
-        "log" : "MessageLog", 
         "parser": "DmozParser",
+        "log" : "MessageLog",         
         "store": "CsvStore",
     },
     "DummyUrls": {"url": "https://dmoz-odp.org/, "repeat":"10"},

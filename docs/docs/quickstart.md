@@ -1,7 +1,7 @@
 ## 一个简单的例子
 作为演示， 我们将爬取网站[dmoz](https://dmoz-odp.org/)首页(可能需要梯子)下方的一些统计数据， 如图所示：
 
-![dmoz](./docs/docs/img/dmoz.png) 
+![dmoz](img/dmoz.png) 
 
 
 首先准备好需要爬取的链接，我们把目标连接放入到urls.txt中:
@@ -141,5 +141,7 @@ after_mutate: {'categories': '1,031,722', 'languages': '90', 'sites': '0'}
 Tips:
    通常可以通过spydy组件的名称来确定一个组件是不是支持异步的， 如果组件带有Async前缀， 那么该组件就是支持异步的。
 ```
+
+## What's Next
 
 
