@@ -21,10 +21,8 @@ _requests_request_exceptions = (
 )
 
 
-"""
-    Successful Exceptions
-"""
 
+##   Successful Exceptions
 
 class TaskDone(Exception):
     """
@@ -47,10 +45,8 @@ class UrlCompleted(TaskDone):
         return self.__repr__()
 
 
-"""
-  Different kinds of erroneous exceptions
-"""
 
+##   Different kinds of erroneous exceptions
 
 class TaskWrong(Exception):
     """
@@ -86,7 +82,9 @@ class DummyUrlNotGiven(Exception):
     """
     Url for DummyUrl is not given
     """
+    
 
+## Put together
 
 Exceptions_To_Handle = (TaskWrong,) + _requests_request_exceptions
 Exceptions_Of_Success = (UrlCompleted,)

@@ -63,7 +63,6 @@ class AsyncCsvStore(Store):
 
 dblock = RLock()
 
-
 class DbStore(Store):
     def __init__(self, connection_url=None, table_name=None):
         self._connection_url = connection_url
@@ -92,8 +91,3 @@ class AsyncDbStore(Store):
     def __init__(self, connection_url=None, table_name=None):
         self.Async = ""
 
-
-if __name__ == "__main__":
-    ds = DbStore()
-    print(type(ds))
-    print(isinstance(ds, Store))
