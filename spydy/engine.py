@@ -166,8 +166,17 @@ class Engine:
         )
         if statsReportLog_instance:
             ulrs_instance = get_step_from_pipeline(self._pipeline, step_type="url")
-            statsReportLog_instance._urls_instance = ulrs_instance  # TODO： exceptions records into here
+            statsReportLog_instance._urls_instance = (
+                ulrs_instance  # TODO： exceptions records into here
+            )
             statsReportLog_instance.init()
 
     def close(self):
-        print(self._exceptions_records)
+        if self._exceptions_records:
+            print("😭 Spydy encounterd some ecceptions during running:")
+            for k, v in sorted(
+                self._exceptions_records.items(), key=lambda item: item[1], reverse=True
+            ):
+                print(k, " : ", v)
+        else:
+            print("😊 Spydy ran successfully without any excepitons")

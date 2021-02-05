@@ -18,4 +18,3 @@ LOGO = r"""
 """.format(
     __version__
 )
-

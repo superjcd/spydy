@@ -41,6 +41,7 @@ def get_class_from_spydy(class_name):
 
 def get_class_from_moudle(module=None, value=None):  # packge class
     import os
+
     sys.path.append(os.getcwd())
     try:
         user_module = importlib.import_module(name=module)

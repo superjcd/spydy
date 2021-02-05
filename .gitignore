@@ -45,3 +45,5 @@ docs/docs/site
 output/
 
 tests/e2e/
+
+use_spydy.py
