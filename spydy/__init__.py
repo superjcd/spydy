@@ -19,4 +19,3 @@ LOGO = r"""
     __version__
 )
 
-print(LOGO)

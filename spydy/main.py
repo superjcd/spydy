@@ -2,6 +2,7 @@ import os
 import argparse
 import configparser
 import asyncio
+from spydy import LOGO
 from .engine import Engine
 from .utils import check_configs
 from .defaults import *
@@ -12,6 +13,7 @@ long_description = '''
 
 
 def fire():
+    print(LOGO)
     arg_parser = argparse.ArgumentParser(
         prog="spydy",
         description="High level spider framework for web crawling based on pipleline",

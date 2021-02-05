@@ -3,7 +3,7 @@ import os
 import redis
 from .exceptions import UrlCompleted, UnExpectedHandleType, DummyUrlNotGiven
 
-__all__ = ["DummyUrls", "FileUrls", "RedisListUrls"]
+__all__ = ["DummyUrls", "FileUrls", "RedisListUrls", "RedisSetUrls"]
 
 
 class Urls(abc.ABC):
@@ -90,7 +90,7 @@ class FileUrls(Urls):
 
 class RedisSetUrls(Urls):
     def __init__(self, set_name, host="localhost", port=6379):
-        self.set_name = set_name
+        self._set_name = set_name
         self._conn = redis.Redis(host=host, port=port)
 
     @property
@@ -98,13 +98,13 @@ class RedisSetUrls(Urls):
         """
         Return count of all urls in the set.
         """
-        return self._conn.scard(self.set_name)
+        return self._conn.scard(self._set_name)
 
     def pop(self):
         ''''
          Using redis spop, randomly get a member from set
         '''
-        item = self._conn.spop(self.set_name)
+        item = self._conn.spop(self._set_name)
         if item:
             return item
         else:
@@ -113,12 +113,12 @@ class RedisSetUrls(Urls):
             sys.tracebacklimit = 0
             raise UrlCompleted(
                 "No value in redis set: {!r};Task will be shutdown in seconds..".format(
-                    self.set_name
+                    self._set_name
                 )
             )
 
     def add(self, item):
-        return self._conn.sadd(item)
+        return self._conn.sadd(self._set_name, item)
 
     def handle_exception(self, recovery_type, url):
         if recovery_type == "url_back_last":
@@ -134,7 +134,7 @@ class RedisSetUrls(Urls):
     def complete(self):
         print(
             "No value in redis set: {!r}; Task will be shutdown in seconds...".format(
-                self.list_name
+                self._set_name
             )
         )
 
@@ -150,7 +150,7 @@ class RedisSetUrls(Urls):
 
 class RedisListUrls(Urls):
     def __init__(self, list_name, host="localhost", port=6379):
-        self.list_name = list_name
+        self._list_name = list_name
         self._conn = redis.Redis(host=host, port=port)
 
     @property
@@ -158,10 +158,10 @@ class RedisListUrls(Urls):
         """
         Return  count of all urls.
         """
-        return self._conn.llen(self.list_name)
+        return self._conn.llen(self._list_name)
 
     def pop(self):
-        item = self._conn.lpop(self.list_name)
+        item = self._conn.lpop(self._list_name)
         if item:
             return item
         else:
@@ -170,7 +170,7 @@ class RedisListUrls(Urls):
             sys.tracebacklimit = 0
             raise UrlCompleted(
                 "No value in redis list: {!r};Task will be shutdown in seconds..".format(
-                    self.list_name
+                    self._list_name
                 )
             )
 
@@ -178,10 +178,10 @@ class RedisListUrls(Urls):
         return self.rpush(item)
 
     def rpush(self, item):
-        return self._conn.rpush(self.list_name, item)
+        return self._conn.rpush(self._list_name, item)
 
     def lpush(slef, item):
-        return self._conn.lpush(self.list_name, item)
+        return self._conn.lpush(self._list_name, item)
 
     def handle_exception(self, recovery_type, url):
         if recovery_type == "url_back_last":
@@ -197,7 +197,7 @@ class RedisListUrls(Urls):
     def complete(self):
         print(
             "No value in redis list: {!r}; Task will be shutdown in seconds...".format(
-                self.list_name
+                self._list_name
             )
         )
 

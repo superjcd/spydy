@@ -18,10 +18,10 @@ def class_dispatcher(user_provide_classname: str):
         class_file_and_name = user_provide_classname.split("file:")[-1]
         package_and_class_parts = class_file_and_name.split(".")
         try:
-            assert (len(package_and_class_parts)) > 2
+            assert (len(package_and_class_parts)) > 1
         except AssertionError:
             raise AssertionError(
-                "The method {!} you provided seems like has a wrong form."
+                "The method {!r} you provided seems like has a wrong form."
             )
         user_package = ".".join(package_and_class_parts[:-1]).strip()
         user_class = package_and_class_parts[-1].strip()
@@ -40,6 +40,8 @@ def get_class_from_spydy(class_name):
 
 
 def get_class_from_moudle(module=None, value=None):  # packge class
+    import os
+    sys.path.append(os.getcwd())
     try:
         user_module = importlib.import_module(name=module)
     except ImportError:
@@ -51,12 +53,12 @@ def get_class_from_moudle(module=None, value=None):  # packge class
     return step_class
 
 
-def get_value_from_moulde(*args, **kwargs):
+def get_value_from_moudle(*args, **kwargs):
     file_value = get_class_from_moudle(*args, **kwargs)
     if callable(file_value):  # function without args, then call it
         return file_value()
     else:
-        return value
+        return file_value
 
 
 def parse_arguments(args: dict) -> dict:
@@ -80,7 +82,7 @@ def get_file_value(value):
         raise AssertionError("The value {!r} you provided seems like has a wrong form.")
     user_package = ".".join(file_and_value_parts[:-1]).strip()
     user_value = file_and_value_parts[-1].strip()
-    return get_value_from_moulde(module=user_package, value=user_value)
+    return get_value_from_moudle(module=user_package, value=user_value)
 
 
 def check_configs(configs):

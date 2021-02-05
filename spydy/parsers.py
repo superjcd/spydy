@@ -33,12 +33,15 @@ class XpathParser(Parser):
         return self._rules
 
     def parse(self, response) -> dict:
+        # breakpoint()
         if response:
             html = HTML(html=response.text)
             _ = self.rules()
             if self._rules:
                 for item, rule in self._rules.items():
-                    self._result[item] = Cleaner.clean(html.xpath(rule, first=True))
+                    parsed = html.xpath(rule, first=True)
+                    clean_parsed = Cleaner.clean(parsed) if parsed else None
+                    self._result[item] = clean_parsed
                 return self._result
             return {}
 
