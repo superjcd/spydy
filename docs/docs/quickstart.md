@@ -1,13 +1,3 @@
-![logo](./docs/docs/img/spydy.svg)  
-
----
-
-目前虽然有很多的开源的爬虫框架和工具， 但是它们大多无法同时兼顾**用户友好**以及**良好性能**这两个特性。
-所以对于为什么要使用[spydy](https://superjcd.github.io/spydy/)这个问题， 简而言之， spydy可以帮助使用者以最快的速度以及更为直观的方式， 开发和部署高性能的网络爬虫。
-## 安装spydy
-```
-$ pip install spydy
-```
 ## 一个简单的例子
 作为演示， 我们将爬取网站[dmoz](https://dmoz-odp.org/)首页(可能需要梯子)下方的一些统计数据， 如图所示：
 
@@ -52,8 +42,7 @@ FileUrls ⇨ HttpGetRequest ⇨ DmozParser ⇨ CsvStore
 
 ### 发生了什么？
 
-spydy的工作流在设计上参考了Unix管道， 定义在配置文件[PipeLine]下面的参数其实就是我们spydy会**顺序执行**的各个步骤,  比如在上面的例子中，  
-spydy的工作流是这样的：
+spydy的工作流在设计上参考了Unix管道， 定义在配置文件[PipeLine]下面的参数其实就是我们spydy会**顺序执行**的各个步骤,比如在上面的例子中, spydy的工作流是这样的：
 
 ```
 FileUrls -> HttpGetRequest -> DmozParser -> CsvStore
@@ -67,16 +56,10 @@ FileUrls -> HttpGetRequest -> DmozParser -> CsvStore
 配置文件中[Globals]下面可以设置spydy的全局参数， 比如这里的`run_mode`被设置了`once`， 所以在上面例子中spydy只会将整个工作流执行一次。
 
 ## 一个复杂点的例子
-在真实开发开发场景中， 我们希望爬虫能够做到：
-* 兼容使用者的自定义模块&功能， 比如兼容用户自定义网页解析模块
-* 支持并发&异步
-* 支持数据持久化， 比如将数据写入数据库
-...
+在真实开发开发场景中， 我们希望爬虫能够爬的快， 同时兼容用户的自定模块。所以我们来用使用spydy来开发一个稍微复杂一点的爬虫应用：
 
-OK， 以上这些spydy都可以支持。我们再来看一个稍微复杂一点的例子作为演示， 在此之前请确保：  
+* 准备一个可以访问的redis键值存储数据库，当然我们需要在Redis中写入一些URL：  
 
-* 有一个可以访问的redis键值存储数据库，当然我们需要在Redis中写入一些URL：  
- 
 ```
 from spydy.urls import RedisListUrls
 
@@ -84,7 +67,7 @@ r = RedisListUrls(list_name="/spider/testurls")  # 默认localhost
 for _ in range(10):
     r.push("https://www.dmoz-odp.org/")  
 ```
- 
+
 
 * 一个可以访问的关系型数据， 在数据库建立一个名为dmoz的database， 以及一个名为stats的表， 表中需要包含editors, categories, sites, languages这四个字段（都是字符串类型）。
   
@@ -113,7 +96,7 @@ class Myfilter(CommonFilter):
 最后， 准备好我们的spydy配置文件(myconfig2.cfg)：
 ```
 [Globals]
-run_mode = async
+run_mode = async_forever
 nworkers = 4
 
 [PipeLine]
@@ -152,19 +135,11 @@ after_mutate: {'categories': '1,031,722', 'languages': '90', 'sites': '0'}
 ...
 
 ```
-### 发生了什么？
-### spydy可以无缝兼容用户的自定义模块
-我们在*PipeLine*中我们加入了自定义的过滤模块(继承自`spydy.filters.CommonFilter`)，由于**filter**被定义在**parser**的后面， 所以**filter**会处理从**parsers**返回的结果。在这个过程中, 如上面日志中显示的那样， 结果数据发生了改变(sites变成了0).
-
-### spydy可以支持并发
-spydy通过**协程**支持并发。在*myconfig2.cfg*配置文件的*[Globals]*部分下， 我们将run_mode设置成了`async`， 同时将`num_workers`设置成了4，同时我们把**request**过程从`HttpGetRequest`改为`AsyncHttpGetRequest`, 意味着spydy将并发执行四个异步任务。这样网络请求就会以异步的方式进行。
+运行结束， 可以到我们的数据库中检查一下是不是成功存储了刚才爬取的数据。
 
 ```
 Tips:
    通常可以通过spydy组件的名称来确定一个组件是不是支持异步的， 如果组件带有Async前缀， 那么该组件就是支持异步的。
 ```
 
-### spydy提供便利的组件
-在上面的例子中， 我们使用了spydy的*RedisListUrls*来获取url, 同时利用spdydy自带的持久化组件，来快速地存储数据。spydy通过为使用者提供常见的组件， 来大大简化使用者的开发工作。
 
- 
