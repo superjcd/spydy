@@ -34,7 +34,7 @@ run_mode = once
 
 [PipeLine]
 url = FileUrls
-request = HttpGetRequest
+request = HttpRequest
 parser = DmozParser
 store = CsvStore
 
@@ -51,7 +51,7 @@ file_name = dmoz.csv
 $ spydy myconfig.cfg
 
 Your pipeline looks like :
-FileUrls ⇨ HttpGetRequest ⇨ DmozParser ⇨ CsvStore
+FileUrls ⇨ HttpRequest ⇨ DmozParser ⇨ CsvStore
 ```
 
 接着， 你会发现在当前目录下面出现了dmoz.csv，并且在dmoz.csv文件中多了一行我们想要获取的数据。
@@ -61,7 +61,7 @@ FileUrls ⇨ HttpGetRequest ⇨ DmozParser ⇨ CsvStore
 spydy的工作流在设计上参考了Unix管道， 定义在配置文件[PipeLine]下面的参数其实就是我们spydy会**顺序执行**的各个步骤,比如在上面的例子中, spydy的工作流是这样的：
 
 ```
-FileUrls -> HttpGetRequest -> DmozParser -> CsvStore
+FileUrls -> HttpRequest -> DmozParser -> CsvStore
 ```
 
 每个步骤的产出就是下一步的输入。
@@ -117,7 +117,7 @@ nworkers = 4
 
 [PipeLine]
 url = RedisListUrls
-request = AsyncHttpGetRequest
+request = AsyncHttpRequest
 parser = DmozParser
 filter = file:mypkg.filters.Myfilter
 store = DbStore
@@ -138,7 +138,7 @@ table_name = stats
 $ spydy myconfig2.cfg
 
 Your pipeline looks like :
-RedisListUrls ⇨ AsyncHttpGetRequest ⇨ DmozParser ⇨ Myfilter ⇨ DbStore
+RedisListUrls ⇨ AsyncHttpRequest ⇨ DmozParser ⇨ Myfilter ⇨ DbStore
 
 befor_mutate: {'categories': '1,031,722', 'languages': '90', 'sites': '3,861,202'}
 after_mutate: {'categories': '1,031,722', 'languages': '90', 'sites': '0'}

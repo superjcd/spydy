@@ -1,4 +1,5 @@
 import asyncio
+import time
 from functools import reduce
 from collections import defaultdict
 from typing import Union
@@ -23,6 +24,11 @@ class Engine:
         self._configs = configs
         self._pipeline = []
         self._temp_results = {}
+        self._interval = (
+            int(self._configs["Globals"].get("interval", None))
+            if self._configs["Globals"].get("interval", None)
+            else None
+        )
         self._exceptions_records = defaultdict(int)
         self.setup()
         print_pipeline(self._pipeline)
@@ -88,6 +94,8 @@ class Engine:
 
     def run_forever(self):
         while True:
+            if self._interval:
+                time.sleep(self._interval)
             self.run_once()
         print_msg(msg="Task Done!", info_header="SUCCESS")
 
@@ -131,6 +139,8 @@ class Engine:
 
     async def async_run_forever(self):
         while True:
+            if self._interval:
+                await asyncio.sleep(self._interval)
             await self.async_run_once()
 
     def run_async_once(self):
@@ -173,10 +183,10 @@ class Engine:
 
     def close(self):
         if self._exceptions_records:
-            print("😭 Spydy encounterd some ecceptions during running:")
+            print("😭 Finished! But encounterd several ecceptions during running:")
             for k, v in sorted(
                 self._exceptions_records.items(), key=lambda item: item[1], reverse=True
             ):
                 print(k, " : ", v)
         else:
-            print("😊 Spydy ran successfully without any excepitons")
+            print("😊 Completed! Spydy ran successfully without any excepitons")

@@ -5,7 +5,13 @@ nav:
   - 快速开始: quickstart.md
   - 文档: 
     - spydy配置文件: spydy_configs.md
-    - spydy组件: components.md
+    - spydy组件: 
+      - 组件概述: components.md
+      - urls获取组件: urls.md
+      - 网络访问组件: requests.md
+      - 网页解析组件: parsers.md
+      - 结果过滤组件: filters.md
+      - 结果存储组件: stores.md
 
 theme:
     name: material

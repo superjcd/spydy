@@ -18,7 +18,7 @@ run_mode = once
 
 [PipeLine]
 url = FileUrls
-request = HttpGetRequest
+request = HttpRequest
 parser = DmozParser
 store = CsvStore
 
@@ -45,10 +45,10 @@ FileUrls ⇨ HttpGetRequest ⇨ DmozParser ⇨ CsvStore
 spydy的工作流在设计上参考了Unix管道， 定义在配置文件[PipeLine]下面的参数其实就是我们spydy会**顺序执行**的各个步骤,比如在上面的例子中, spydy的工作流是这样的：
 
 ```
-FileUrls -> HttpGetRequest -> DmozParser -> CsvStore
+FileUrls -> HttpRequest -> DmozParser -> CsvStore
 ```
 
-每个步骤的产出就是下一步的输入。
+**注意**： 在pipeline中， 每个步骤的产出就是下一步的输入。
 
 当然， 每个步骤可能需要一些参数， 比如FileUrls需要`file_name`参数， 所以需要单独地在[FileUrls]下面配置好`file_name`参数， 如果用户没有提供相应参数，  
 那么spydy将使用默认参数。
@@ -101,7 +101,7 @@ nworkers = 4
 
 [PipeLine]
 url = RedisListUrls
-request = AsyncHttpGetRequest
+request = AsyncHttpRequest
 parser = DmozParser
 filter = file:mypkg.filters.Myfilter
 store = DbStore
@@ -122,7 +122,7 @@ table_name = stats
 $ spydy myconfig2.cfg
 
 Your pipeline looks like :
-RedisListUrls ⇨ AsyncHttpGetRequest ⇨ DmozParser ⇨ Myfilter ⇨ DbStore
+RedisListUrls ⇨ AsyncHttpRequest ⇨ DmozParser ⇨ Myfilter ⇨ DbStore
 
 befor_mutate: {'categories': '1,031,722', 'languages': '90', 'sites': '3,861,202'}
 after_mutate: {'categories': '1,031,722', 'languages': '90', 'sites': '0'}
@@ -139,7 +139,7 @@ after_mutate: {'categories': '1,031,722', 'languages': '90', 'sites': '0'}
 
 ```
 Tips:
-   通常可以通过spydy组件的名称来确定一个组件是不是支持异步的， 如果组件带有Async前缀， 那么该组件就是支持异步的。
+   通常可以通过spydy组件的名称来确定一个组件是不是支持异步的， 如果组件带有Async前缀(比如上面的`AsyncHttpGetRequest`)， 那么该组件就是支持异步的。
 ```
 
 ## What's Next

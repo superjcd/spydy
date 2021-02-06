@@ -41,7 +41,7 @@ nworkers = 4
 
 [PipeLine]
 url = DummyUrls
-request = AsyncHttpGetRequest
+request = AsyncHttpRequest
 parser = DmozParser
 log = MessageLog
 store = CsvStore
@@ -69,7 +69,7 @@ myconfig = {
  },
   "PipeLine":{
     "url":"DummyUrls",
-    "request": "AsyncHttpGetRequest",
+    "request": "AsyncHttpRequest",
     "parser": "DmozParser",
     "log": "MessageLog"
     "store": "CsvStore"

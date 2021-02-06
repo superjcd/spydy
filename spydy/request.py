@@ -4,31 +4,78 @@ import requests
 from requests_html import HTML, AsyncHTMLSession
 from .adpaters import url_for_request
 
-__all__ = ["HttpGetRequest", "AsyncHttpGetRequest"]
+__all__ = ["HttpRequest", "AsyncHttpRequest"]
 
 
 class Request(abc.ABC):
     @abc.abstractmethod
-    def get_html(self):
+    def request(self):
         ...
 
 
-class HttpGetRequest(Request):
-    def __init__(self, headers=None, proxy=None):  # 把method去掉
+class HttpRequest(Request):
+    def __init__(
+        self,
+        method="GET",
+        headers=None,
+        params=None,
+        data=None,
+        cookies=None,
+        files=None,
+        auth=None,
+        timeout=None,
+        allow_redirects=True,
+        proxies=None,
+        hooks=None,
+        stream=None,
+        verify=None,
+        cert=None,
+        json=None,
+    ):
+        self._method = method
         self._headers = headers
-        if proxy:
-            self._proxy = {"http": proxy, "https": proxy}
+        if proxies:
+            self._proxies = {"http": proxies, "https": proxies}
         else:
-            self._proxy = None
+            self._proxies = None
+        self._params = params
+        self._data = data
+        self._cookies = cookies
+        self._files = files
+        self._auth = auth
+        self._timeout = timeout
+        self._allow_redirects = allow_redirects
+        self._hooks = hooks
+        self._stream = (stream,)
+        self._verify = verify
+        self._cert = cert
+        self._json = json
 
-    def get_html(self, url):
+    def request(self, url):
         if url:
             url = url_for_request(url)
             with requests.session() as session:
-                return session.get(url, headers=self._headers, proxies=self._proxy)
+                return session.request(
+                    self._method,
+                    url,
+                    headers=self._headers,
+                    proxies=self._proxies,
+                    params=self._params,
+                    data=self._data,
+                    cookies=self._cookies,
+                    files=self._files,
+                    auth=self._auth,
+                    timeout=self._timeout,
+                    allow_redirects=self._allow_redirects,
+                    hooks=self._hooks,
+                    stream=self._stream,
+                    verify=self._verify,
+                    cert=self._cert,
+                    json=self._json,
+                )
 
     def __call__(self, *args, **kwargs):
-        return self.get_html(*args, **kwargs)
+        return self.request(*args, **kwargs)
 
     def __repr__(self):
         return self.__class__.__name__
@@ -37,26 +84,74 @@ class HttpGetRequest(Request):
         return self.__repr__()
 
 
-class AsyncHttpGetRequest(Request):
-    def __init__(self, headers=None, proxy=None):
+class AsyncHttpRequest(Request):
+    def __init__(
+        self,
+        method="GET",
+        headers=None,
+        params=None,
+        data=None,
+        cookies=None,
+        files=None,
+        auth=None,
+        timeout=None,
+        allow_redirects=True,
+        proxies=None,
+        hooks=None,
+        stream=None,
+        verify=None,
+        cert=None,
+        json=None,
+    ):
         self.Async = ""
+        self._method = method
         self._headers = headers
-        if proxy:
-            self._proxy = {"http": proxy, "https": proxy}
+        if proxies:
+            self._proxies = {"http": proxies, "https": proxies}
         else:
-            self._proxy = None
+            self._proxies = None
+        self._params = params
+        self._data = data
+        self._cookies = cookies
+        self._files = files
+        self._auth = auth
+        self._timeout = timeout
+        self._allow_redirects = allow_redirects
+        self._hooks = hooks
+        self._stream = (stream,)
+        self._verify = verify
+        self._cert = cert
+        self._json = json
 
-    async def get_html(self, url):
+    async def request(self, url):
         url = url_for_request(url)
         asession = AsyncHTMLSession()
-        response = await asession.get(url, headers=self._headers, proxies=self._proxy)
+        response = await asession.request(
+                self._method,
+                url,
+                headers=self._headers,
+                proxies=self._proxies,
+                params=self._params,
+                data=self._data,
+                cookies=self._cookies,
+                files=self._files,
+                auth=self._auth,
+                timeout=self._timeout,
+                allow_redirects=self._allow_redirects,
+                hooks=self._hooks,
+                stream=self._stream,
+                verify=self._verify,
+                cert=self._cert,
+                json=self._json,
+            )
         return response
 
     def __call__(self, *args, **kwargs):
-        return self.get_html(*args, **kwargs)
+        return self.request(*args, **kwargs)
 
     def __repr__(self):
         return self.__class__.__name__
 
     def __str__(self):
         return self.__repr__()
+

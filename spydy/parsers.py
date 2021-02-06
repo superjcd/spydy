@@ -33,7 +33,6 @@ class XpathParser(Parser):
         return self._rules
 
     def parse(self, response) -> dict:
-        # breakpoint()
         if response:
             html = HTML(html=response.text)
             _ = self.rules()
