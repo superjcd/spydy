@@ -405,12 +405,12 @@
                 
                 
                 <h1 id="_1">网络请求组件</h1>
-<p>网络请求组件继承自<code>spydy.reuqests.Request</code> 基类， 顾名思义是用来访问网络， 并请求资源的。spydy的网络请求组件包括 ：</p>
+<p>网络请求组件继承自<code>spydy.reuqests.Request</code> 基类， 顾名思义是用来访问网络/请求资源的。spydy的网络请求组件包括 ：</p>
 <ul>
 <li>HttpRequest:  同步网络请求组件</li>
 <li>AsyncHttpRequest： 异步网络请求组件</li>
 </ul>
-<p>不论是<code>HttpReuqest</code>还是<code>AsyncHttpRequest</code> 都只是对驰名的<a href="https://requests.readthedocs.io/en/master/">requests</a>包的<code>Session</code>对象的<code>request</code>方法进行了一层薄薄的封装， 所以<code>HttpReuqest</code>和<code>AsyncHttpRequest</code>的参数可以参考<a href="https://requests.readthedocs.io/en/master/api/">这里</a>， 默认的<code>method</code>参数为<code>GET</code>。</p>
+<p>不论是<code>HttpReuqest</code>还是<code>AsyncHttpRequest</code> 都只是对<a href="https://requests.readthedocs.io/en/master/">requests</a>包的<code>Session</code>对象的<code>request</code>方法进行了一层薄薄的封装， 所以<code>HttpReuqest</code>和<code>AsyncHttpRequest</code>的参数可以参考<a href="https://requests.readthedocs.io/en/master/api/">这里</a>， 默认的<code>method</code>参数为<code>GET</code>。它们的返回值是<a href="https://requests.readthedocs.io/en/master/api/#requests.Response">requests.Response</a>对象。</p>
                 
               
               

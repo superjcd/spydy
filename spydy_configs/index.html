@@ -505,7 +505,7 @@
 <li><code>async_once</code>: 使用异步的方式， 但是只运行一次， 适合异步执行时的测试</li>
 <li><code>async_forever</code>: 使用异步的方式一直运行</li>
 </ul>
-<p><strong>nworkers</strong>: 同时运行的协程数量， 不过只要当<code>run_mode</code>为<code>async_forever</code>的时候才有效果。</p>
+<p><strong>nworkers</strong>: 同时运行的协程数量， 不过只有当<code>run_mode</code>为<code>async_forever</code>的时候才有效果。</p>
 <p><strong>interval</strong>: 爬虫每次运行间的等待时间。  </p>
 <p><strong>recovery_type</strong>: 当程序报错的时候， <code>urls</code><a href="../components/">组件</a>处理当前url的方式， 目前支持：</p>
 <ul>
