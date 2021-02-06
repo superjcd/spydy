@@ -3,14 +3,14 @@ from codecs import open
 from os import path
 
 
-__version__ = '0.1.5'
+__version__ = '0.1.6'
 
 here = path.abspath(path.dirname(__file__))
 
 long_description_for_pypi = '''
 # Spydy
 
-spydy is a light-weight high-level web-scraping framework for fast-devlopment and high performance, which is inspired by unix pipeline.
+spydy is a light-weight high-level web-crawling framework for fast-devlopment and high performance, which is inspired by unix pipeline.
 
 
 
@@ -110,7 +110,7 @@ dependency_links = [x.strip().replace('git+', '') for x in all_reqs if x.startsw
 setup(
     name='spydy',
     version=__version__,
-    description='light-weight high-level web-scraping framework',
+    description='light-weight high-level web-crawling framework',
     long_description=long_description_for_pypi,
     long_description_content_type='text/markdown',
     url='https://github.com/superjcd/spydy',
