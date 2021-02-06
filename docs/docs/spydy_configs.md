@@ -17,7 +17,7 @@ spydy的配置文件是通过使用python自带的[configparser](https://docs.py
 - `async_once`: 使用异步的方式， 但是只运行一次， 适合异步执行时的测试
 - `async_forever`: 使用异步的方式一直运行
 
-**nworkers**: 同时运行的协程数量， 不过只要当`run_mode`为`async_forever`的时候才有效果。
+**nworkers**: 同时运行的协程数量， 不过只有当`run_mode`为`async_forever`的时候才有效果。
 
 
 

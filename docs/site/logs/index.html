@@ -14,7 +14,7 @@
     
     
       
-        <title>组件概述 - Spydy</title>
+        <title>打印日志 - Spydy</title>
       
     
     
@@ -57,11 +57,6 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
-        
-        <a href="#spydy" class="md-skip">
-          Skip to content
-        </a>
-      
     </div>
     <div data-md-component="announce">
       
@@ -90,7 +85,7 @@
         <div class="md-header-nav__topic">
           <span class="md-ellipsis">
             
-              组件概述
+              打印日志
             
           </span>
         </div>
@@ -237,14 +232,12 @@
             
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2" >
       
       <label class="md-nav__link" for="nav-3-2">
         spydy组件
@@ -261,20 +254,11 @@
             
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../components/" class="md-nav__link">
         组件概述
       </a>
-      
     </li>
   
 
@@ -348,11 +332,18 @@
             
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../logs/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         打印日志
       </a>
+      
     </li>
   
 
@@ -382,42 +373,15 @@
               </div>
             
             
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-    
-  
-  
-</nav>
-                  </div>
-                </div>
-              </div>
-            
           
           <div class="md-content">
             <article class="md-content__inner md-typeset">
               
                 
                 
-                <h1 id="spydy">spydy组件</h1>
-<p>spydy的核心就是一个有序的工作流（Pipeline）, 组成工作流的就是各种组件。根据爬虫的各个步骤， spydy自带了多种类型的组件  </p>
-<ul>
-<li>
-<p><a href="../urls/">Url获取组件</a></p>
-</li>
-<li>
-<p><a href="../requests/">网络请求组件</a></p>
-</li>
-<li><a href="../parsers/">网页解析组件</a></li>
-<li><a href="../filters/">结果过滤组件</a></li>
-<li><a href="../stores/">结果存储组件</a>  </li>
-</ul>
-<p><strong>注意</strong>: 每一个spydy组件都继承了一个<a href="https://docs.python.org/zh-cn/3/library/abc.html">抽象基类</a>,用来规范组件的行为（当然使用者在使用的时候是意识不到这些行为的存在的）。例如, 所有的Urls获取组件都继承自<code>spydy.urls.Urls</code>基类。</p>
+                  <h1>打印日志</h1>
+                
+                
                 
               
               
@@ -436,7 +400,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
         
-          <a href="../spydy_configs/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../stores/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-footer-nav__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
             </div>
@@ -445,19 +409,19 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                spydy配置文件
+                结果存储组件
               </div>
             </div>
           </a>
         
         
-          <a href="../urls/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../error_handling/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-footer-nav__title">
               <div class="md-ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                urls获取组件
+                spydy中的错误处理
               </div>
             </div>
             <div class="md-footer-nav__button md-icon">
