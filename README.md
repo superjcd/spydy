@@ -1,6 +1,11 @@
 ![logo](./docs/docs/img/spydy.svg)  
 
 ---
+- [源码](https://github.com/superjcd/spydy)
+- [官方文档](https://superjcd.github.io/spydy/)
+- [pypi](https://pypi.org/project/spydy)
+
+---
 **spydy** 是一个非常轻量的爬虫框架。兼具高性能和易用性。支持但不限于以下功能：
 
 - 支持并发（基于协程而非传统的多进/线程）

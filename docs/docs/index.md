@@ -1,6 +1,11 @@
 ![logo](img/spydy.svg)  
 
 ---
+- [源码](https://github.com/superjcd/spydy)
+- [官方文档](https://superjcd.github.io/spydy/)
+- [pypi](https://pypi.org/project/spydy)
+
+---
 
 ## 为什么要使用spydy？
 

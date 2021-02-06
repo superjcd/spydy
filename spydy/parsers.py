@@ -15,7 +15,7 @@ class Parser(abc.ABC):
         ...
 
     @abc.abstractmethod
-    def parse(self):
+    def parse(self, response):
         ...
 
 

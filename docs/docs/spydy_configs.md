@@ -18,7 +18,11 @@ spydy的配置文件是通过使用python自带的[configparser](https://docs.py
 - `async_forever`: 使用异步的方式一直运行
 
 **nworkers**: 同时运行的协程数量， 不过只要当`run_mode`为`async_forever`的时候才有效果。
+
+
+
 **interval**: 爬虫每次运行间的等待时间。  
+
 **recovery_type**: 当程序报错的时候， `urls`[组件](components.md)处理当前url的方式， 目前支持：
 
  - `skip`: 不做任何事情， 意味着发生错误的url不会被执行第二次， 通常不是理想的选择

@@ -9,7 +9,7 @@ nav:
       - 组件概述: components.md
       - urls获取组件: urls.md
       - 网络访问组件: requests.md
-      - 网页解析组件: parsers.md
+      - 请求解析组件: parsers.md
       - 结果过滤组件: filters.md
       - 结果存储组件: stores.md
 
