@@ -328,6 +328,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    返回结果
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -361,6 +368,42 @@
         
       </ul>
     </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../customer_component/" class="md-nav__link">
+      自定义组件
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../logs/" class="md-nav__link">
+      打印日志
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../error_handling/" class="md-nav__link">
+      spydy中的错误处理
+    </a>
   </li>
 
         
@@ -413,6 +456,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    返回结果
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -427,18 +477,14 @@
                 
                 
                 <h1 id="_1">网页（请求）解析组件</h1>
-<p>请求解析组件通常是需要使用者自己提供的， spydy只提供了一个<code>DmozParser</code>来获取<a href="https://dmoz-odp.org/">dmoz</a>网站的部分数据用以测试， 具体参考<a href="../quickstart/">快速开始</a>。不过spydy还是提供了部分组件来简化繁琐的网页解析工作， 比如：</p>
+<p>请求解析组件通常需要使用者自己提供的（或者也可能是使用者唯一需要定义的组件）， spydy只提供了一个<code>DmozParser</code>来获取<a href="https://dmoz-odp.org/">dmoz</a>网站的部分数据用以测试， 具体参考<a href="../quickstart/">快速开始</a>。不过spydy还是提供了部分组件来简化繁琐的网页解析工作， 比如：</p>
 <ul>
-<li>
-<p><a href="#xpathparser">XpathParser</a></p>
-</li>
-<li>
-<p><a href="#cssparser">CssParser</a> </p>
-</li>
-<li>自定义parser</li>
+<li><a href="#xpathparser">XpathParser</a></li>
+<li><a href="#cssparser">CssParser</a></li>
+<li><a href="#自定义parser">自定义parser</a></li>
 </ul>
 <h2 id="xpathparser">XpathParser</h2>
-<p>基于使用者提供的xpath规则， 来解析网络请求对象的结果。只要使用者的自定义类继承了<code>XpathParser</code>,  那么只要在自定义类中写入值为xpath规则的类属性， <code>XpathParser</code>就会自动解析， 以<code>DmozParser</code>为例， 它是通过如下方式定义的：</p>
+<p>基于使用者提供的xpath规则， 来解析网络请求对象的结果。只要使用者的自定义类继承了<code>XpathParser</code>,  那么只要在自定义类中写入值为xpath规则的类属性， <code>XpathParser</code>就会解析相应内容， 以<code>DmozParser</code>为例， 它是通过如下方式定义的：</p>
 <pre><code>class DmozParser(XpathParser):
     editors = &quot;//div[@class='editors']/h3/text()[1]&quot;
     categories = &quot;//div[@class='categories']/h3/text()[1]&quot;
@@ -454,8 +500,43 @@
 </code></pre>
 <p>后续， <code>XpathParser</code>就会把类的属性名作为输出结果（字典格式）的键， 类的属性值对应的xpath规则匹配出来的值作为输出结果的值。</p>
 <h2 id="cssparser">CssParser</h2>
-<p>同XpathParser， 只要在使用者的自定义类中继承了<code>CssParser</code>, 那么只要在自定义类中写入值为csss选择器规则的类属性， <code>CssParser</code>就会自动解析。</p>
+<p>同<code>XpathParser</code>， 当使用者的自定义类中继承了<code>CssParser</code>, 那么只要在自定义类中写入值为csss选择器规则的类属性， <code>CssParser</code>就会自动解析目标内容。</p>
 <h2 id="parser">自定义parser</h2>
+<p>这里的自定义parser是指不继承上诉的<code>XpathParser</code>或者<code>CssParser</code>而完全由用户定义的解析组件。
+有时候， 网页解析的逻辑会变的很复杂， 比如需要进行一些条件判断，类似当a出现的时候b的值是什么， 或者a的值是b和c的结合。虽然spydy的推荐的做法通常是， 继承spydy的<code>XpathParser</code>或者<code>CssParser</code>， 然后在<a href="../filters/">filters</a>这一步去进行更进一步的操作（<code>spydy.filters.CommonFilter</code>提供了非常便利的方法）。 比如前面提到的条件判断， 值的清洗之类。<br />
+但有时你可能想直接操作response对象（比如交互解析， 类似<a href="https://docs.scrapy.org/en/latest/index.html">scrapy</a>的shell功能， 则可以选择在自定义组件中打一个断点），或者你想返回的结果并不是字典，比如是字典的列表， 那么就需要来自己定义一个parser。</p>
+<p>下面是一个用来演示的自定义parser：</p>
+<pre><code>from spydy.parsers import Parser
+from requests_html import HTML
+
+class Myparser(Parser): # 继承抽象积累Parser
+    def __init__(self):  # any parameters you want to set
+        pass
+
+    def parse(self, response):  # must define
+        html = HTML(html=response.text)
+
+        content1 = html.xpath('') # define your parse logic here
+
+
+        return {}  # 通常是字典， 也可以是字典列表， 但是后面的组件需要支持这种返回结果
+
+    def __call__(self, *args, **kwargs):
+        return self.parse(*args, **kwargs)
+
+    def __str__(self):
+        return self.__class__.__name__
+</code></pre>
+<p>上面的代码展示了编写自定义parser的一些要点：  </p>
+<ul>
+<li>首先需要继承spydy的抽象基类<code>Parser</code>， 因为<code>Parser</code>定义了一个抽象方法<code>parse</code>, 所以继承自<code>Parser</code> 的自定义解析组件也要定义一个<code>parse</code>方法</li>
+<li><code>response</code> 其实就是上一个步骤的返回值， 通常是一个<a href="https://requests.readthedocs.io/en/master/api/#requests.Response">requests.Response</a>对象（假设<code>Myparser</code>的上一步使用的是spydy的自带组件<code>HttpRequest</code>或<code>AsyncRequest</code>的话）,  所以可以调用response的text属性来获取页面html, 然后进行相应的解析</li>
+<li>最后返回结果， 一般是一个字典格式。当然也可以是字典列表， 但是后面的组件需要支持这种返回结果。详见<a href="../stores/">存储组件</a></li>
+<li>定义__call__方法， 这个是非常重要的， 因为spydy是默认调用组件的__call__方法的， 所以一定要定义。</li>
+<li>定义__str__方法， 不是必须的， 但是为了更好地在日志中显示组件， 所以最好加上。</li>
+</ul>
+<h2 id="_2">返回结果</h2>
+<p><code>Parser组件</code>最后会返回一个字典(默认)， 或者一个字典列表（某一些自定义场景下）。</p>
                 
               
               

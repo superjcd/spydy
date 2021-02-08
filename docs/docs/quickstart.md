@@ -35,7 +35,7 @@ file_name = dmoz.csv
 $ spydy myconfig.cfg
 
 Your pipeline looks like :
-FileUrls ⇨ HttpGetRequest ⇨ DmozParser ⇨ CsvStore
+FileUrls ⇨ HttpRequest ⇨ DmozParser ⇨ CsvStore
 ```
 
 接着， 你会发现在当前目录下面出现了dmoz.csv，并且在dmoz.csv文件中多了一行我们想要获取的数据。
@@ -50,13 +50,11 @@ FileUrls -> HttpRequest -> DmozParser -> CsvStore
 
 **注意**： 在pipeline中， 每个步骤的产出就是下一步的输入。
 
-当然， 每个步骤可能需要一些参数， 比如FileUrls需要`file_name`参数， 所以需要单独地在[FileUrls]下面配置好`file_name`参数， 如果用户没有提供相应参数，  
-那么spydy将使用默认参数。
-
+当然， 每个步骤可能需要一些参数， 比如FileUrls需要`file_name`参数， 所以需要单独地在[FileUrls]下面配置好`file_name`参数。  
 配置文件中[Globals]下面可以设置spydy的全局参数， 比如这里的`run_mode`被设置了`once`， 所以在上面例子中spydy只会将整个工作流执行一次。
 
 ## 一个复杂点的例子
-在真实开发开发场景中， 我们希望爬虫能够爬的快， 同时兼容用户的自定模块。所以我们来用使用spydy来开发一个稍微复杂一点的爬虫应用：
+在真实开发开发场景中， 我们希望爬虫能够爬的快(支持并发)， 同时兼容用户的自定模块。作为演示， 我们用spydy来开发一个稍微复杂一点的爬虫应用：
 
 * 准备一个可以访问的redis键值存储数据库，当然我们需要在Redis中写入一些URL：  
 
@@ -77,7 +75,7 @@ for _ in range(10):
   - __init__.py
   - filters.py
 ```
-在filters.py中写入：
+在filters.py（我们的自定义模块， 用来过滤解析结果）中写入：
 ```
 from spydy.filters import CommonFilter
 
@@ -115,8 +113,7 @@ list_name = /spider/testurls
 connection_url = sqlite:///./tests/files/dmoz.db
 table_name = stats
 ```
-当然， 你的redis连接和数据库连接(使用[sqlalchemy](https://docs.sqlalchemy.org/en/13/core/connections.html)的定义方式)和上面的未必相同， 请根据自己的情况进行修改。
-
+当然， 你的redis连接和数据库连接(使用[sqlalchemy](https://docs.sqlalchemy.org/en/13/core/connections.html)的定义方式)和上面的未必相同， 请根据自己的情况进行修改。  
 万事俱备， 让我们运行spydy吧：
 ```
 $ spydy myconfig2.cfg
@@ -139,9 +136,15 @@ after_mutate: {'categories': '1,031,722', 'languages': '90', 'sites': '0'}
 
 ```
 Tips:
-   通常可以通过spydy组件的名称来确定一个组件是不是支持异步的， 如果组件带有Async前缀(比如上面的`AsyncHttpGetRequest`)， 那么该组件就是支持异步的。
+   通常可以通过spydy组件的名称来确定一个组件是不是支持异步的，
+   如果组件带有Async前缀(比如上面的`AsyncHttpRequest`)， 
+   那么该组件就是支持异步的。
 ```
 
 ## What's Next
+- [理解spydy的配置文件](spydy_configs.md)
+- [理解spydy的组件](components.md)
+- [使用spydy的日志工具](logs.md)
+- [spydy中的错误处理方式](error_handling.md)
 
 

@@ -321,6 +321,42 @@
   </li>
 
         
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../customer_component/" class="md-nav__link">
+      自定义组件
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../logs/" class="md-nav__link">
+      打印日志
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../error_handling/" class="md-nav__link">
+      spydy中的错误处理
+    </a>
+  </li>
+
+        
       </ul>
     </nav>
   </li>
@@ -355,7 +391,7 @@
                 
                 
                 <h1 id="spydy">spydy组件</h1>
-<p>spydy的核心就是一个有序的工作流（Pipeline）, 组成工作流的就是各种组件。根据爬虫的各个步骤， spydy自带了多种类型的组件  </p>
+<p>spydy的核心就是一个有序的工作流（Pipeline）, 组成工作流各个步骤的就是各种组件。根据爬虫的各个步骤， spydy自带了多种类型的组件  </p>
 <ul>
 <li>
 <p><a href="../urls/">Url获取组件</a></p>
@@ -364,10 +400,10 @@
 <p><a href="../requests/">网络请求组件</a></p>
 </li>
 <li><a href="../parsers/">网页解析组件</a></li>
-<li><a href="../filters/">结果过滤组件</a></li>
+<li><a href="../filters/">过滤组件</a></li>
 <li><a href="../stores/">结果存储组件</a>  </li>
 </ul>
-<p><strong>注意</strong>: 每一个spydy组件都继承了一个<a href="https://docs.python.org/zh-cn/3/library/abc.html">抽象基类</a>,用来规范组件的行为（当然使用者在使用的时候是意识不到这些行为的存在的）。例如, 所有的Urls获取组件都继承自<code>spydy.urls.Urls</code>基类。</p>
+<p><strong>注意</strong>: 每一个spydy组件都继承了一个<a href="https://docs.python.org/zh-cn/3/library/abc.html">抽象基类</a>用来规范组件的行为（当然使用者在使用的时候是意识不到这些行为的存在的）。例如, 所有的Urls获取组件都继承自<code>spydy.urls.Urls</code>基类, 而该基类定义了一个<code>pop</code>抽象方法， 用来获取下一个url。</p>
                 
               
               

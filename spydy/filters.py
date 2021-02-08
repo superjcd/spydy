@@ -24,7 +24,8 @@ class CommonFilter(Filter):
                 if drop_items:
                     if isinstance(drop_items, list):
                         for item in drop_items:
-                            del self._outputs[item]
+                            if item in self._outputs:
+                                del self._outputs[item]
                     else:
                         raise TypeError(
                             "Method Drops of {!r} returned a none-list object".format(
@@ -38,7 +39,8 @@ class CommonFilter(Filter):
                     self._outputs = {}
                     if isinstance(keep_items, list):
                         for item in keep_items:
-                            self._outputs[item] = self._to_filter[item]
+                            if item in self._to_filter:
+                                self._outputs[item] = self._to_filter[item]
                     else:
                         raise TypeError(
                             "Method Keeps of {!r} returned a none-list object".format(

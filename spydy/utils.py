@@ -141,6 +141,7 @@ def print_pipeline(pipeline: list):
 
 
 def print_msg(msg, info_header="INFO", time_format="%Y-%m-%d %H:%M:%S", verbose=False):
+    verbose = bool(verbose)
     msg = msg if verbose else repr(msg)
     time_info = datetime.now().strftime(time_format)
     message = "|".join([info_header, time_info, msg])

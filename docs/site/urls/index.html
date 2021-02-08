@@ -311,6 +311,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    返回值
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -371,6 +378,42 @@
   </li>
 
         
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../customer_component/" class="md-nav__link">
+      自定义组件
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../logs/" class="md-nav__link">
+      打印日志
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../error_handling/" class="md-nav__link">
+      spydy中的错误处理
+    </a>
+  </li>
+
+        
       </ul>
     </nav>
   </li>
@@ -427,6 +470,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    返回值
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -441,34 +491,40 @@
                 
                 
                 <h1 id="url">Url获取组件</h1>
-<p>Url获取组件顾名思义， 使用来存储urls以及获取url的组件；spydy提供了以下Url获取组件：</p>
+<p>Url获取组件顾名思义， 是用来存储urls以及获取url的组件；spydy提供了以下Url获取组件：</p>
 <ul>
-<li>
-<p><a href="#dummyurls">DummyUrls</a></p>
-</li>
-<li>
-<p><a href="#fileurls">FileUrls</a></p>
-</li>
+<li><a href="#dummyurls">DummyUrls</a></li>
+<li><a href="#fileurls">FileUrls</a></li>
 <li><a href="#redisseturls">RedisSetUrls</a></li>
 <li><a href="#redislisturls">RedisListUrls</a></li>
 </ul>
 <h2 id="dummyurls">DummyUrls</h2>
-<p>用来重复地产生某一个url， 通常是用来测试的（比如有些网站在重复访问多次的时候， 会有访问限制， 所以通过对一个网站的多次访问可以触发网站的反爬机制）。参数有：
-- <code>url</code>: url连接, 必选项
-- <code>repeat</code>: 重复次数, 默认为1</p>
+<p>用来重复地产生某一个url， 通常是用来测试的（比如有些网站在重复访问多次的时候， 会有访问限制， 所以通过对一个网站的多次访问可以触发网站的反爬机制）。参数有：</p>
+<ul>
+<li><code>url</code>: url连接, 必选项</li>
+<li><code>repeat</code>: 重复次数, 默认为1</li>
+</ul>
 <h2 id="fileurls">FileUrls</h2>
-<p>作用和<code>DummyUrls</code>类似， 通常用来测试， 不过可以在在文件中存储更多不同的url, 参数有:
-- <code>file_name</code>: 文件名称, 记录在file中的url需要以换号符分隔</p>
+<p>作用和<code>DummyUrls</code>类似， 通常用来测试， 不过可以在文件中存储更多不同的url, 参数有:</p>
+<ul>
+<li><code>file_name</code>: 文件名称, 记录在file中的url需要以换号符分隔</li>
+</ul>
 <h2 id="redisseturls">RedisSetUrls</h2>
-<p>连接redis的set,  所以存储在<code>RedisSetUrls</code>的urls是不能重复且无序的， 参数有:
-- <code>set_name</code>: redis集合名称
-- <code>host</code>: 连接host
-- <code>port</code>: 连接port</p>
+<p>连接redis的set,  所以存储在<code>RedisSetUrls</code>的urls是不能重复且无序的， 参数有:</p>
+<ul>
+<li><code>set_name</code>: redis集合名称</li>
+<li><code>host</code>: 连接host</li>
+<li><code>port</code>: 连接port</li>
+</ul>
 <h2 id="redislisturls">RedisListUrls</h2>
-<p>连接redis的list,  所以存储在<code>RedisListUrls</code>的urls是可以重复且有序的，参数有:
-- <code>list_name</code>: redis队列名称
-- <code>host</code>: 连接host
-- <code>port</code>: 连接port</p>
+<p>连接redis的list,  所以存储在<code>RedisListUrls</code>的urls是可以重复且有序的，参数有:  </p>
+<ul>
+<li><code>list_name</code>: redis队列名称</li>
+<li><code>host</code>: 连接host</li>
+<li><code>port</code>: 连接port</li>
+</ul>
+<h2 id="_1">返回值</h2>
+<p>上诉组件的返回值都是一个url字符串。</p>
                 
               
               

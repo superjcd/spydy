@@ -3,10 +3,12 @@ import csv
 import asyncio
 from sqlalchemy import create_engine, MetaData, Table
 from threading import RLock
+from .async_component import AsyncComponent
+from typing import List
 
 # from sqlalchemy.ext.asyncio import create_async_engine
 
-__all__ = ["CsvStore", "AsyncCsvStore", "DbStore"]
+__all__ = ["CsvStore", "AsyncCsvStore", "DbStore", "DbManyStore"]
 
 
 class Store(abc.ABC):
@@ -37,9 +39,8 @@ class CsvStore(Store):
         return self.__repr__()
 
 
-class AsyncCsvStore(Store):
+class AsyncCsvStore(Store, AsyncComponent):
     def __init__(self, file_name):
-        self.Async = ""
         self._filename = file_name
 
     async def store(self, items):
@@ -88,6 +89,35 @@ class DbStore(Store):
         return self.__repr__()
 
 
-class AsyncDbStore(Store):
+class DbManyStore(Store):
     def __init__(self, connection_url=None, table_name=None):
-        self.Async = ""
+        self._connection_url = connection_url
+        self._table_name = table_name
+        self.engine = create_engine(connection_url, echo=False)
+        self.metadata = MetaData()
+        self.metadata.reflect(bind=self.engine)
+
+    def store(self, items: List[dict]):
+        dblock.acquire()
+        self.engine.execute(self.metadata.tables[self._table_name].insert(), items)
+        dblock.release()
+        return items
+
+    def __call__(self, *args, **kwargs):
+        return self.store(*args, **kwargs)
+
+    def __repr__(self):
+        return self.__class__.__name__
+
+    def __str__(self):
+        return self.__repr__()
+
+
+class AsyncDbStore(Store, AsyncComponent):
+    def __init__(self, connection_url=None, table_name=None):
+        ...
+
+
+class AsyncDbManyStore(Store, AsyncComponent):
+    def __init__(self, connection_url=None, table_name=None):
+        ...

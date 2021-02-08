@@ -56,6 +56,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -289,10 +294,41 @@
     
     <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
     
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        结果过滤组件
+        <span class="md-nav__icon md-icon"></span>
+      </label>
     
     <a href="./" class="md-nav__link md-nav__link--active">
       结果过滤组件
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#commonfilter" class="md-nav__link">
+    CommonFilter
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
     
   </li>
 
@@ -314,6 +350,42 @@
   </li>
 
         
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../customer_component/" class="md-nav__link">
+      自定义组件
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../logs/" class="md-nav__link">
+      打印日志
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../error_handling/" class="md-nav__link">
+      spydy中的错误处理
+    </a>
+  </li>
+
+        
       </ul>
     </nav>
   </li>
@@ -326,15 +398,66 @@
               </div>
             
             
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#commonfilter" class="md-nav__link">
+    CommonFilter
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content">
             <article class="md-content__inner md-typeset">
               
                 
                 
-                  <h1>结果过滤组件</h1>
-                
-                
+                <h1 id="_1">过滤组件</h1>
+<p>过滤组件并不是必须的， 它的作用在很大程度是为了减轻解析组件的工作： 比如清洗解析结果， 生成新结果， 丢弃不要的结果等等。它的存在， 可以让解析组件更加专注于从网页中提取信息， 从而使整个工作流更加的清晰：<br />
+spydy目前提供了一个<code>CommonFilter</code>来简化解析的工作， 只需要继承<code>CommonFilter</code>， 就能更为清晰地实现丢弃、 保持以及生成新属性的功能。</p>
+<h2 id="commonfilter">CommonFilter</h2>
+<p>其实在<a href="../quickstart/">快速开始</a>， 我们就定义了一个自定义过滤组件:</p>
+<pre><code>from spydy.filters import CommonFilter
+
+class Myfilter(CommonFilter):
+    def drops(self):
+        return [&quot;editors&quot;]
+
+    def mutates(self, items):
+        print(&quot;befor_filter: {}&quot;.format(items))
+        items[&quot;sites&quot;] = &quot;0&quot;
+        print(&quot;after_filter: {}&quot;.format(items))
+        return items
+
+</code></pre>
+<p>用户的自定义过滤组件可以按需提供三个函数<code>drops</code>、 <code>keeps</code>和<code>mutate</code>, 然后<code>CommonFilter</code>就会进行相应地处理：  </p>
+<ul>
+<li><em>drops</em>: 需要返回一个列表， 然后列表中的值所对应的字段将会被丢弃（如果存在于上一步的解析结果中的话）</li>
+<li><em>keeps</em>: 需要返回一个列表， 然后列表中的值所对应的字段将会被保留（如果存在于上一步的解析结果中的话）， 如果一个字段同时出现在<code>drops</code>方法的返回结果中时， 以<code>keeps</code>方法为准</li>
+<li><em>mutates</em>: <code>mutate</code>方法的第一个参数为上一步的解析对象， 这里可以改变解析结果的字段值并输出一个解析结果。 如果解析结果中的字段同时出现在<code>drops</code>和<code>keeps</code>时， 以<code>mutates</code>方法为准。</li>
+</ul>
                 
               
               

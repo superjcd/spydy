@@ -12,6 +12,9 @@ nav:
       - 请求解析组件: parsers.md
       - 结果过滤组件: filters.md
       - 结果存储组件: stores.md
+    - 自定义组件: customer_component.md
+    - 打印日志: logs.md
+    - spydy中的错误处理: error_handling.md
 
 theme:
     name: material

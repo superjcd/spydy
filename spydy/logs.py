@@ -86,7 +86,7 @@ class StatsReportLog(Log):
             self._stats["Consumed"] = urls_consumed
             self._stats["Remained"] = total_now
             self._stats["Processing Speed"] = processing_speed
-            self._stats["Effiency"] = efficiency
+            self._stats["Efficiency"] = efficiency
             self._stats["Eta"] = eta
             print_stats_log(self._stats)
         return items

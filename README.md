@@ -160,7 +160,9 @@ after_mutate: {'categories': '1,031,722', 'languages': '90', 'sites': '0'}
 
 ```
 Tips:
-   通常可以通过spydy组件的名称来确定一个组件是不是支持异步的， 如果组件带有Async前缀， 那么该组件就是支持异步的。
+   通常可以通过spydy组件的名称来确定一个组件是不是支持异步的， 
+   如果组件带有Async前缀， 
+   那么该组件就是支持异步的。
 ```
 
 👉 想要了解spydy的更多特性， 请移步[spydy官方文档](https://superjcd.github.io/spydy/).
