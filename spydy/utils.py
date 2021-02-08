@@ -7,7 +7,6 @@ import sys
 import spydy
 from spydy.urls import Urls
 from spydy.defaults import RUNMODES, LEGAL_GLOBALS, LEGAL_RECOVERYS
-from spydy.adpaters import url_for_request
 from spydy.exceptions import UrlsStepNotFound
 
 
@@ -213,7 +212,7 @@ def handle_exceptions(
         if hasattr(url_step, "handle_exception"):
             url = get_temp_result(type(url_step), temp_results, coroutine_id)
             url_step.handle_exception(
-                recovery_type=recovery_type, url=url_for_request(url)
+                recovery_type=recovery_type, url=url
             )
 
 

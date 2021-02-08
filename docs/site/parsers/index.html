@@ -438,7 +438,7 @@
 <li>自定义parser</li>
 </ul>
 <h2 id="xpathparser">XpathParser</h2>
-<p>基于使用者提供的xpath规则， 来解析网络请求对象的。只要使用者的自定义类继承了<code>XpathParser</code>,  那么只要在自定义类中写入值为xpath规则的类属性， <code>XpathParser</code>就会自动解析， 以<code>DmozParser</code>为例， 它是通过如下方式定义的：</p>
+<p>基于使用者提供的xpath规则， 来解析网络请求对象的结果。只要使用者的自定义类继承了<code>XpathParser</code>,  那么只要在自定义类中写入值为xpath规则的类属性， <code>XpathParser</code>就会自动解析， 以<code>DmozParser</code>为例， 它是通过如下方式定义的：</p>
 <pre><code>class DmozParser(XpathParser):
     editors = &quot;//div[@class='editors']/h3/text()[1]&quot;
     categories = &quot;//div[@class='categories']/h3/text()[1]&quot;
@@ -454,6 +454,7 @@
 </code></pre>
 <p>后续， <code>XpathParser</code>就会把类的属性名作为输出结果（字典格式）的键， 类的属性值对应的xpath规则匹配出来的值作为输出结果的值。</p>
 <h2 id="cssparser">CssParser</h2>
+<p>同XpathParser， 只要在使用者的自定义类中继承了<code>CssParser</code>, 那么只要在自定义类中写入值为csss选择器规则的类属性， <code>CssParser</code>就会自动解析。</p>
 <h2 id="parser">自定义parser</h2>
                 
               

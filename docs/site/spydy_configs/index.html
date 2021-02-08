@@ -455,9 +455,9 @@
 <li><code>async_once</code>: 使用异步的方式， 但是只运行一次， 适合异步执行时的测试</li>
 <li><code>async_forever</code>: 使用异步的方式一直运行</li>
 </ul>
-<p><strong>nworkers</strong>: 同时运行的协程数量， 不过只要当<code>run_mode</code>为<code>async_forever</code>的时候才有效果。
-<strong>interval</strong>: 爬虫每次运行间的等待时间。<br />
-<strong>recovery_type</strong>: 当程序报错的时候， <code>urls</code><a href="../components/">组件</a>处理当前url的方式， 目前支持：</p>
+<p><strong>nworkers</strong>: 同时运行的协程数量， 不过只要当<code>run_mode</code>为<code>async_forever</code>的时候才有效果。</p>
+<p><strong>interval</strong>: 爬虫每次运行间的等待时间。  </p>
+<p><strong>recovery_type</strong>: 当程序报错的时候， <code>urls</code><a href="../components/">组件</a>处理当前url的方式， 目前支持：</p>
 <ul>
 <li><code>skip</code>: 不做任何事情， 意味着发生错误的url不会被执行第二次， 通常不是理想的选择</li>
 <li><code>url_back_last</code>: 把出错的url放回队列的最后， 当然前提是<code>urls</code>组件是有序的队列， 例如<code>RedisListUrls</code></li>

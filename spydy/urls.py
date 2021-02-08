@@ -3,6 +3,7 @@ import os
 import redis
 from .exceptions import UrlCompleted, UnExpectedHandleType, DummyUrlNotGiven
 
+
 __all__ = ["DummyUrls", "FileUrls", "RedisListUrls", "RedisSetUrls"]
 
 
@@ -106,7 +107,7 @@ class RedisSetUrls(Urls):
         '''
         item = self._conn.spop(self._set_name)
         if item:
-            return item
+            return item.decode("utf-8")
         else:
             import sys
 
@@ -163,7 +164,7 @@ class RedisListUrls(Urls):
     def pop(self):
         item = self._conn.lpop(self._list_name)
         if item:
-            return item
+            return item.decode("utf-8")
         else:
             import sys
 

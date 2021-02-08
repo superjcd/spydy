@@ -2,7 +2,7 @@ import abc
 import aiohttp
 import requests
 from requests_html import HTML, AsyncHTMLSession
-from .adpaters import url_for_request
+from .async_component import AsyncComponent
 
 __all__ = ["HttpRequest", "AsyncHttpRequest"]
 
@@ -53,7 +53,6 @@ class HttpRequest(Request):
 
     def request(self, url):
         if url:
-            url = url_for_request(url)
             with requests.session() as session:
                 return session.request(
                     self._method,
@@ -84,7 +83,7 @@ class HttpRequest(Request):
         return self.__repr__()
 
 
-class AsyncHttpRequest(Request):
+class AsyncHttpRequest(Request, AsyncComponent):
     def __init__(
         self,
         method="GET",
@@ -103,7 +102,6 @@ class AsyncHttpRequest(Request):
         cert=None,
         json=None,
     ):
-        self.Async = ""
         self._method = method
         self._headers = headers
         if proxies:
@@ -124,7 +122,6 @@ class AsyncHttpRequest(Request):
         self._json = json
 
     async def request(self, url):
-        url = url_for_request(url)
         asession = AsyncHTMLSession()
         response = await asession.request(
                 self._method,
