@@ -468,15 +468,17 @@
 <li><a href="#statsreportlog">StatsReportLog</a></li>
 </ul>
 <h2 id="simpleprintlog">SimplePrintLog</h2>
-<p>简单地打印输出结果， 没有任何参数。通常可以用来调试，查看爬虫的中间结果， 比如可以定义在<a href="../stores/">存储组件</a>之前。 </p>
+<p>简单地打印信息， 没有任何参数。通常可以用来调试，查看爬虫的中间结果， 比如可以定义在<a href="../stores/">存储组件</a>之前。 </p>
 <h2 id="messagelog">MessageLog</h2>
-<p>打印缩略的结果信息， 同时输出时间信息。有时中间结果可能会很大， 所以可以选择只打印缩略结果。支持以下参数：</p>
+<p>打印缩略的信息以及执行时间信息。有时后，中间解析结果可能会很大， 所以可以选择只打印缩略结果。支持以下参数：</p>
 <ul>
 <li><code>info_header</code>: 打印信息的信息头， 默认为"INFO"</li>
 <li><code>verbose</code>: 是否支持详细打印， 如果为True, 那么会打印所有信息；Flase的话则打印缩略信息</li>
 </ul>
 <h2 id="statsreportlog">StatsReportLog</h2>
-<p>滚动打印统spydy目前的运行结果， 打印示例如下:</p>
+<p>滚动打印统spydy目前的运行结果， 参数如下：
+ - <code>every</code> : 每运行多少次打印当前统计结果， 默认值为1。
+打印示例如下:</p>
 <pre><code>  Elapsed: 0h:0m:35s| Processed: 124| Consumed: 125| Remained: 9| Processing Speed: 3.47| Efficiency: 1| Eta: 0h:0m:2s|
 </code></pre>
 <p>统计字段的意思如下：</p>

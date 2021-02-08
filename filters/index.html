@@ -454,9 +454,9 @@ class Myfilter(CommonFilter):
 </code></pre>
 <p>用户的自定义过滤组件可以按需提供三个函数<code>drops</code>、 <code>keeps</code>和<code>mutate</code>, 然后<code>CommonFilter</code>就会进行相应地处理：  </p>
 <ul>
-<li><em>drops</em>: 需要返回一个列表， 然后列表中的值所对应的字段将会被丢弃（如果存在于上一步的解析结果中的话）</li>
-<li><em>keeps</em>: 需要返回一个列表， 然后列表中的值所对应的字段将会被保留（如果存在于上一步的解析结果中的话）， 如果一个字段同时出现在<code>drops</code>方法的返回结果中时， 以<code>keeps</code>方法为准</li>
-<li><em>mutates</em>: <code>mutate</code>方法的第一个参数为上一步的解析对象， 这里可以改变解析结果的字段值并输出一个解析结果。 如果解析结果中的字段同时出现在<code>drops</code>和<code>keeps</code>时， 以<code>mutates</code>方法为准。</li>
+<li><code>drops</code>: 需要返回一个列表， 然后列表中的值所对应的字段将会被丢弃（如果该字段存在于上一步的解析结果中的话）</li>
+<li><code>keeps</code>: 需要返回一个列表， 然后列表中的值所对应的字段将会被保留（如果该字段存在于上一步的解析结果中的话）， 如果一个字段同时出现在<code>drops</code>方法的返回结果中时， 以<code>keeps</code>方法为准</li>
+<li><code>mutates</code>: <code>mutate</code>方法的第一个参数为上一步的解析对象， 这里可以改变解析结果的字段值并输出一个解析结果。 如果解析结果中的字段同时出现在<code>drops</code>和<code>keeps</code>时， 以<code>mutates</code>方法为准。</li>
 </ul>
                 
               
