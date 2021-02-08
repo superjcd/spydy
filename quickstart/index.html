@@ -375,6 +375,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../customer_component/" class="md-nav__link">
+      自定义组件
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../logs/" class="md-nav__link">
       打印日志
     </a>
@@ -494,17 +506,16 @@ file_name = dmoz.csv
 <pre><code>$ spydy myconfig.cfg
 
 Your pipeline looks like :
-FileUrls ⇨ HttpGetRequest ⇨ DmozParser ⇨ CsvStore
+FileUrls ⇨ HttpRequest ⇨ DmozParser ⇨ CsvStore
 </code></pre>
 <p>接着， 你会发现在当前目录下面出现了dmoz.csv，并且在dmoz.csv文件中多了一行我们想要获取的数据。</p>
 <h3 id="_2">发生了什么？</h3>
 <p>spydy的工作流在设计上参考了Unix管道， 定义在配置文件[PipeLine]下面的参数其实就是我们spydy会<strong>顺序执行</strong>的各个步骤,比如在上面的例子中, spydy的工作流是这样的：</p>
 <pre><code>FileUrls -&gt; HttpRequest -&gt; DmozParser -&gt; CsvStore
 </code></pre>
-<p><strong>注意</strong>： 在pipeline中， 每个步骤的产出就是下一步的输入（keep in mind!）。</p>
-<p>当然， 每个步骤可能需要一些参数， 比如FileUrls需要<code>file_name</code>参数， 所以需要单独地在[FileUrls]下面配置好<code>file_name</code>参数， 如果用户没有提供相应参数，<br />
-那么spydy将使用默认参数。</p>
-<p>配置文件中[Globals]下面可以设置spydy的全局参数， 比如这里的<code>run_mode</code>被设置了<code>once</code>， 所以在上面例子中spydy只会将整个工作流执行一次。</p>
+<p><strong>注意</strong>： 在pipeline中， 每个步骤的产出就是下一步的输入。</p>
+<p>当然， 每个步骤可能需要一些参数， 比如FileUrls需要<code>file_name</code>参数， 所以需要单独地在[FileUrls]下面配置好<code>file_name</code>参数。<br />
+配置文件中[Globals]下面可以设置spydy的全局参数， 比如这里的<code>run_mode</code>被设置了<code>once</code>， 所以在上面例子中spydy只会将整个工作流执行一次。</p>
 <h2 id="_3">一个复杂点的例子</h2>
 <p>在真实开发开发场景中， 我们希望爬虫能够爬的快(支持并发)， 同时兼容用户的自定模块。作为演示， 我们用spydy来开发一个稍微复杂一点的爬虫应用：</p>
 <ul>
@@ -528,7 +539,7 @@ for _ in range(10):
   - __init__.py
   - filters.py
 </code></pre>
-<p>在filters.py中写入：</p>
+<p>在filters.py（我们的自定义模块， 用来过滤解析结果）中写入：</p>
 <pre><code>from spydy.filters import CommonFilter
 
 class Myfilter(CommonFilter):
@@ -563,8 +574,8 @@ list_name = /spider/testurls
 connection_url = sqlite:///./tests/files/dmoz.db
 table_name = stats
 </code></pre>
-<p>当然， 你的redis连接和数据库连接(使用<a href="https://docs.sqlalchemy.org/en/13/core/connections.html">sqlalchemy</a>的定义方式)和上面的未必相同， 请根据自己的情况进行修改。</p>
-<p>万事俱备， 让我们运行spydy吧：</p>
+<p>当然， 你的redis连接和数据库连接(使用<a href="https://docs.sqlalchemy.org/en/13/core/connections.html">sqlalchemy</a>的定义方式)和上面的未必相同， 请根据自己的情况进行修改。<br />
+万事俱备， 让我们运行spydy吧：</p>
 <pre><code>$ spydy myconfig2.cfg
 
 Your pipeline looks like :
@@ -589,7 +600,7 @@ after_mutate: {'categories': '1,031,722', 'languages': '90', 'sites': '0'}
 </code></pre>
 <h2 id="whats-next">What's Next</h2>
 <ul>
-<li><a href="spydy_config.md">理解spydy的配置文件</a></li>
+<li><a href="../spydy_configs/">理解spydy的配置文件</a></li>
 <li><a href="../components/">理解spydy的组件</a></li>
 <li><a href="../logs/">使用spydy的日志工具</a></li>
 <li><a href="../error_handling/">spydy中的错误处理方式</a></li>
