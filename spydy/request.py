@@ -124,23 +124,23 @@ class AsyncHttpRequest(Request, AsyncComponent):
     async def request(self, url):
         asession = AsyncHTMLSession()
         response = await asession.request(
-                self._method,
-                url,
-                headers=self._headers,
-                proxies=self._proxies,
-                params=self._params,
-                data=self._data,
-                cookies=self._cookies,
-                files=self._files,
-                auth=self._auth,
-                timeout=self._timeout,
-                allow_redirects=self._allow_redirects,
-                hooks=self._hooks,
-                stream=self._stream,
-                verify=self._verify,
-                cert=self._cert,
-                json=self._json,
-            )
+            self._method,
+            url,
+            headers=self._headers,
+            proxies=self._proxies,
+            params=self._params,
+            data=self._data,
+            cookies=self._cookies,
+            files=self._files,
+            auth=self._auth,
+            timeout=self._timeout,
+            allow_redirects=self._allow_redirects,
+            hooks=self._hooks,
+            stream=self._stream,
+            verify=self._verify,
+            cert=self._cert,
+            json=self._json,
+        )
         return response
 
     def __call__(self, *args, **kwargs):
@@ -151,4 +151,3 @@ class AsyncHttpRequest(Request, AsyncComponent):
 
     def __str__(self):
         return self.__repr__()
-

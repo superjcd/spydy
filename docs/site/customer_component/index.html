@@ -56,6 +56,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -316,10 +321,41 @@
     
     <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
     
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        自定义组件
+        <span class="md-nav__icon md-icon"></span>
+      </label>
     
     <a href="./" class="md-nav__link md-nav__link--active">
       自定义组件
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    自定义异步组件
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
     
   </li>
 
@@ -360,15 +396,122 @@
               </div>
             
             
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    自定义异步组件
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content">
             <article class="md-content__inner md-typeset">
               
                 
                 
-                  <h1>自定义组件</h1>
-                
-                
+                <h1 id="_1">自定义组件</h1>
+<p>其实在<a href="../parsers/">自定义解析组件</a>中已经提及了定义自定义组件的方法， 大致的步骤如下：</p>
+<ul>
+<li>根据组件类型，继承一个抽象基类， 以规范组件的行为（子类需要实现特定的方法， 如下所示）spydy现有抽象基类有：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>抽象基类名称</th>
+<th>说明</th>
+<th>spydy默认返回类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>spydy.urls.Urls</td>
+<td>存储及提供url的抽象基类，子类需要实现如下方法：1 <code>pop</code>方法， 返回一个字符类型的url  2 <code>totoal</code>方法， 子类定义时需要带上@property装饰器， 因为spydy会把<code>total</code>当做属性来使用</td>
+<td><code>pop</code>返回字符串</td>
+</tr>
+<tr>
+<td>spydy.request.Request</td>
+<td>网路请求抽象基类， 子类需要实现如下方法： 1 <code>request</code> 方法</td>
+<td><a href="https://requests.readthedocs.io/en/master/api/#requests.Response">requests.Response</a>对象</td>
+</tr>
+<tr>
+<td>spydy.parsers.Parser</td>
+<td>解析基类， 子类需要实现如下方法： 1 <code>parse</code> 方法</td>
+<td>字典</td>
+</tr>
+<tr>
+<td>spydy.filters.Filter</td>
+<td>过滤基类， 子类需要实现如下方法： 1 <code>filter</code> 方法</td>
+<td>字典</td>
+</tr>
+<tr>
+<td>spydy.store.Store</td>
+<td>存储基类， 子类需要实现如下方法： 1 store 方法</td>
+<td>上一步结果</td>
+</tr>
+<tr>
+<td>spydy.logs.Log</td>
+<td>打印基类， 子类需要实现如下方法： 1 log 方法</td>
+<td>上一步结果</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>
+<p>在自定义组件的方法时， 最好输出与spydy的默认返回类型相同类型的结果， 以兼容spydy组件</p>
+</li>
+<li>
+<p>定义<code>__call__</code>方法和<code>__str__</code>方法， 具体参考<a href="../parsers/">自定义解析组件</a></p>
+</li>
+</ul>
+<p>然后在使用的时候， 将自定义组件定义在配置文件的[Pipeline]下即可，记得带上<code>file:</code>标签， 请参考<a href="../quickstart/">快速开始</a>。接着为我们的组件附上自定义参数， 遇到参数较为复杂的情况， 可以参考之前提到的网络请求组件<a href="../spydy_configs/">配置参数</a>配置<code>headers</code>参数的方式。</p>
+<h2 id="_2">自定义异步组件</h2>
+<p>因为spydy是通过协程来实现并发的， 如果想要尽可能地提升爬虫速度，可以自定义一个异步组件。不过需要指出的是， 影响爬虫速度最重要的是网络请求， spydy已经实现了相应的异步组件， 即<a href="../requests/">AsyncHttpRequest</a>； 其次是存储部分（不久也会提供）。因为上诉这些操作是涉及比较多的IO操作的。 这里作为演示， 我们来定义一个自定义异步组件：</p>
+<pre><code>from spydy.async_component import AsyncComponent
+import asyncio
+
+class MyIoOperation(AsyncComponent)
+    def __init__(self):
+        pass
+
+    async def operate(self, inofs):
+        await asyncio.sleep(1)
+        return infos
+
+    def __call__(self, *args, **kwargs):
+        return self.operate(*args, **kwargs)
+
+    def __repr__(self):
+        return self.__class__.__name__
+
+    def __str__(self):
+        return self.__repr__()
+
+</code></pre>
+<p>可以看到 ,  我们的 自定义异步组件<code>MyIoOperation</code>首先要继承了<code>AsyncComponent</code>。然后定义一个<code>async</code>方法， 这里是<code>operate</code>， 在这里处理涉及到IO的各种操作。总体来说非常简单。    </p>
+<p>但需要注意的是， 大多数情况下， 自己定义异步组件是难以提升效果的， 除非你的自定义组件涉及到了大量的IO操作， 类似请求网络以及存储这种过程。</p>
                 
               
               

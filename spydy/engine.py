@@ -7,7 +7,12 @@ from configparser import ConfigParser
 from requests.exceptions import RequestException
 from requests_html import HTML
 from .defaults import *
-from .exceptions import Exceptions_To_Handle, Exceptions_Of_Success
+from .exceptions import (
+    Exceptions_To_Handle,
+    Exceptions_To_Ignore,
+    Exceptions_Of_Success,
+    Exceptions_To_RunAgain,
+)
 from .utils import (
     class_dispatcher,
     linear_pipelinefunc,
@@ -34,7 +39,7 @@ class Engine:
         print_pipeline(self._pipeline)
 
     def run(self):
-        run_mode = self._configs["Globals"].get("run_mode", RUNMODE)
+        run_mode = self._configs["Globals"].get("run_mode")
         if run_mode == "once":
             self.run_once()
             print_msg(msg="Task Done", info_header="SUCCESS")
@@ -83,9 +88,27 @@ class Engine:
                 except Exceptions_To_Handle as e:
                     self._exceptions_records[type(e)] += 0
                     handle_exceptions(
-                        run_mode="once",
                         temp_results=self._temp_results,
                         pipleline=self._pipeline,
+                        recovery_type=self._configs["Globals"].get(
+                            "recovery_type", RECOVERY_TYPE
+                        ),
+                    )
+                    temp_result = None
+                except Exceptions_To_Ignore as e:
+                    self._exceptions_records[type(e)] += 0
+                    handle_exceptions(
+                        temp_results=self._temp_results,
+                        pipleline=self._pipeline,
+                        recovery_type="skip",
+                    )
+                    temp_result = None
+                except Exceptions_To_RunAgain as e:
+                    self._exceptions_records[type(e)] += 0
+                    handle_exceptions(
+                        temp_results=self._temp_results,
+                        pipleline=self._pipeline,
+                        recovery_type="url_back_last",
                     )
                     temp_result = None
                 self._temp_results[type(cur_step)] = temp_result
@@ -127,10 +150,28 @@ class Engine:
                 except Exceptions_To_Handle as e:
                     self._exceptions_records[type(e)] += 1
                     handle_exceptions(
-                        run_mode="async_once",
                         temp_results=self._temp_results,
                         pipleline=self._pipeline,
                         coroutine_id=_coroutine_id,
+                        recovery_type=self._configs["Globals"].get(
+                            "recovery_type", RECOVERY_TYPE
+                        ),
+                    )
+                    temp_result = None
+                except Exceptions_To_Ignore as e:
+                    self._exceptions_records[type(e)] += 0
+                    handle_exceptions(
+                        temp_results=self._temp_results,
+                        pipleline=self._pipeline,
+                        recovery_type="skip",
+                    )
+                    temp_result = None
+                except Exceptions_To_RunAgain as e:
+                    self._exceptions_records[type(e)] += 0
+                    handle_exceptions(
+                        temp_results=self._temp_results,
+                        pipleline=self._pipeline,
+                        recovery_type="url_back_last",
                     )
                     temp_result = None
                 self._temp_results[type(cur_step)] = temp_result
@@ -176,9 +217,7 @@ class Engine:
         )
         if statsReportLog_instance:
             ulrs_instance = get_step_from_pipeline(self._pipeline, step_type="url")
-            statsReportLog_instance._urls_instance = (
-                ulrs_instance  # TODO： exceptions records into here
-            )
+            statsReportLog_instance._urls_instance = ulrs_instance
             statsReportLog_instance.init()
 
     def close(self):

@@ -191,7 +191,6 @@ def get_config_ifexists(parser, section_name, setting_name):
 
 
 def handle_exceptions(
-    run_mode,
     temp_results,
     pipleline: List,
     coroutine_id=None,
@@ -208,13 +207,10 @@ def handle_exceptions(
       :handle_type: choose a way to deal with the exception when encountered an exception
     """
     check_recovery_type(recovery_type)
-    if run_mode == "once":
-        url_step = get_step_from_pipeline(pipleline, step_type="url")
-        if hasattr(url_step, "handle_exception"):
-            url = get_temp_result(type(url_step), temp_results, coroutine_id)
-            url_step.handle_exception(
-                recovery_type=recovery_type, url=url
-            )
+    url_step = get_step_from_pipeline(pipleline, step_type="url")
+    if hasattr(url_step, "handle_exception"):
+        url = get_temp_result(type(url_step), temp_results, coroutine_id)
+        url_step.handle_exception(recovery_type=recovery_type, url=url)
 
 
 def get_total_from_urls(urls_instance):

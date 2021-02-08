@@ -1,2 +1,2 @@
 class AsyncComponent(object):
-    Async =  True
+    Async = True

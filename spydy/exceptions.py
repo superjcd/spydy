@@ -46,6 +46,16 @@ class UrlCompleted(TaskDone):
 
 
 ##   Different kinds of erroneous exceptions
+class TaskIgnore(Exception):
+    """
+    Ignore the task
+    """
+
+
+class TaskRunAgain(Exception):
+    """
+    Run the task again
+    """
 
 
 class TaskWrong(Exception):
@@ -87,4 +97,6 @@ class DummyUrlNotGiven(Exception):
 ## Put together
 
 Exceptions_To_Handle = (TaskWrong,) + _requests_request_exceptions
+Exceptions_To_Ignore = (TaskIgnore,)
+Exceptions_To_RunAgain = (TaskRunAgain,)
 Exceptions_Of_Success = (UrlCompleted,)
