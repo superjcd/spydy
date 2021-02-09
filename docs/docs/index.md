@@ -2,7 +2,7 @@
 
 ---
 - [源码](https://github.com/superjcd/spydy)
-- [官方文档](https://superjcd.github.io/spydy/)
+- [文档](https://superjcd.github.io/spydy/)
 - [pypi](https://pypi.org/project/spydy)
 
 ---
@@ -26,6 +26,3 @@ spydy是一个非常轻量的爬虫框架。兼具高性能和易用性。支持
 ```
 $ pip install spydy
 ```
-
-## 源码位置
-👉  github项目地址: [spydy](https://github.com/superjcd/spydy)

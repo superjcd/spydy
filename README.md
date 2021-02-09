@@ -2,7 +2,7 @@
 
 ---
 - [源码](https://github.com/superjcd/spydy)
-- [官方文档](https://superjcd.github.io/spydy/)
+- [文档](https://superjcd.github.io/spydy/)
 - [pypi](https://pypi.org/project/spydy)
 
 ---
@@ -165,4 +165,4 @@ Tips:
    那么该组件就是支持异步的。
 ```
 
-👉 想要了解spydy的更多特性， 请移步[spydy官方文档](https://superjcd.github.io/spydy/).
+👉 想要了解spydy的更多特性， 请移步[spydy文档](https://superjcd.github.io/spydy/).

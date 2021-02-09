@@ -12,7 +12,11 @@ long_description_for_pypi = '''
 
 spydy is a light-weight high-level web-crawling framework for fast-devlopment and high performance, which is inspired by unix pipeline.
 
+---
+[Code](https://github.com/superjcd/spydy)
 
+[Document](https://superjcd.github.io/spydy/)
+---
 
 ## Install
 
