@@ -15,7 +15,6 @@ from .exceptions import (
 )
 from .utils import (
     class_dispatcher,
-    linear_pipelinefunc,
     print_pipeline,
     print_msg,
     parse_arguments,
@@ -38,17 +37,37 @@ class Engine:
         self.setup()
         print_pipeline(self._pipeline)
 
-    def run(self):
+    def run(self):  # TODO : exception hanler for success exception is not that good,
         run_mode = self._configs["Globals"].get("run_mode")
         if run_mode == "once":
-            self.run_once()
-            print_msg(msg="Task Done", info_header="SUCCESS")
+            try:
+                self.run_once()
+            except Exceptions_Of_Success as e:
+                print_msg(
+                    msg="Task Done, Details:" + str(e),
+                    info_header="SUCCESS",
+                    verbose=True,
+                )
         if run_mode == "forever":
-            self.run_forever()
-            print_msg(msg="Task Done", info_header="SUCCESS")
+            try:
+                self.run_forever()
+            except Exceptions_Of_Success as e:
+                print_msg(
+                    msg="Task Done, Details:" + str(e),
+                    info_header="SUCCESS",
+                    verbose=True,
+                )
+
         if run_mode == "async_once":
-            self.run_async_once()
-            print_msg(msg="Task Done", info_header="SUCCESS")
+            try:
+                self.run_async_once()
+            except Exceptions_Of_Success as e:
+                print_msg(
+                    msg="Task Done, Details:" + str(e),
+                    info_header="SUCCESS",
+                    verbose=True,
+                )
+
         if run_mode == "async_forever":
             nworkers = int(self._configs["Globals"].get("nworkers", NWORKERS))
             loop = asyncio.get_event_loop()
@@ -66,9 +85,6 @@ class Engine:
                         raise
 
         self.close()
-
-    # def run_once(self):
-    #     return reduce(linear_pipelinefunc, self._pipeline)
 
     def run_once(self):
         final_result = None

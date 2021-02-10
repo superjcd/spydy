@@ -11,10 +11,6 @@ class Cleaner(object):
 
 class Parser(abc.ABC):
     @abc.abstractmethod
-    def rules(self):
-        ...
-
-    @abc.abstractmethod
     def parse(self, response):
         ...
 
@@ -38,6 +34,7 @@ class XpathParser(Parser):
             _ = self.rules()
             if self._rules:
                 for item, rule in self._rules.items():
+                    breakpoint()
                     parsed = html.xpath(rule, first=True)
                     clean_parsed = Cleaner.clean(parsed) if parsed else None
                     self._result[item] = clean_parsed
