@@ -252,7 +252,7 @@
 
   <li class="md-nav__item">
     <a href="../urls/" class="md-nav__link">
-      urls获取组件
+      url获取组件
     </a>
   </li>
 
@@ -475,7 +475,7 @@
                 
                 
                 <h1 id="spydy">Spydy中的错误处理机制</h1>
-<p>你不能指望爬虫永远不会出错， 所以良好的错误处理机制对于爬虫而言是必须的。在配置文件中的<a href="../spydy_configs/#Globals">全局参数</a>设置中有提到过<code>recovery_type</code>参数的设置， spydy默认的<code>recovery_type</code>是<code>url_back_last</code>， 意味着爬取出错的url会被默认放到队列的最后， 然后等待被再次执行。</p>
+<p>你不能指望爬虫永远不会出错， 所以良好的错误处理机制对于爬虫而言是必须的。在配置文件中的<a href="../spydy_configs/#Globals">全局参数</a>设置中有提到过<code>recovery_type</code>参数的设置， spydy默认的<code>recovery_type</code>是<code>url_back_end</code>， 意味着爬取出错的url会被默认放到队列的最后， 然后等待被再次执行。</p>
 <p>除了定义全局性的恢复机制（recovery_type），有些情景下我们希望针对个每个目标url实行不同的处理机制， 比如：</p>
 <ul>
 <li>重跑任务</li>

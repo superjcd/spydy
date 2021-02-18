@@ -311,7 +311,7 @@
 
   <li class="md-nav__item">
     <a href="../urls/" class="md-nav__link">
-      urls获取组件
+      url获取组件
     </a>
   </li>
 
@@ -496,18 +496,18 @@
 <p><strong>recovery_type</strong>: 当程序报错的时候， <code>urls</code><a href="../components/">组件</a>处理当前url的方式， 目前支持：</p>
 <ul>
 <li><code>skip</code>: 不做任何事情， 意味着发生错误的url不会被执行第二次， 通常不是理想的选择</li>
-<li><code>url_back_last</code>: 把出错的url放回队列的最后， 当然前提是<code>urls</code>组件是有序的队列， 例如<code>RedisListUrls</code></li>
-<li><code>url_back_first</code>: 把出错的url放回队列的z最前面， 同样，前提是<code>urls</code>组件是有序的队列</li>
+<li><code>url_back_end</code>: 把出错的url放回队列的最后， 当然前提是<code>urls</code>组件是有序的队列， 例如<code>RedisListUrls</code></li>
+<li><code>url_back_front</code>: 把出错的url放回队列的z最前面， 同样，前提是<code>urls</code>组件是有序的队列</li>
 </ul>
 <h2 id="pipeline">Pipeline</h2>
 <p>在这里我们需要定义我们的整个工作流， 再强调一次， Pipeline中的组件是按照定义的先后顺序有序执行的。定义的方式通常是<code>步骤名 = 组件名</code>的形式。<br />
 这里的步骤名称可以是任意的， 没有特别的限制， 但是建议使用符合步骤类别的名称， 比如<code>urls = RedisUrlsList</code>的方式，虽然可以不使用<code>urls</code>作为步骤的名称， 但是很显然， 使用urls作为名称能够使工作流更加清晰易懂。<br />
 在<a href="quickstart.md/#复杂一点的例子">快速开始的复杂的例子</a>中有一个组件是这样配置的<code>filter = file:mypkg.filters.Myfilter</code>, 注意这里的参数值带有一个<code>file:</code>标签， 意味着<code>mypkg.filters.Myfilter</code>就是自定义组件。所以用户想使用自己的组件的时候（尤其是定义网页解析组件时）， 只要带上<code>file:</code>标签spydy就能识别。</p>
 <h2 id="_1">组件参数配置</h2>
-<p>组件的参数在这里配置， 由于组件可能会是多个， 所以需要为多个组件配置参数， 配置方式是: 用组件名作为section名（参考<a href="../quickstart/">快速开始</a>）， 然后在该section下配置组件的参数， 如果没有为PipeLine中的组件配置参数的话， 那么spydy将会使用组件的默认参数。<br />
+<p>组件的参数在这里配置， 由于组件可能会是多个， 所以需要为多个组件配置参数， 配置方式是: 用Pipeline中定义的步骤名作为section名（参考<a href="../quickstart/">快速开始</a>）， 然后在该section下配置组件的参数， 如果没有为PipeLine中的组件配置参数的话， 那么spydy将会使用组件的默认参数。<br />
 <strong>注意</strong>：
-  在配置参数的时候，除了可以使用字符串作为参数值， 同样也可以使用<code>file:</code>标签来实现更为复杂的赋值， 比如在配置网络请求组件<code>HttpRequest</code>的请求头时， 请求头可能会很大， 所以不适合直接在配置文件中定义。那么我们可以这样配置：</p>
-<pre><code>[HttpRequest]
+  在配置参数的时候，除了可以使用字符串作为参数值， 同样也可以使用<code>file:</code>标签(注意：<code>file</code>和<code>:</code>是没有空格的)来实现更为复杂的赋值， 比如在配置网络请求组件<code>HttpRequest</code>的请求头时， 请求头可能会很大， 所以不适合直接在配置文件中定义。那么我们可以这样配置：</p>
+<pre><code>[request]
 headers = file:myheaders.headers
 </code></pre>
 <p><code>myheaders</code>为当前目录下的python(myheaders.py)文件(当然如果把所有的自定义文件放在一个目录下的话， 参数定义就是<code>mypkg.myheaders.headers</code>)， <code>headers</code>是你准备的请求头， 比如：</p>
@@ -523,7 +523,7 @@ headers = file:myheaders.headers
 from spydy.utils import check_configs
 
 configs = {
-    &quot;Globals&quot;: {&quot;run_mode&quot;: &quot;async_forever&quot;, &quot;nworkers&quot;: &quot;4&quot;, &quot;recovery_type&quot;:&quot;url_back_last&quot;},
+    &quot;Globals&quot;: {&quot;run_mode&quot;: &quot;async_forever&quot;, &quot;nworkers&quot;: &quot;4&quot;, &quot;recovery_type&quot;:&quot;url_back_end&quot;},
     &quot;PipeLine&quot;: {
         &quot;url&quot;: &quot;DummyUrls&quot;,
         &quot;request&quot;: &quot;AsyncHttpRequest&quot;,
@@ -531,8 +531,8 @@ configs = {
         &quot;log&quot; : &quot;MessageLog&quot;,         
         &quot;store&quot;: &quot;CsvStore&quot;,
     },
-    &quot;DummyUrls&quot;: {&quot;url&quot;: &quot;https://dmoz-odp.org/, &quot;repeat&quot;:&quot;10&quot;},
-    &quot;CsvStore&quot;: {&quot;file_name&quot;: &quot;result.csv&quot;},
+    &quot;url&quot;: {&quot;url&quot;: &quot;https://dmoz-odp.org/, &quot;repeat&quot;:&quot;10&quot;},
+    &quot;store&quot;: {&quot;file_name&quot;: &quot;result.csv&quot;},
 }
 
 check_configs(configs)
