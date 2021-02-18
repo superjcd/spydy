@@ -194,7 +194,7 @@ def handle_exceptions(
     temp_results,
     pipleline: List,
     coroutine_id=None,
-    recovery_type="url_back_last",
+    recovery_type="url_back_end",
 ):
     """
     Handle exception during workflow by handle_type

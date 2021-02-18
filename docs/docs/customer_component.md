@@ -25,7 +25,7 @@
 因为spydy是通过协程来实现并发的， 如果想要尽可能地提升爬虫速度，可以自定义一个异步组件。不过需要指出的是， 影响爬虫速度最重要的是网络请求， spydy已经实现了相应的异步组件， 即[AsyncHttpRequest](requests.md)； 其次是存储部分（不久也会提供）。因为上诉这些操作是涉及比较多的IO操作的。 这里作为演示， 我们来定义一个自定义异步组件：
 
 ```
-from spydy.async_component import AsyncComponent
+from spydy.component import AsyncComponent
 import asyncio
 
 class MyIoOperation(AsyncComponent)
@@ -39,11 +39,6 @@ class MyIoOperation(AsyncComponent)
     def __call__(self, *args, **kwargs):
         return self.operate(*args, **kwargs)
 
-    def __repr__(self):
-        return self.__class__.__name__
-
-    def __str__(self):
-        return self.__repr__()
 
 ```
 

@@ -124,7 +124,7 @@ class Engine:
                     handle_exceptions(
                         temp_results=self._temp_results,
                         pipleline=self._pipeline,
-                        recovery_type="url_back_last",
+                        recovery_type="url_back_end",
                     )
                     temp_result = None
                 self._temp_results[type(cur_step)] = temp_result
@@ -187,7 +187,7 @@ class Engine:
                     handle_exceptions(
                         temp_results=self._temp_results,
                         pipleline=self._pipeline,
-                        recovery_type="url_back_last",
+                        recovery_type="url_back_end",
                     )
                     temp_result = None
                 self._temp_results[type(cur_step)] = temp_result
@@ -213,8 +213,8 @@ class Engine:
     def setup(self):
         for k, v in self._configs["PipeLine"].items():
             step_class = class_dispatcher(v)
-            if v in self._configs:
-                arguments = parse_arguments(self._configs[v])
+            if k in self._configs:
+                arguments = parse_arguments(self._configs[k])
                 try:
                     self._pipeline.append(step_class(**arguments))
                 except TypeError as e:

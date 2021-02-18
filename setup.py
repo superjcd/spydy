@@ -3,7 +3,7 @@ from codecs import open
 from os import path
 
 
-__version__ = '0.1.7'
+__version__ = '0.1.8'
 
 here = path.abspath(path.dirname(__file__))
 
@@ -13,9 +13,11 @@ long_description_for_pypi = '''
 spydy is a light-weight high-level web-crawling framework for fast-devlopment and high performance, which is inspired by unix pipeline.
 
 ---
+
 [Code](https://github.com/superjcd/spydy)
 
 [Document](https://superjcd.github.io/spydy/)
+
 ---
 
 ## Install
@@ -50,11 +52,11 @@ parser = DmozParser
 log = MessageLog
 store = CsvStore
 
-[DummyUrls]
+[url]
 url = https://dmoz-odp.org
 repeat = 10
 
-[CsvStore]
+[store]
 file_name = result.csv
 ```
 
@@ -78,11 +80,11 @@ myconfig = {
     "log": "MessageLog"
     "store": "CsvStore"
   },
-  "DummyUrls":{
+  "url":{
     "url":"https://dmoz-odp.org",
     "repeate":"10"
   },
-  "CsvStore":{
+  "store":{
     "file_name":"result.csv"
   }
 }

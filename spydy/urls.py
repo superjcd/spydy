@@ -2,12 +2,13 @@ import abc
 import os
 import redis
 from .exceptions import UrlCompleted, UnExpectedHandleType, DummyUrlNotGiven
+from .component import Component
 
 
 __all__ = ["DummyUrls", "FileUrls", "RedisListUrls", "RedisSetUrls"]
 
 
-class Urls(abc.ABC):
+class Urls(Component):
     @abc.abstractmethod
     def pop(self):
         ...
@@ -15,6 +16,13 @@ class Urls(abc.ABC):
     @abc.abstractmethod
     def total(self):
         ...
+
+    @abc.abstractmethod
+    def handle_exception(self):
+        ...
+
+    def __call__(self, *args, **kwargs):
+        return self.pop(*args, **kwargs)
 
 
 class DummyUrls(Urls):
@@ -27,7 +35,7 @@ class DummyUrls(Urls):
             raise DummyUrlNotGiven
         self._url = url
         self._repeat = int(repeat)
-        self._urls = (self._url for _ in range(self._repeat))
+        self._urls = [self._url for _ in range(self._repeat)]
     
     @property
     def total(self):
@@ -35,32 +43,46 @@ class DummyUrls(Urls):
 
     def pop(self):
         try:
-            return next(self._urls)
-        except StopIteration:
-            raise UrlCompleted("No more item in DummyUrls")
+            item = self._urls.pop(0)  # pop first out
+        except IndexError:
+            import sys
 
-    def __call__(self, *args, **kwargs):
-        return self.pop(*args, **kwargs)
+            sys.tracebacklimit = 0
+            raise UrlCompleted(
+                "No more dummy urls"
+                )
+        return item
 
-    def __repr__(self):
-        return self.__class__.__name__
+    def add_to_end(self, url):
+        self._urls.append(url)
+    
+    def add_to_front(self, url):
+        self._urls.insert(0, url)
 
-    def __str__(self):
-        return self.__repr__()
+    def handle_exception(self, recovery_type, url):
+        if recovery_type == "url_back_end":
+            self.add_to_end(url)
+        elif recovery_type == "url_back_front":
+            self.add_to_front(url)
+        elif recovery_type == "skip": # do nothing if skip 
+            pass
+        else:
+            raise UnExpectedHandleType
+        return None
 
 
 class FileUrls(Urls):
     def __init__(self, file_name=None):
         self._filename = file_name
-        self._lines = self._readlines(file_name)
+        self._urls = self._readurls(file_name)
 
     @property
     def total(self):
-        return len(self._lines)
+        return len(self._urls)
 
     def pop(self):
         try:
-            item = self._lines.pop(0)  # pop first out
+            item = self._urls.pop(0)  # pop first out
         except IndexError:
             import sys
 
@@ -72,21 +94,30 @@ class FileUrls(Urls):
             )
         return item
 
-    def _readlines(self, file_name):
+
+    def _readurls(self, file_name):
         if not os.path.exists(file_name):
             raise FileExistsError("No such file: {!r}".format(file_name))
         with open(file_name, "r", encoding="utf-8") as f:
             lines = f.readlines()
         return [line.strip() for line in lines]
 
-    def __call__(self, *args, **kwargs):
-        return self.pop(*args, **kwargs)
+    def add_to_end(self, url):
+        self._urls.append(url)
+    
+    def add_to_front(self, url):
+        self._urls.insert(0, url)
 
-    def __repr__(self):
-        return self.__class__.__name__
-
-    def __str__(self):
-        return self.__repr__()
+    def handle_exception(self, recovery_type, url):
+        if recovery_type == "url_back_end":
+            self.add_to_end(url)
+        elif recovery_type == "url_back_front":
+            self.add_to_front(url)
+        elif recovery_type == "skip": # do nothing if skip 
+            pass
+        else:
+            raise UnExpectedHandleType
+        return None
 
 
 class RedisSetUrls(Urls):
@@ -122,9 +153,9 @@ class RedisSetUrls(Urls):
         return self._conn.sadd(self._set_name, item)
 
     def handle_exception(self, recovery_type, url):
-        if recovery_type == "url_back_last":
+        if recovery_type == "url_back_end":
             self.sadd(url)
-        elif recovery_type == "url_back_first":
+        elif recovery_type == "url_back_front":
             self.sadd(url)
         elif recovery_type == "skip": 
             pass
@@ -139,14 +170,6 @@ class RedisSetUrls(Urls):
             )
         )
 
-    def __call__(self, *args, **kwargs):
-        return self.pop(*args, **kwargs)
-
-    def __repr__(self):
-        return self.__class__.__name__
-
-    def __str__(self):
-        return self.__repr__()
 
 
 class RedisListUrls(Urls):
@@ -185,9 +208,9 @@ class RedisListUrls(Urls):
         return self._conn.lpush(self._list_name, item)
 
     def handle_exception(self, recovery_type, url):
-        if recovery_type == "url_back_last":
+        if recovery_type == "url_back_end":
             self.rpush(url)
-        elif recovery_type == "url_back_first":
+        elif recovery_type == "url_back_front":
             self.lpush(url)
         elif recovery_type == "skip": # do nothing if skip 
             pass
@@ -201,15 +224,6 @@ class RedisListUrls(Urls):
                 self._list_name
             )
         )
-
-    def __call__(self, *args, **kwargs):
-        return self.pop(*args, **kwargs)
-
-    def __repr__(self):
-        return self.__class__.__name__
-
-    def __str__(self):
-        return self.__repr__()
 
 
 

@@ -7,7 +7,7 @@ nav:
     - spydy配置文件: spydy_configs.md
     - spydy组件: 
       - 组件概述: components.md
-      - urls获取组件: urls.md
+      - url获取组件: urls.md
       - 网络访问组件: requests.md
       - 请求解析组件: parsers.md
       - 结果过滤组件: filters.md

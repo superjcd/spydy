@@ -24,8 +24,8 @@ spydy的配置文件是通过使用python自带的[configparser](https://docs.py
 **recovery_type**: 当程序报错的时候， `urls`[组件](components.md)处理当前url的方式， 目前支持：
 
  - `skip`: 不做任何事情， 意味着发生错误的url不会被执行第二次， 通常不是理想的选择
- - `url_back_last`: 把出错的url放回队列的最后， 当然前提是`urls`组件是有序的队列， 例如`RedisListUrls`
- - `url_back_first`: 把出错的url放回队列的z最前面， 同样，前提是`urls`组件是有序的队列
+ - `url_back_end`: 把出错的url放回队列的最后， 当然前提是`urls`组件是有序的队列， 例如`RedisListUrls`
+ - `url_back_front`: 把出错的url放回队列的z最前面， 同样，前提是`urls`组件是有序的队列
 
 
 ## Pipeline
@@ -34,11 +34,11 @@ spydy的配置文件是通过使用python自带的[configparser](https://docs.py
 在[快速开始的复杂的例子](quickstart.md/#复杂一点的例子)中有一个组件是这样配置的`filter = file:mypkg.filters.Myfilter`, 注意这里的参数值带有一个`file:`标签， 意味着`mypkg.filters.Myfilter`就是自定义组件。所以用户想使用自己的组件的时候（尤其是定义网页解析组件时）， 只要带上`file:`标签spydy就能识别。
 
 ## 组件参数配置
-组件的参数在这里配置， 由于组件可能会是多个， 所以需要为多个组件配置参数， 配置方式是: 用组件名作为section名（参考[快速开始](quickstart.md)）， 然后在该section下配置组件的参数， 如果没有为PipeLine中的组件配置参数的话， 那么spydy将会使用组件的默认参数。  
+组件的参数在这里配置， 由于组件可能会是多个， 所以需要为多个组件配置参数， 配置方式是: 用Pipeline中定义的步骤名作为section名（参考[快速开始](quickstart.md)）， 然后在该section下配置组件的参数， 如果没有为PipeLine中的组件配置参数的话， 那么spydy将会使用组件的默认参数。  
 **注意**：
-  在配置参数的时候，除了可以使用字符串作为参数值， 同样也可以使用`file:`标签来实现更为复杂的赋值， 比如在配置网络请求组件`HttpRequest`的请求头时， 请求头可能会很大， 所以不适合直接在配置文件中定义。那么我们可以这样配置：
+  在配置参数的时候，除了可以使用字符串作为参数值， 同样也可以使用`file:`标签(注意：`file`和`:`是没有空格的)来实现更为复杂的赋值， 比如在配置网络请求组件`HttpRequest`的请求头时， 请求头可能会很大， 所以不适合直接在配置文件中定义。那么我们可以这样配置：
 ```
-[HttpRequest]
+[request]
 headers = file:myheaders.headers
 ```
 `myheaders`为当前目录下的python(myheaders.py)文件(当然如果把所有的自定义文件放在一个目录下的话， 参数定义就是`mypkg.myheaders.headers`)， `headers`是你准备的请求头， 比如：
@@ -61,7 +61,7 @@ from spydy.engine import Engine
 from spydy.utils import check_configs
 
 configs = {
-    "Globals": {"run_mode": "async_forever", "nworkers": "4", "recovery_type":"url_back_last"},
+    "Globals": {"run_mode": "async_forever", "nworkers": "4", "recovery_type":"url_back_end"},
     "PipeLine": {
         "url": "DummyUrls",
         "request": "AsyncHttpRequest",
@@ -69,8 +69,8 @@ configs = {
         "log" : "MessageLog",         
         "store": "CsvStore",
     },
-    "DummyUrls": {"url": "https://dmoz-odp.org/, "repeat":"10"},
-    "CsvStore": {"file_name": "result.csv"},
+    "url": {"url": "https://dmoz-odp.org/, "repeat":"10"},
+    "store": {"file_name": "result.csv"},
 }
 
 check_configs(configs)

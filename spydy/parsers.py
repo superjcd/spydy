@@ -1,6 +1,7 @@
 import abc
 from requests_html import HTML
 from .exceptions import TaskWrong
+from .component import Component
 
 
 class Cleaner(object):
@@ -9,10 +10,13 @@ class Cleaner(object):
         return text.strip()
 
 
-class Parser(abc.ABC):
+class Parser(Component):
     @abc.abstractmethod
     def parse(self, response):
         ...
+
+    def __call__(self, *args, **kwargs):
+        return self.parse(*args, **kwargs)
 
 
 class XpathParser(Parser):
@@ -34,21 +38,11 @@ class XpathParser(Parser):
             _ = self.rules()
             if self._rules:
                 for item, rule in self._rules.items():
-                    breakpoint()
                     parsed = html.xpath(rule, first=True)
                     clean_parsed = Cleaner.clean(parsed) if parsed else None
                     self._result[item] = clean_parsed
                 return self._result
             return {}
-
-    def __call__(self, *args, **kwargs):
-        return self.parse(*args, **kwargs)
-
-    def __repr__(self):
-        return self.__class__.__name__
-
-    def __str__(self):
-        return self.__repr__()
 
 
 class CssParser(Parser):
@@ -76,15 +70,6 @@ class CssParser(Parser):
                 return self._result
             return {}
 
-    def __call__(self, *args, **kwargs):
-        return self.parse(*args, **kwargs)
-
-    def __repr__(self):
-        return self.__class__.__name__
-
-    def __str__(self):
-        return self.__repr__()
-
 
 # Parser for tests
 class DmozParser(XpathParser):
@@ -93,8 +78,8 @@ class DmozParser(XpathParser):
     sites = "//div[@class='sites']/h3/text()[1]"
     languages = "//div[@class='languages']/h3/text()[1]"
 
-    def __repr__(self):
-        return self.__class__.__name__
+    # def __repr__(self):
+    #     return self.__class__.__name__
 
-    def __str__(self):
-        return self.__repr__()
+    # def __str__(self):
+    #     return self.__repr__()

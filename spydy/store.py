@@ -3,7 +3,7 @@ import csv
 import asyncio
 from sqlalchemy import create_engine, MetaData, Table
 from threading import RLock
-from .async_component import AsyncComponent
+from .component import Component, AsyncComponent
 from typing import List
 
 # from sqlalchemy.ext.asyncio import create_async_engine
@@ -11,10 +11,13 @@ from typing import List
 __all__ = ["CsvStore", "AsyncCsvStore", "DbStore", "DbManyStore"]
 
 
-class Store(abc.ABC):
+class Store(Component):
     @abc.abstractmethod
     def store(self):
         ...
+
+    def __call__(self, *args, **kwargs):
+        return self.store(*args, **kwargs)
 
 
 class CsvStore(Store):
@@ -29,15 +32,6 @@ class CsvStore(Store):
                 writer.writerow(items)
             return items
 
-    def __call__(self, *args, **kwargs):
-        return self.store(*args, **kwargs)
-
-    def __repr__(self):
-        return self.__class__.__name__
-
-    def __str__(self):
-        return self.__repr__()
-
 
 class AsyncCsvStore(Store, AsyncComponent):
     def __init__(self, file_name):
@@ -51,15 +45,6 @@ class AsyncCsvStore(Store, AsyncComponent):
             with await asyncio.Lock():
                 writer.writerow(items)
         return items
-
-    def __call__(self, *args, **kwargs):
-        return self.store(*args, **kwargs)
-
-    def __repr__(self):
-        return self.__class__.__name__
-
-    def __str__(self):
-        return self.__repr__()
 
 
 dblock = RLock()
@@ -79,15 +64,6 @@ class DbStore(Store):
         dblock.release()
         return items
 
-    def __call__(self, *args, **kwargs):
-        return self.store(*args, **kwargs)
-
-    def __repr__(self):
-        return self.__class__.__name__
-
-    def __str__(self):
-        return self.__repr__()
-
 
 class DbManyStore(Store):
     def __init__(self, connection_url=None, table_name=None):
@@ -102,15 +78,6 @@ class DbManyStore(Store):
         self.engine.execute(self.metadata.tables[self._table_name].insert(), items)
         dblock.release()
         return items
-
-    def __call__(self, *args, **kwargs):
-        return self.store(*args, **kwargs)
-
-    def __repr__(self):
-        return self.__class__.__name__
-
-    def __str__(self):
-        return self.__repr__()
 
 
 class AsyncDbStore(Store, AsyncComponent):

@@ -22,10 +22,10 @@ request = HttpRequest
 parser = DmozParser
 store = CsvStore
 
-[FileUrls]
+[url]
 file_name = urls.txt
 
-[CsvStore]
+[store]
 file_name = dmoz.csv
 ```
 
@@ -50,11 +50,11 @@ FileUrls -> HttpRequest -> DmozParser -> CsvStore
 
 **注意**： 在pipeline中， 每个步骤的产出就是下一步的输入。
 
-当然， 每个步骤可能需要一些参数， 比如FileUrls需要`file_name`参数， 所以需要单独地在[FileUrls]下面配置好`file_name`参数。  
+当然， 每个步骤可能需要一些参数， 比如FileUrls需要`file_name`参数， 所以需要单独地在[url]下面配置好`file_name`参数(配置文件中的section名称即为P0ipeline中的步骤名)。  
 配置文件中[Globals]下面可以设置spydy的全局参数， 比如这里的`run_mode`被设置了`once`， 所以在上面例子中spydy只会将整个工作流执行一次。
 
 ## 一个复杂点的例子
-在真实开发开发场景中， 我们希望爬虫能够爬的快(支持并发)， 同时兼容用户的自定模块。作为演示， 我们用spydy来开发一个稍微复杂一点的爬虫应用：
+在真实开发开发场景中， 我们希望爬虫能够支持并发， 同时兼容用户的自定模块。作为演示， 我们用spydy来开发一个稍微复杂一点的爬虫应用：
 
 * 准备一个可以访问的redis键值存储数据库，当然我们需要在Redis中写入一些URL：  
 
@@ -91,7 +91,7 @@ class Myfilter(CommonFilter):
 
 ```
 
-最后， 准备好我们的spydy配置文件(myconfig2.cfg)：
+最后， 准备好我们的spydy配置文件(myconfig2.cfg, 与mypkg文件夹处于同一级目录)：
 ```
 [Globals]
 run_mode = async_forever
@@ -104,12 +104,12 @@ parser = DmozParser
 filter = file:mypkg.filters.Myfilter
 store = DbStore
 
-[RedisListUrls]
+[url]
 host = localhost
 port = 6379
 list_name = /spider/testurls
 
-[DbStore]
+[store]
 connection_url = sqlite:///./tests/files/dmoz.db
 table_name = stats
 ```

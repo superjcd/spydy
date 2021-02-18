@@ -1,6 +1,7 @@
 import abc
 import sys
 import time
+from .component import Component
 from .exceptions import UrlsStepNotFound
 from .utils import (
     print_msg,
@@ -12,10 +13,13 @@ from .utils import (
 __all__ = ["SimplePrintLog", "MessageLog", "StatsReportLog"]
 
 
-class Log(abc.ABC):
+class Log(Component):
     @abc.abstractmethod
     def log(self):
         ...
+
+    def __call__(self, *args, **kwargs):
+        return self.log(*args, **kwargs)
 
 
 class SimplePrintLog(Log):
@@ -26,15 +30,6 @@ class SimplePrintLog(Log):
         print(items)
         return items
 
-    def __call__(self, *args, **kwargs):
-        return self.log(*args, **kwargs)
-
-    def __repr__(self):
-        return self.__class__.__name__
-
-    def __str__(self):
-        return self.__repr__()
-
 
 class MessageLog(Log):
     def __init__(self, info_header="INFO", verbose=False):
@@ -44,15 +39,6 @@ class MessageLog(Log):
     def log(self, items: dict):
         print_msg(msg=items, info_header=self._info_header, verbose=self._verbose)
         return items
-
-    def __call__(self, *args, **kwargs):
-        return self.log(*args, **kwargs)
-
-    def __repr__(self):
-        return self.__class__.__name__
-
-    def __str__(self):
-        return self.__repr__()
 
 
 class StatsReportLog(Log):
@@ -90,12 +76,3 @@ class StatsReportLog(Log):
             self._stats["Eta"] = eta
             print_stats_log(self._stats)
         return items
-
-    def __call__(self, *args, **kwargs):
-        return self.log(*args, **kwargs)
-
-    def __repr__(self):
-        return self.__class__.__name__
-
-    def __str__(self):
-        return self.__repr__()

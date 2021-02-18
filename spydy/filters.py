@@ -1,12 +1,16 @@
 import abc
 import copy
 from requests_html import HTML
+from .component import Component
 
 
-class Filter(abc.ABC):
+class Filter(Component):
     @abc.abstractmethod
     def filter(self, to_filter: dict):
         ...
+
+    def __call__(self, *args, **kwargs):
+        return self.filter(*args, **kwargs)
 
 
 class CommonFilter(Filter):
@@ -60,12 +64,3 @@ class CommonFilter(Filter):
                             )
                         )
             return self._outputs
-
-    def __call__(self, *args, **kwargs):
-        return self.filter(*args, **kwargs)
-
-    def __repr__(self):
-        return self.__class__.__name__
-
-    def __str__(self):
-        return self.__repr__()

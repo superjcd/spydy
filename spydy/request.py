@@ -2,15 +2,18 @@ import abc
 import aiohttp
 import requests
 from requests_html import HTML, AsyncHTMLSession
-from .async_component import AsyncComponent
+from .component import Component, AsyncComponent
 
 __all__ = ["HttpRequest", "AsyncHttpRequest"]
 
 
-class Request(abc.ABC):
+class Request(Component):
     @abc.abstractmethod
     def request(self):
         ...
+
+    def __call__(self, *args, **kwargs):
+        return self.request(*args, **kwargs)
 
 
 class HttpRequest(Request):
@@ -73,15 +76,6 @@ class HttpRequest(Request):
                     json=self._json,
                 )
 
-    def __call__(self, *args, **kwargs):
-        return self.request(*args, **kwargs)
-
-    def __repr__(self):
-        return self.__class__.__name__
-
-    def __str__(self):
-        return self.__repr__()
-
 
 class AsyncHttpRequest(Request, AsyncComponent):
     def __init__(
@@ -142,12 +136,3 @@ class AsyncHttpRequest(Request, AsyncComponent):
             json=self._json,
         )
         return response
-
-    def __call__(self, *args, **kwargs):
-        return self.request(*args, **kwargs)
-
-    def __repr__(self):
-        return self.__class__.__name__
-
-    def __str__(self):
-        return self.__repr__()

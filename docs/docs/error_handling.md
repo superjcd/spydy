@@ -1,6 +1,6 @@
 # Spydy中的错误处理机制
 
-你不能指望爬虫永远不会出错， 所以良好的错误处理机制对于爬虫而言是必须的。在配置文件中的[全局参数](spydy_configs.md#Globals)设置中有提到过`recovery_type`参数的设置， spydy默认的`recovery_type`是`url_back_last`， 意味着爬取出错的url会被默认放到队列的最后， 然后等待被再次执行。
+你不能指望爬虫永远不会出错， 所以良好的错误处理机制对于爬虫而言是必须的。在配置文件中的[全局参数](spydy_configs.md#Globals)设置中有提到过`recovery_type`参数的设置， spydy默认的`recovery_type`是`url_back_end`， 意味着爬取出错的url会被默认放到队列的最后， 然后等待被再次执行。
 
 除了定义全局性的恢复机制（recovery_type），有些情景下我们希望针对个每个目标url实行不同的处理机制， 比如：
 
