@@ -21,7 +21,16 @@ _requests_request_exceptions = (
 )
 
 
-##   Successful Exceptions
+class ConfigTypeNotSupported:
+    ...
+
+
+class ConfigrNotGiven(Exception):
+    pass
+
+
+class WrongSpydyPipeline(Exception):
+    pass
 
 
 class TaskDone(Exception):

@@ -67,31 +67,19 @@ file_name = result.csv
 ```
 from spydy.engine import Engine
 from spydy.utils import check_configs
+from spydy import urls, request, parsers, logs, store
 
 myconfig = {
-  "Globals":{
-     "run_mode": "async_forever",
-     "nworkers": "4"
- },
-  "PipeLine":{
-    "url":"DummyUrls",
-    "request": "AsyncHttpRequest",
-    "parser": "DmozParser",
-    "log": "MessageLog"
-    "store": "CsvStore"
-  },
-  "url":{
-    "url":"https://dmoz-odp.org",
-    "repeate":"10"
-  },
-  "store":{
-    "file_name":"result.csv"
-  }
-}
-
+    "Globals":{
+        "run_mode": "async_forever",
+        "nworkers": "4"
+    },
+    "PipeLine":[urls.DummyUrls(url="https://dmoz-odp.org", repeat=10),
+                request.AsyncHttpRequest(), parsers.DmozParser(), logs.MessageLog(), store.CsvStore(file_name=FILE_NAME)]
+    }
 
 chech_configs(myconfig)
-spider = Engine(myconfig)
+spider = Engine.from_dict(myconfig)
 spider.run()
 ```
 

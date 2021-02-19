@@ -8,7 +8,7 @@ from typing import List
 
 # from sqlalchemy.ext.asyncio import create_async_engine
 
-__all__ = ["CsvStore", "AsyncCsvStore", "DbStore", "DbManyStore"]
+__all__ = ["Store", "CsvStore", "AsyncCsvStore", "DbStore", "DbManyStore"]
 
 
 class Store(Component):
@@ -38,11 +38,11 @@ class AsyncCsvStore(Store, AsyncComponent):
         self._filename = file_name
 
     async def store(self, items):
-        items = await items
+        items = items
         fileds = list(items)
         with open(self._filename, "a+", newline="") as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=fileds)
-            with await asyncio.Lock():
+            async with asyncio.Lock():
                 writer.writerow(items)
         return items
 

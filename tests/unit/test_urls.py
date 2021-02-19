@@ -3,7 +3,7 @@ from spydy.exceptions import UrlCompleted
 import pytest
 
 
-class TestFileUrls():
+class TestFileUrls:
     fileurls = FileUrls(file_name="./tests/files/urls")
 
     def test_urls_total_equal_to_num(self, num=7):
@@ -36,7 +36,7 @@ class TestFileUrls():
                 self.fileurls()
 
 
-class TestDummyUrls():
+class TestDummyUrls:
     dummyurls = DummyUrls(url="dummy.com", repeat=5)
 
     def test_urls_total_equal_to_num(self, num=5):
@@ -67,10 +67,3 @@ class TestDummyUrls():
         with pytest.raises(UrlCompleted) as e:
             while True:
                 self.dummyurls()
-
-
-
-  
-
-
-

@@ -1,4 +1,5 @@
 from spydy.utils import convert_seconds_to_formal
+import pytest
 
 
 def test_convert_seconds_to_formal():

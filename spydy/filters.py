@@ -3,6 +3,8 @@ import copy
 from requests_html import HTML
 from .component import Component
 
+__all__ = ["CommonFilter"]
+
 
 class Filter(Component):
     @abc.abstractmethod

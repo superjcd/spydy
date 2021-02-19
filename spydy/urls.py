@@ -150,7 +150,7 @@ class RedisSetUrls(Urls):
             )
 
     def add(self, item):
-        return self._conn.sadd(self._set_name, item)
+        self._conn.sadd(self._set_name, item)
 
     def handle_exception(self, recovery_type, url):
         if recovery_type == "url_back_end":
@@ -162,13 +162,6 @@ class RedisSetUrls(Urls):
         else:
             raise UnExpectedHandleType
         return None
-
-    def complete(self):
-        print(
-            "No value in redis set: {!r}; Task will be shutdown in seconds...".format(
-                self._set_name
-            )
-        )
 
 
 
@@ -199,13 +192,13 @@ class RedisListUrls(Urls):
             )
 
     def push(self, item):
-        return self.rpush(item)
+        self.rpush(item)
 
     def rpush(self, item):
-        return self._conn.rpush(self._list_name, item)
+        self._conn.rpush(self._list_name, item)
 
     def lpush(slef, item):
-        return self._conn.lpush(self._list_name, item)
+        self._conn.lpush(self._list_name, item)
 
     def handle_exception(self, recovery_type, url):
         if recovery_type == "url_back_end":
@@ -217,13 +210,6 @@ class RedisListUrls(Urls):
         else:
             raise UnExpectedHandleType
         return None
-
-    def complete(self):
-        print(
-            "No value in redis list: {!r}; Task will be shutdown in seconds...".format(
-                self._list_name
-            )
-        )
 
 
 

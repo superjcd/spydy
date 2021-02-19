@@ -2,12 +2,16 @@ import asyncio
 import time
 from functools import reduce
 from collections import defaultdict
-from typing import Union
+from typing import Union, List
 from configparser import ConfigParser
 from requests.exceptions import RequestException
 from requests_html import HTML
+from .component import Component
 from .defaults import *
 from .exceptions import (
+    WrongSpydyPipeline,
+    ConfigrNotGiven,
+    ConfigTypeNotSupported,
     Exceptions_To_Handle,
     Exceptions_To_Ignore,
     Exceptions_Of_Success,
@@ -23,13 +27,18 @@ from .utils import (
 )
 
 
+_SPYDY_CONFIGS = Union[ConfigParser, dict]
+
+_SPYDY_PIPELINE = List[Component]
+
+
 class Engine:
-    def __init__(self, configs: Union[ConfigParser, dict]):
+    def __init__(self, configs: _SPYDY_CONFIGS = None):
         self._configs = configs
         self._pipeline = []
         self._temp_results = {}
         self._interval = (
-            int(self._configs["Globals"].get("interval", None))
+            int(self._configs["Globals"].get("interval"))
             if self._configs["Globals"].get("interval", None)
             else None
         )
@@ -37,54 +46,60 @@ class Engine:
         self.setup()
         print_pipeline(self._pipeline)
 
-    def run(self):  # TODO : exception hanler for success exception is not that good,
-        run_mode = self._configs["Globals"].get("run_mode")
-        if run_mode == "once":
-            try:
-                self.run_once()
-            except Exceptions_Of_Success as e:
-                print_msg(
-                    msg="Task Done, Details:" + str(e),
-                    info_header="SUCCESS",
-                    verbose=True,
-                )
-        if run_mode == "forever":
-            try:
-                self.run_forever()
-            except Exceptions_Of_Success as e:
-                print_msg(
-                    msg="Task Done, Details:" + str(e),
-                    info_header="SUCCESS",
-                    verbose=True,
-                )
+    @classmethod
+    def from_configparser(cls, configs: ConfigParser):
+        if not configs:
+            raise ConfigrNotGiven
+        return cls(configs)
 
-        if run_mode == "async_once":
-            try:
-                self.run_async_once()
-            except Exceptions_Of_Success as e:
-                print_msg(
-                    msg="Task Done, Details:" + str(e),
-                    info_header="SUCCESS",
-                    verbose=True,
-                )
+    @classmethod
+    def from_dict(cls, configs: dict):
+        if not configs:
+            raise ConfigrNotGiven
+        return cls(configs)
+
+    def run(self):
+        run_mode = self._configs["Globals"].get("run_mode")
+        if run_mode in ["once", "forever", "async_once"]:
+            self._run(run_mode)
 
         if run_mode == "async_forever":
-            nworkers = int(self._configs["Globals"].get("nworkers", NWORKERS))
-            loop = asyncio.get_event_loop()
-            tasks = self.run_async_forever(loop, nworkers)
-            for task in tasks:
-                exception = task.exception()
-                for success_exception in Exceptions_Of_Success:
-                    if isinstance(exception, success_exception):
-                        print_msg(
-                            msg="Task Done, Details:" + str(exception),
-                            info_header="SUCCESS",
-                            verbose=True,
-                        )
-                    else:
-                        raise
+            self._run_async_forever()
 
         self.close()
+
+    def _run(self, run_mode):
+        try:
+            if run_mode == "once":
+                self.run_once()
+
+            if run_mode == "forever":
+                self.run_forever()
+
+            if run_mode == "async_once":
+                self.run_async_once()
+        except Exceptions_Of_Success as e:
+            print_msg(
+                msg="Task Done, Details:" + str(e),
+                info_header="SUCCESS",
+                verbose=True,
+            )
+
+    def _run_async_forever(self):
+        nworkers = int(self._configs["Globals"].get("nworkers", NWORKERS))
+        loop = asyncio.get_event_loop()
+        tasks = self.run_async_forever(loop, nworkers)
+        for task in tasks:
+            exception = task.exception()
+            for success_exception in Exceptions_Of_Success:
+                if isinstance(exception, success_exception):
+                    print_msg(
+                        msg="Task Done, Details:" + str(exception),
+                        info_header="SUCCESS",
+                        verbose=True,
+                    )
+                else:
+                    raise
 
     def run_once(self):
         final_result = None
@@ -211,30 +226,24 @@ class Engine:
         return tasks
 
     def setup(self):
-        for k, v in self._configs["PipeLine"].items():
-            step_class = class_dispatcher(v)
-            if k in self._configs:
-                arguments = parse_arguments(self._configs[k])
-                try:
-                    self._pipeline.append(step_class(**arguments))
-                except TypeError as e:
-                    err_msg = (
-                        "Class {!r} encounter an error when instantiating: {}".format(
+        if isinstance(self._configs, ConfigParser):
+            for k, v in self._configs["PipeLine"].items():
+                step_class = class_dispatcher(v)
+                if k in self._configs:
+                    arguments = parse_arguments(self._configs[k])
+                    try:
+                        self._pipeline.append(step_class(**arguments))
+                    except TypeError as e:
+                        err_msg = "Class {!r} encounter an error when instantiating: {}".format(
                             step_class, e.args
                         )
-                    )
-                    raise TypeError(err_msg)
-            else:
-                self._pipeline.append(step_class())
+                        raise TypeError(err_msg)
+                else:
+                    self._pipeline.append(step_class())
+        if isinstance(self._configs, dict):
+            self._pipeline = self._configs["PipeLine"]
 
-        # Prepare statsReportLog if exists
-        statsReportLog_instance = get_step_from_pipeline(
-            self._pipeline, step_type="statsLog"
-        )
-        if statsReportLog_instance:
-            ulrs_instance = get_step_from_pipeline(self._pipeline, step_type="url")
-            statsReportLog_instance._urls_instance = ulrs_instance
-            statsReportLog_instance.init()
+        init_statsReport(pipeline=self._pipeline)
 
     def close(self):
         if self._exceptions_records:
@@ -245,3 +254,14 @@ class Engine:
                 print(k, " : ", v)
         else:
             print("😊 Completed! Spydy ran successfully without any excepitons")
+
+
+def init_statsReport(pipeline):
+    """
+    Initialize the StatsReportLog instance in pipeline if exists
+    """
+    statsReportLog_instance = get_step_from_pipeline(pipeline, step_type="statsLog")
+    if statsReportLog_instance:
+        ulrs_instance = get_step_from_pipeline(pipeline, step_type="url")
+        statsReportLog_instance._urls_instance = ulrs_instance
+        statsReportLog_instance.init()

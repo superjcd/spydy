@@ -1,13 +1,42 @@
 import abc
-from requests_html import HTML
+import re
+from requests_html import HTML, Element
 from .exceptions import TaskWrong
 from .component import Component
+
+__all__ = ["XpathParser", "CssParser", "DmozParser"]
+
+"""
+TODO：
+  这里有个很大的问题在于parser的返回类别
+  1 目前主要支出生成单一的dict，
+  2 但结果也可能是：list of dicts [], List[dict]
+  3 links, list
+
+  随着parser的增加， 那么对下游的依赖也要发生改变
+
+  还有一个问题在于， 目前的parser只可以支持单一操作， 如果我要同时做两件事怎么办？比如一边把提取url， 一边获取信息（比如爬取wikipedia， 
+  当然这个问题可以变得非常复杂， 涉及到重复数据的问题）
+"""
 
 
 class Cleaner(object):
     @staticmethod
-    def clean(text: str):
+    def clean(tobe_cleaned):
+        if isinstance(tobe_cleaned, str):
+            return Cleaner.clean_text(tobe_cleaned)
+
+        if isinstance(tobe_cleaned, Element):
+            return Cleaner.clean_element(tobe_cleaned)
+
+    @staticmethod
+    def clean_text(text: str):
         return text.strip()
+
+    @staticmethod
+    def clean_element(element: Element):
+        if hasattr(element, "text"):
+            return Cleaner.clean_text(element.text)
 
 
 class Parser(Component):
@@ -19,18 +48,25 @@ class Parser(Component):
         return self.parse(*args, **kwargs)
 
 
-class XpathParser(Parser):
+class RuleBasedParserMixin:
+    def rules(self):
+        if not self._rules:
+            self._rules = {
+                attr: getattr(self, attr)
+                for attr in dir(self)
+                if not attr.startswith("_") and not callable(getattr(self, attr))
+            }
+        return self._rules
+
+
+class XpathParser(Parser, RuleBasedParserMixin):
+    """
+    Parse contents by xpath rules, often act as a parent class to be inheritate.
+    """
+
     def __init__(self):
         self._rules = None
         self._result = {}
-
-    def rules(self):
-        self._rules = {
-            attr: getattr(self, attr)
-            for attr in dir(self)
-            if not attr.startswith("_") and not callable(getattr(self, attr))
-        }
-        return self._rules
 
     def parse(self, response) -> dict:
         if response:
@@ -45,18 +81,14 @@ class XpathParser(Parser):
             return {}
 
 
-class CssParser(Parser):
+class CssParser(Parser, RuleBasedParserMixin):
+    """
+    Parse contents by css selectors, often act as a parent class to be inheritate.
+    """
+
     def __init__(self):
         self._rules = None
         self._result = {}
-
-    def rules(self):
-        self._rules = {
-            attr: getattr(self, attr)
-            for attr in dir(self)
-            if not attr.startswith("_") and not callable(getattr(self, attr))
-        }
-        return self._rules
 
     def parse(self, response) -> dict:
         if response:
@@ -78,8 +110,26 @@ class DmozParser(XpathParser):
     sites = "//div[@class='sites']/h3/text()[1]"
     languages = "//div[@class='languages']/h3/text()[1]"
 
-    # def __repr__(self):
-    #     return self.__class__.__name__
 
-    # def __str__(self):
-    #     return self.__repr__()
+#
+class LinksParser(Parser):
+    """
+    Extract the links in the reponse html content
+    """
+
+    def __init__(self, pattern=None, use_re=False):
+        self._pattern = pattern
+        self._use_re = bool(use_re)
+
+    def parse(self, response):
+        html = HTML(html=response.text)
+        links = response.html.links
+        return links
+
+
+class RegexParser(Parser):
+    def __init__(self):
+        ...
+
+    def parse(self, response):
+        ...

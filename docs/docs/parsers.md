@@ -17,11 +17,6 @@ class DmozParser(XpathParser):
     sites = "//div[@class='sites']/h3/text()[1]"
     languages = "//div[@class='languages']/h3/text()[1]"
 
-    def __repr__(self):
-        return self.__class__.__name__
-
-    def __str__(self):
-        return self.__repr__()
 
 ```
 
@@ -53,11 +48,7 @@ class Myparser(Parser): # 继承抽象积累Parser
 
         return {}  # 通常是字典， 也可以是字典列表， 但是后面的组件需要支持这种返回结果
     
-    def __call__(self, *args, **kwargs):
-        return self.parse(*args, **kwargs)
 
-    def __str__(self):
-        return self.__class__.__name__
 ```
 
 上面的代码展示了编写自定义parser的一些要点：  
@@ -69,7 +60,7 @@ class Myparser(Parser): # 继承抽象积累Parser
 - 定义__str__方法， 不是必须的， 但是为了更好地在日志中显示组件， 所以最好加上。
 
 ## 返回结果
-`Parser组件`最后会返回一个字典(默认)， 或者一个字典列表（某一些自定义场景下）。
+`Parser组件`最后会返回一个字典(默认)， 或者其他类型（比如字典的列表，某一些自定义场景下）。
 
 
 
