@@ -44,6 +44,4 @@ docs/docs/site
 # Cookiecutter
 output/
 
-tests/e2e/
-
 use_spydy.py
