@@ -29,7 +29,7 @@ spydy的配置文件是通过使用python自带的[configparser](https://docs.py
 
 
 ## PipeLine
-在这里我们需要定义我们的整个工作流， 再强调一次， Pipeline中的组件是按照定义的先后顺序有序执行的。定义的方式通常是`步骤名 = 组件名`的形式。  
+在这里我们需要定义我们的整个工作流， 再强调一次， Pipeline中的组件是按照定义的先后顺序有序执行的。定义的方式通常是“步骤名=组件名”的形式。  
 这里的步骤名称可以是任意的， 没有特别的限制， 但是建议使用符合步骤类别的名称， 比如`urls = RedisUrlsList`的方式，虽然可以不使用`urls`作为步骤的名称， 但是很显然， 使用urls作为名称能够使工作流更加清晰易懂。  
 在[快速开始的复杂的例子](quickstart.md/#复杂一点的例子)中有一个组件是这样配置的`filter = file:mypkg.filters.Myfilter`, 注意这里的参数值带有一个`file:`标签， 意味着`mypkg.filters.Myfilter`就是[自定义组件](customer_component.md)。所以用户想使用自己的组件的时候（尤其是定义网页解析组件时）， 只要带上`file:`标签spydy就能识别。
 

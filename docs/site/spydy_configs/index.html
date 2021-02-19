@@ -500,7 +500,7 @@
 <li><code>url_back_front</code>: 把出错的url放回队列的z最前面， 同样，前提是<code>urls</code>组件是有序的队列</li>
 </ul>
 <h2 id="pipeline">PipeLine</h2>
-<p>在这里我们需要定义我们的整个工作流， 再强调一次， Pipeline中的组件是按照定义的先后顺序有序执行的。定义的方式通常是<code>步骤名 = 组件名</code>的形式。<br />
+<p>在这里我们需要定义我们的整个工作流， 再强调一次， Pipeline中的组件是按照定义的先后顺序有序执行的。定义的方式通常是“步骤名=组件名”的形式。<br />
 这里的步骤名称可以是任意的， 没有特别的限制， 但是建议使用符合步骤类别的名称， 比如<code>urls = RedisUrlsList</code>的方式，虽然可以不使用<code>urls</code>作为步骤的名称， 但是很显然， 使用urls作为名称能够使工作流更加清晰易懂。<br />
 在<a href="quickstart.md/#复杂一点的例子">快速开始的复杂的例子</a>中有一个组件是这样配置的<code>filter = file:mypkg.filters.Myfilter</code>, 注意这里的参数值带有一个<code>file:</code>标签， 意味着<code>mypkg.filters.Myfilter</code>就是<a href="../customer_component/">自定义组件</a>。所以用户想使用自己的组件的时候（尤其是定义网页解析组件时）， 只要带上<code>file:</code>标签spydy就能识别。</p>
 <h2 id="_1">组件参数配置</h2>

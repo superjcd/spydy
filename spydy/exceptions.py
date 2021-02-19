@@ -21,18 +21,6 @@ _requests_request_exceptions = (
 )
 
 
-class ConfigTypeNotSupported:
-    ...
-
-
-class ConfigrNotGiven(Exception):
-    pass
-
-
-class WrongSpydyPipeline(Exception):
-    pass
-
-
 class TaskDone(Exception):
     """
     Indicate that the tasks have be finished gracefully.

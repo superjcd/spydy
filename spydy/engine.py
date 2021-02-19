@@ -9,9 +9,6 @@ from requests_html import HTML
 from .component import Component
 from .defaults import *
 from .exceptions import (
-    WrongSpydyPipeline,
-    ConfigrNotGiven,
-    ConfigTypeNotSupported,
     Exceptions_To_Handle,
     Exceptions_To_Ignore,
     Exceptions_Of_Success,
@@ -48,14 +45,10 @@ class Engine:
 
     @classmethod
     def from_configparser(cls, configs: ConfigParser):
-        if not configs:
-            raise ConfigrNotGiven
         return cls(configs)
 
     @classmethod
     def from_dict(cls, configs: dict):
-        if not configs:
-            raise ConfigrNotGiven
         return cls(configs)
 
     def run(self):

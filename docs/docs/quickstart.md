@@ -134,12 +134,11 @@ after_mutate: {'categories': '1,031,722', 'languages': '90', 'sites': '0'}
 ```
 运行结束， 可以到我们的数据库中检查一下是不是成功存储了刚才爬取的数据。
 
-```
-Tips:
+
+#### Tips:
    通常可以通过spydy组件的名称来确定一个组件是不是支持异步的，
    如果组件带有Async前缀(比如上面的`AsyncHttpRequest`)， 
    那么该组件就是支持异步的。
-```
 
 ## What's Next
 - [理解spydy的配置文件](spydy_configs.md)
