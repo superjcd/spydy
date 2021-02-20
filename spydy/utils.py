@@ -266,3 +266,7 @@ def print_stats_log(stats: dict):
     info_table = output.format(*infos)
     sys.stdout.write(info_table)
     sys.stdout.flush()
+
+
+def wrap_exceptions_message(e):
+    return repr(e)

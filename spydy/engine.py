@@ -21,12 +21,12 @@ from .utils import (
     parse_arguments,
     handle_exceptions,
     get_step_from_pipeline,
+    wrap_exceptions_message
 )
 
 
 _SPYDY_CONFIGS = Union[ConfigParser, dict]
 
-_SPYDY_PIPELINE = List[Component]
 
 
 class Engine:
@@ -110,7 +110,7 @@ class Engine:
                 try:
                     temp_result = cur_step(temp_result)
                 except Exceptions_To_Handle as e:
-                    self._exceptions_records[type(e)] += 0
+                    self._exceptions_records[wrap_exceptions_message(e)] += 1
                     handle_exceptions(
                         temp_results=self._temp_results,
                         pipleline=self._pipeline,
@@ -120,7 +120,7 @@ class Engine:
                     )
                     temp_result = None
                 except Exceptions_To_Ignore as e:
-                    self._exceptions_records[type(e)] += 0
+                    self._exceptions_records[wrap_exceptions_message(e)] += 1
                     handle_exceptions(
                         temp_results=self._temp_results,
                         pipleline=self._pipeline,
@@ -128,7 +128,7 @@ class Engine:
                     )
                     temp_result = None
                 except Exceptions_To_RunAgain as e:
-                    self._exceptions_records[type(e)] += 0
+                    self._exceptions_records[wrap_exceptions_message(e)] += 1
                     handle_exceptions(
                         temp_results=self._temp_results,
                         pipleline=self._pipeline,
@@ -172,7 +172,7 @@ class Engine:
                     else:
                         temp_result = cur_step(temp_result)
                 except Exceptions_To_Handle as e:
-                    self._exceptions_records[type(e)] += 1
+                    self._exceptions_records[wrap_exceptions_message(e)] += 1
                     handle_exceptions(
                         temp_results=self._temp_results,
                         pipleline=self._pipeline,
@@ -183,7 +183,7 @@ class Engine:
                     )
                     temp_result = None
                 except Exceptions_To_Ignore as e:
-                    self._exceptions_records[type(e)] += 0
+                    self._exceptions_records[wrap_exceptions_message(e)] += 1
                     handle_exceptions(
                         temp_results=self._temp_results,
                         pipleline=self._pipeline,
@@ -191,7 +191,7 @@ class Engine:
                     )
                     temp_result = None
                 except Exceptions_To_RunAgain as e:
-                    self._exceptions_records[type(e)] += 0
+                    self._exceptions_records[wrap_exceptions_message(e)] += 1
                     handle_exceptions(
                         temp_results=self._temp_results,
                         pipleline=self._pipeline,
