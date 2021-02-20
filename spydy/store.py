@@ -8,7 +8,7 @@ from typing import List, Union
 
 # from sqlalchemy.ext.asyncio import create_async_engine
 
-__all__ = ["Store", "CsvStore", "AsyncCsvStore", "DbStore", "DbManyStore"]
+__all__ = ["Store", "CsvStore", "AsyncCsvStore", "DbStore"]
 
 
 class Store(Component):

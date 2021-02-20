@@ -18,6 +18,7 @@ def get_conifgs():
 
     return myconfig
 
+@pytest.mark.skip
 def test_configurate_and_run_spydy_by_dict(configs):
     from spydy.engine import Engine
     if os.path.exists(FILE_NAME):
