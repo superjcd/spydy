@@ -4,7 +4,7 @@ import asyncio
 
 
 def test_csv_store_output(tmpdir):
-    test_csv_file = "dmoz_test.csv"
+    test_csv_file = "dmoz_test_.csv"
     if os.path.exists(test_csv_file):
         os.remove(test_csv_file)
     csvstore = CsvStore(file_name=test_csv_file)
@@ -21,7 +21,7 @@ def test_csv_store_output(tmpdir):
 
 
 def test_async_csv_store_output(tmpdir):
-    test_csv_file = "dmoz_test.csv"
+    test_csv_file = "dmoz_test_.csv"
     if os.path.exists(test_csv_file):
         os.remove(test_csv_file)
     csvstore = AsyncCsvStore(file_name=test_csv_file)

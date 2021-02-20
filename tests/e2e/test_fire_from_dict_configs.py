@@ -2,7 +2,7 @@ import pytest
 import os
 
 
-FILE_NAME = "result.csv"
+FILE_NAME = "result_.csv"
 
 @pytest.fixture(name="configs")
 def get_conifgs():
