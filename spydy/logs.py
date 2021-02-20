@@ -1,11 +1,13 @@
 import abc
 import sys
 import time
+import json
+from pprint import pprint
 from .component import Component
 from .exceptions import UrlsStepNotFound
 from .utils import (
     print_msg,
-    convert_seconds_to_formal,
+    convert_seconds_to_standard_format,
     get_total_from_urls,
     print_stats_log,
 )
@@ -23,13 +25,9 @@ class Log(Component):
 
 
 class SimplePrintLog(Log):
-    def __init__(self):
-        ...
-
-    def log(self, items: dict):
-        print(items)
+    def log(self, items):
+        pprint(items)
         return items
-
 
 class MessageLog(Log):
     def __init__(self, info_header="INFO", verbose=False):
@@ -66,8 +64,11 @@ class StatsReportLog(Log):
             consuming_speed = round(urls_consumed / time_elapsed, 2)
             _efficiency = round(urls_consumed / self._N, 2)
             efficiency = 1 if _efficiency > 1 else _efficiency
-            eta = convert_seconds_to_formal(total_now / consuming_speed)
-            self._stats["Elapsed"] = convert_seconds_to_formal(time_elapsed)
+            try:
+                eta = convert_seconds_to_standard_format(total_now / consuming_speed)
+            except ZeroDivisionError:
+                eta = "--"
+            self._stats["Elapsed"] = convert_seconds_to_standard_format(time_elapsed)
             self._stats["Processed"] = self._N
             self._stats["Consumed"] = urls_consumed
             self._stats["Remained"] = total_now

@@ -227,7 +227,7 @@ def get_total_from_urls(urls_instance):
         return None
 
 
-def convert_seconds_to_formal(seconds):
+def convert_seconds_to_standard_format(seconds):
     """
     Convert  seconds to a formal time format
     """
