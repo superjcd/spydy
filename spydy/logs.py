@@ -29,6 +29,7 @@ class SimplePrintLog(Log):
         pprint(items)
         return items
 
+
 class MessageLog(Log):
     def __init__(self, info_header="INFO", verbose=False):
         self._info_header = info_header

@@ -21,12 +21,11 @@ from .utils import (
     parse_arguments,
     handle_exceptions,
     get_step_from_pipeline,
-    wrap_exceptions_message
+    wrap_exceptions_message,
 )
 
 
 _SPYDY_CONFIGS = Union[ConfigParser, dict]
-
 
 
 class Engine:

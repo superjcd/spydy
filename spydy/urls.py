@@ -39,7 +39,7 @@ class DummyUrls(Urls):
     
     @property
     def total(self):
-        return len(self._urls)    
+        return len(self._urls) 
 
     def pop(self):
         try:

@@ -27,7 +27,6 @@ class TaskDone(Exception):
     """
 
 
-
 class UrlCompleted(TaskDone):
     """
     Taskd done, there are no more urls.

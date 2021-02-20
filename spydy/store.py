@@ -66,7 +66,6 @@ class DbStore(Store):
             return items
 
 
-
 class AsyncDbStore(Store, AsyncComponent):
     def __init__(self, connection_url=None, table_name=None):
         ...
