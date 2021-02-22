@@ -6,7 +6,13 @@ import importlib
 import sys
 import spydy
 from spydy.urls import Urls
-from spydy.defaults import RUNMODES, LEGAL_GLOBALS, LEGAL_RECOVERYS
+from spydy.defaults import (
+    RUNMODES,
+    LEGAL_GLOBALS,
+    LEGAL_RECOVERYS,
+    RECOVERY_TYPE,
+    VERBOSE,
+)
 from spydy.exceptions import UrlsStepNotFound
 
 
@@ -85,31 +91,33 @@ def get_file_value(value):
     return get_value_from_moudle(module=user_package, value=user_value)
 
 
+def check_configs_and_add_defaults(configs):
+    check_configs(configs)
+    add_defaults(configs)
+
+
 def check_configs(configs):
     """
-    Check if the configs have the right forms
+    Configs Sanity checks
     """
     try:
         assert "PipeLine" in configs
     except AssertionError:
-        raise AssertionError("Section <PipeLine> seems not be inclued")
+        raise ValueError("Section <PipeLine> seems not be inclued")
     try:
         assert "Globals" in configs
     except AssertionError:
-        raise AssertionError("Section <Globals> seems not be inclued")
-    try:
-        assert (
-            "run_mode" in configs["Globals"]
-            and configs["Globals"]["run_mode"] in RUNMODES
-        )
-    except:
-        raise AssertionError(
-            "Parameter <run_mode> seems not be provides or run_mode not in {}".format(
-                RUNMODES
-            )
-        )
+        raise ValueError("Section <Globals> seems not be inclued")
 
+    check_run_mode(configs)
     global_arguments = configs["Globals"]
+    check_globals_has_legal_keys(global_arguments)
+
+    if "recovery_type" in global_arguments:
+        check_recovery_type_in_default_recoverys(global_arguments["recovery_type"])
+
+
+def check_globals_has_legal_keys(global_arguments):
     for argument in global_arguments:
         if argument not in LEGAL_GLOBALS:
             raise ValueError(
@@ -119,7 +127,21 @@ def check_configs(configs):
             )
 
 
-def check_recovery_type(recovery_type):
+def check_run_mode(configs):
+    try:
+        assert (
+            "run_mode" in configs["Globals"]
+            and configs["Globals"]["run_mode"] in RUNMODES
+        )
+    except:
+        raise ValueError(
+            "Parameter <run_mode> seems not be provides or run_mode not in {}".format(
+                RUNMODES
+            )
+        )
+
+
+def check_recovery_type_in_default_recoverys(recovery_type):
     if recovery_type not in LEGAL_RECOVERYS:
         raise ValueError(
             "{!r} not in allowed spydy, spydy only supports following recovery types: {}".format(
@@ -128,11 +150,37 @@ def check_recovery_type(recovery_type):
         )
 
 
-def linear_pipelinefunc(a, b):
-    if callable(a):
-        return b(a())
+def add_defaults(configs):
+    add_verbose_default(configs)
+
+
+def add_verbose_default(conifgs):
+    if "verbose" not in conifgs["Globals"]:
+        conifgs["Globals"]["verbose"] = VERBOSE
     else:
-        return b(a)
+        try:
+            conifgs["Globals"]["verbose"] = bool(conifgs["Globals"]["verbose"])
+
+        except:
+            raise ValueError(
+                "Verbose setting in the [Global] section should can not treat as Bool; Check if you given a right value of verbose"
+            )
+
+
+def get_verbose(configs):
+    return configs["Globals"]["verbose"]
+
+
+def get_interval(configs):
+    return (
+        int(configs["Globals"].get("interval"))
+        if configs["Globals"].get("interval", None)
+        else None
+    )
+
+
+def get_recovery_type(configs):
+    return configs["Globals"].get("recovery_type", RECOVERY_TYPE)
 
 
 def print_pipeline(pipeline: list):
@@ -192,7 +240,7 @@ def get_config_ifexists(parser, section_name, setting_name):
 
 def handle_exceptions(
     temp_results,
-    pipleline: List,
+    pipeline: List,
     coroutine_id=None,
     recovery_type="url_back_end",
 ):
@@ -206,8 +254,7 @@ def handle_exceptions(
       :pipeline: list of spydy pipeline components instance
       :handle_type: choose a way to deal with the exception when encountered an exception
     """
-    check_recovery_type(recovery_type)
-    url_step = get_step_from_pipeline(pipleline, step_type="url")
+    url_step = get_step_from_pipeline(pipeline, step_type="url")
     if hasattr(url_step, "handle_exception"):
         url = get_temp_result(type(url_step), temp_results, coroutine_id)
         url_step.handle_exception(recovery_type=recovery_type, url=url)

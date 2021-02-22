@@ -4,7 +4,7 @@ import configparser
 import asyncio
 from spydy import LOGO
 from .engine import Engine
-from .utils import check_configs
+from .utils import check_configs_and_add_defaults
 from .defaults import *
 
 
@@ -16,7 +16,7 @@ def fire():
     print(LOGO)
     arg_parser = argparse.ArgumentParser(
         prog="spydy",
-        description="High level spider framework for web crawling based on pipleline",
+        description="High level spider framework for web crawling based on pipeline",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=long_description,
     )
@@ -32,6 +32,6 @@ def fire():
 
     config_parser = configparser.ConfigParser()
     config_parser.read(configfile, encoding="utf-8")
-    check_configs(config_parser)
+    check_configs_and_add_defaults(config_parser)
     engine = Engine.from_configparser(config_parser)
     engine.run()

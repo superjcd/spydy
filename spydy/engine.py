@@ -19,6 +19,9 @@ from .utils import (
     print_pipeline,
     print_msg,
     parse_arguments,
+    get_interval,
+    get_verbose,
+    get_recovery_type,
     handle_exceptions,
     get_step_from_pipeline,
     wrap_exceptions_message,
@@ -28,16 +31,28 @@ from .utils import (
 _SPYDY_CONFIGS = Union[ConfigParser, dict]
 
 
+def handle_erroneous_exceptions(
+    exception, verbose_flag, excepitons_records, temp_results, pipeline, recovery_type
+):
+    if verbose_flag == True:
+        print("{} was encountered, details: {}".format(type(exception), exception.args))
+
+    excepitons_records[wrap_exceptions_message(excepiton)] += 1
+
+    handle_exceptions(
+        temp_results=self._temp_results,
+        pipeline=pipeline,
+        recovery_type=recovery_type,
+    )
+
+
 class Engine:
     def __init__(self, configs: _SPYDY_CONFIGS = None):
         self._configs = configs
         self._pipeline = []
         self._temp_results = {}
-        self._interval = (
-            int(self._configs["Globals"].get("interval"))
-            if self._configs["Globals"].get("interval", None)
-            else None
-        )
+        self._interval = get_interval(self._configs)
+        self._verbose = get_verbose(self._configs)
         self._exceptions_records = defaultdict(int)
         self.setup()
         print_pipeline(self._pipeline)
@@ -90,8 +105,6 @@ class Engine:
                         info_header="SUCCESS",
                         verbose=True,
                     )
-                else:
-                    raise
 
     def run_once(self):
         final_result = None
@@ -109,28 +122,32 @@ class Engine:
                 try:
                     temp_result = cur_step(temp_result)
                 except Exceptions_To_Handle as e:
-                    self._exceptions_records[wrap_exceptions_message(e)] += 1
-                    handle_exceptions(
+                    handle_erroneous_exceptions(
+                        exception=e,
+                        verbose_flag=self._verbose,
+                        excepitons_records=self._exceptions_records,
                         temp_results=self._temp_results,
-                        pipleline=self._pipeline,
-                        recovery_type=self._configs["Globals"].get(
-                            "recovery_type", RECOVERY_TYPE
-                        ),
+                        pipeline=self._pipeline,
+                        recovery_type=get_recovery_type(self._configs),
                     )
                     temp_result = None
                 except Exceptions_To_Ignore as e:
-                    self._exceptions_records[wrap_exceptions_message(e)] += 1
-                    handle_exceptions(
+                    handle_erroneous_exceptions(
+                        exception=e,
+                        verbose_flag=self._verbose,
+                        excepitons_records=self._exceptions_records,
                         temp_results=self._temp_results,
-                        pipleline=self._pipeline,
+                        pipeline=self._pipeline,
                         recovery_type="skip",
                     )
                     temp_result = None
                 except Exceptions_To_RunAgain as e:
-                    self._exceptions_records[wrap_exceptions_message(e)] += 1
-                    handle_exceptions(
+                    handle_erroneous_exceptions(
+                        exception=e,
+                        verbose_flag=self._verbose,
+                        excepitons_records=self._exceptions_records,
                         temp_results=self._temp_results,
-                        pipleline=self._pipeline,
+                        pipeline=self._pipeline,
                         recovery_type="url_back_end",
                     )
                     temp_result = None
@@ -172,28 +189,32 @@ class Engine:
                         temp_result = cur_step(temp_result)
                 except Exceptions_To_Handle as e:
                     self._exceptions_records[wrap_exceptions_message(e)] += 1
-                    handle_exceptions(
+                    handle_erroneous_exceptions(
+                        exception=e,
+                        verbose_flag=self._verbose,
+                        excepitons_records=self._exceptions_records,
                         temp_results=self._temp_results,
-                        pipleline=self._pipeline,
-                        coroutine_id=_coroutine_id,
-                        recovery_type=self._configs["Globals"].get(
-                            "recovery_type", RECOVERY_TYPE
-                        ),
+                        pipeline=self._pipeline,
+                        recovery_type=get_recovery_type(self._configs),
                     )
                     temp_result = None
                 except Exceptions_To_Ignore as e:
-                    self._exceptions_records[wrap_exceptions_message(e)] += 1
-                    handle_exceptions(
+                    handle_erroneous_exceptions(
+                        exception=e,
+                        verbose_flag=self._verbose,
+                        excepitons_records=self._exceptions_records,
                         temp_results=self._temp_results,
-                        pipleline=self._pipeline,
+                        pipeline=self._pipeline,
                         recovery_type="skip",
                     )
                     temp_result = None
                 except Exceptions_To_RunAgain as e:
-                    self._exceptions_records[wrap_exceptions_message(e)] += 1
-                    handle_exceptions(
+                    handle_erroneous_exceptions(
+                        exception=e,
+                        verbose_flag=self._verbose,
+                        excepitons_records=self._exceptions_records,
                         temp_results=self._temp_results,
-                        pipleline=self._pipeline,
+                        pipeline=self._pipeline,
                         recovery_type="url_back_end",
                     )
                     temp_result = None
