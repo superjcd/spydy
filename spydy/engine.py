@@ -25,6 +25,7 @@ from .utils import (
     handle_exceptions,
     get_step_from_pipeline,
     wrap_exceptions_message,
+    print_table
 )
 
 
@@ -261,10 +262,7 @@ class Engine:
     def close(self):
         if self._exceptions_records:
             print("😭 Finished! But encounterd several ecceptions during running:")
-            for k, v in sorted(
-                self._exceptions_records.items(), key=lambda item: item[1], reverse=True
-            ):
-                print(k, " : ", v)
+            print_table(self._exceptions_records)
         else:
             print("😊 Completed! Spydy ran successfully without any excepitons")
 

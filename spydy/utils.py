@@ -5,6 +5,7 @@ import reprlib
 import importlib
 import sys
 import spydy
+from tabulate import tabulate
 from spydy.urls import Urls
 from spydy.defaults import (
     RUNMODES,
@@ -316,4 +317,15 @@ def print_stats_log(stats: dict):
 
 
 def wrap_exceptions_message(e):
-    return repr(e)
+    max_display_length = 30
+    return repr(e)[:max_display_length]
+
+
+def print_table(infos: dict):
+    table_data = sorted(infos.items(), key=lambda item: item[1], reverse=True)
+    table_header = ["Error", "Counts"]
+    print(tabulate(table_data, headers=table_header, tablefmt='grid'))
+
+
+
+
