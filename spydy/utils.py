@@ -220,7 +220,7 @@ def get_step_from_pipeline(pipeline, step_type="urls"):
             if isinstance(step, ExceptionLog):
                 return step
         raise ExceptionLogNotFound
-    
+
     else:
         raise StepTypeNotSupported
 
@@ -332,8 +332,4 @@ def wrap_exceptions_message(e):
 def print_table(infos: dict):
     table_data = sorted(infos.items(), key=lambda item: item[1], reverse=True)
     table_header = ["Error", "Counts"]
-    print(tabulate(table_data, headers=table_header, tablefmt='grid'))
-
-
-
-
+    print(tabulate(table_data, headers=table_header, tablefmt="grid"))

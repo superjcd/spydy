@@ -25,7 +25,7 @@ from .utils import (
     handle_exceptions,
     get_step_from_pipeline,
     wrap_exceptions_message,
-    print_table
+    print_table,
 )
 
 
@@ -274,7 +274,7 @@ class Engine:
             self._pipeline = self._configs["PipeLine"]
 
         init_statsReport(pipeline=self._pipeline)
-        init_exceptionLog(excepitons=self._exceptions_records)
+        init_exceptionLog(pipeline=self._pipeline, excepitons=self._exceptions_records)
 
     def close(self):
         if self._exceptions_records:
@@ -282,6 +282,3 @@ class Engine:
             print_table(self._exceptions_records)
         else:
             print("😊 Completed! Spydy ran successfully without any excepitons")
-
-
-

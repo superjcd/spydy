@@ -8,7 +8,7 @@ from requests.exceptions import (
     Timeout,
     ConnectTimeout,
     ReadTimeout,
-    ChunkedEncodingError
+    ChunkedEncodingError,
 )
 
 _requests_request_exceptions = (
@@ -80,15 +80,18 @@ class UrlsNotFound(StepNotFound):
     Step of urls not found in pipeline
     """
 
+
 class StatsLogNotFound(StepNotFound):
     """
     Step of statslog not found in pipeline
-    """    
+    """
+
 
 class ExceptionLogNotFound(StepNotFound):
     """
     Step of exceptionlog not found in pipeline
-    """        
+    """
+
 
 class StepTypeNotSupported(Exception):
     """

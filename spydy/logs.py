@@ -4,13 +4,12 @@ import time
 import json
 from pprint import pprint
 from .component import Component
-from .exceptions import UrlsNotFound, StatsLogNotFound
 from .utils import (
     print_msg,
     convert_seconds_to_standard_format,
     get_total_from_urls,
     print_stats_log,
-    print_table
+    print_table,
 )
 
 __all__ = ["SimplePrintLog", "MessageLog", "StatsReportLog"]
@@ -46,9 +45,7 @@ class StatsReportLog(Log):
         self._every = int(every)
         self._urls_instance = None
         self._N = 0
-        self._trigger_time = (
-            time.time()
-        ) 
+        self._trigger_time = time.time()
         self._stats = {}
 
     def init(self, urls_instance):
@@ -83,7 +80,7 @@ class StatsReportLog(Log):
 class ExceptionLog(Log):
     def __init__(self, every=1):
         self._every = int(every)
-        self._exceptions_records =None
+        self._exceptions_records = None
 
     def init(self, excepitons):
         self._exceptions_records = excepitons
@@ -92,5 +89,3 @@ class ExceptionLog(Log):
         if self._N % self._every == 0:
             print_table(self._exceptions_records)
         return items
-   
-    
