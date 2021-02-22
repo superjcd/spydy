@@ -314,14 +314,12 @@ def print_stats_log(stats: dict):
     :stats: A dict object
     """
     output = " {}: {}|" * len(stats)
-    output += "\r"
     infos = []
     for h, c in stats.items():
         infos.append(h)
         infos.append(c)
     info_table = output.format(*infos)
-    sys.stdout.write(info_table)
-    sys.stdout.flush()
+    print(info_table)
 
 
 def wrap_exceptions_message(e):

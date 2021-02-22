@@ -27,6 +27,7 @@ class Log(Component):
 class SimplePrintLog(Log):
     def log(self, items):
         pprint(items)
+        print("/n")
         return items
 
 
