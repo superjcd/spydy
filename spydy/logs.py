@@ -12,7 +12,7 @@ from .utils import (
     print_table,
 )
 
-__all__ = ["SimplePrintLog", "MessageLog", "StatsReportLog"]
+__all__ = ["SimplePrintLog", "MessageLog", "StatsReportLog", "ExceptionLog"]
 
 
 class Log(Component):
@@ -27,7 +27,6 @@ class Log(Component):
 class SimplePrintLog(Log):
     def log(self, items):
         pprint(items)
-        print("/n")
         return items
 
 
@@ -82,11 +81,13 @@ class ExceptionLog(Log):
     def __init__(self, every=1):
         self._every = int(every)
         self._exceptions_records = None
+        self._N = 0
 
     def init(self, excepitons):
         self._exceptions_records = excepitons
 
     def log(self, items):
+        self._N += 1
         if self._N % self._every == 0:
             print_table(self._exceptions_records)
         return items

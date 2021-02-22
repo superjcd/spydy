@@ -13,6 +13,7 @@ from spydy.defaults import (
     LEGAL_RECOVERYS,
     RECOVERY_TYPE,
     VERBOSE,
+    LOG_TIME_FORMAT
 )
 from spydy.exceptions import UrlsNotFound, StatsLogNotFound, ExceptionLogNotFound
 
@@ -61,15 +62,14 @@ def get_class_from_moudle(module=None, value=None):  # packge class
 
 
 def get_value_from_moudle(*args, **kwargs):
-    file_value = get_class_from_moudle(*args, **kwargs)
-    if callable(file_value):  # function without args, then call it
-        return file_value()
+    file_value = get_class_from_moudle(*args, **kwargs) 
+    if callable(file_value):  
+        return file_value()  # 如果是这样的话， 只会调用一次！
     else:
         return file_value
 
 
 def parse_arguments(args: dict) -> dict:
-    # breakpoint()
     result_args = {}
     for k, v in args.items():
         if v.startswith("file:"):
@@ -155,22 +155,18 @@ def add_defaults(configs):
     add_verbose_default(configs)
 
 
-def add_verbose_default(conifgs):
-    if "verbose" not in conifgs["Globals"]:
-        conifgs["Globals"]["verbose"] = VERBOSE
-    else:
-        try:
-            conifgs["Globals"]["verbose"] = bool(conifgs["Globals"]["verbose"])
-
-        except:
-            raise ValueError(
-                "Verbose setting in the [Global] section should can not treat as Bool; Check if you given a right value of verbose"
-            )
+def add_verbose_default(configs):
+    if "verbose" not in configs["Globals"]:
+        configs["Globals"]["verbose"] = VERBOSE
 
 
 def get_verbose(configs):
-    return configs["Globals"]["verbose"]
-
+    try:
+        return bool(configs["Globals"]["verbose"])
+    except:
+        raise ValueError(
+            "Verbose setting in the [Globals] section should can not treated as Bool; Check if you give a right value of verbose"
+        )
 
 def get_interval(configs):
     return (
@@ -189,12 +185,16 @@ def print_pipeline(pipeline: list):
     print(msg + "\n")
 
 
-def print_msg(msg, info_header="INFO", time_format="%Y-%m-%d %H:%M:%S", verbose=False):
+def print_msg(msg, info_header="INFO", time_format=LOG_TIME_FORMAT, verbose=False):
     verbose = bool(verbose)
     msg = msg if verbose else reprlib.repr(msg)
-    time_info = datetime.now().strftime(time_format)
+    time_info = get_current_time_string(time_format)
     message = "|".join([info_header, time_info, msg])
     print(message)
+
+
+def get_current_time_string(fmt):
+    return datetime.now().strftime(fmt)
 
 
 def get_step_from_pipeline(pipeline, step_type="urls"):
@@ -206,20 +206,20 @@ def get_step_from_pipeline(pipeline, step_type="urls"):
             if isinstance(step, Urls):
                 return step
         raise UrlsNotFound
+
     elif step_type == "statsLog":
         from spydy.logs import StatsReportLog
-
         for step in pipeline:
             if isinstance(step, StatsReportLog):
                 return step
-        raise StatsLogNotFound
+        return None
     elif step_type == "exceptionLog":
         from spydy.logs import ExceptionLog
 
         for step in pipeline:
             if isinstance(step, ExceptionLog):
                 return step
-        raise ExceptionLogNotFound
+        return None
 
     else:
         raise StepTypeNotSupported
@@ -306,7 +306,7 @@ def convert_seconds_to_standard_format(seconds):
     return "{}h:{}m:{}s".format(H, M, S)
 
 
-def print_stats_log(stats: dict):
+def print_stats_log(stats: dict, add_time_info=True):
     """
     Print table-formatted infomations
 
@@ -319,15 +319,19 @@ def print_stats_log(stats: dict):
         infos.append(h)
         infos.append(c)
     info_table = output.format(*infos)
+    if add_time_info:
+        info_table = get_current_time_string(LOG_TIME_FORMAT) + "|" +info_table
     print(info_table)
 
 
 def wrap_exceptions_message(e):
-    max_display_length = 30
+    max_display_length = 40
     return repr(e)[:max_display_length]
 
 
-def print_table(infos: dict):
+def print_table(infos: dict, add_time_info=True):
     table_data = sorted(infos.items(), key=lambda item: item[1], reverse=True)
-    table_header = ["Error", "Counts"]
+    table_header = ["ErrorType", "Counts"]
+    if add_time_info:
+        print(get_current_time_string(fmt=LOG_TIME_FORMAT))
     print(tabulate(table_data, headers=table_header, tablefmt="grid"))

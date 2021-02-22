@@ -38,10 +38,10 @@ def handle_erroneous_exceptions(
     if verbose_flag == True:
         print("{} was encountered, details: {}".format(type(exception), exception.args))
 
-    excepitons_records[wrap_exceptions_message(excepiton)] += 1
+    excepitons_records[wrap_exceptions_message(exception)] += 1
 
     handle_exceptions(
-        temp_results=self._temp_results,
+        temp_results=temp_results,
         pipeline=pipeline,
         recovery_type=recovery_type,
     )
