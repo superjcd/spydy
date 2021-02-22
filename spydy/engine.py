@@ -47,6 +47,22 @@ def handle_erroneous_exceptions(
     )
 
 
+def init_statsReport(pipeline):
+    """
+    Initialize the StatsReportLog instance in pipeline if exists
+    """
+    statsReportLog_instance = get_step_from_pipeline(pipeline, step_type="statsLog")
+    if statsReportLog_instance:
+        ulrs_instance = get_step_from_pipeline(pipeline, step_type="url")
+        statsReportLog_instance.init(ulrs_instance)
+
+
+def init_exceptionLog(pipeline, excepitons):
+    exceptionLog_instance = get_step_from_pipeline(pipeline, step_type="exceptionLog")
+    if exceptionLog_instance:
+        exceptionLog_instance.init(excepitons)
+
+
 class Engine:
     def __init__(self, configs: _SPYDY_CONFIGS = None):
         self._configs = configs
@@ -258,6 +274,7 @@ class Engine:
             self._pipeline = self._configs["PipeLine"]
 
         init_statsReport(pipeline=self._pipeline)
+        init_exceptionLog(excepitons=self._exceptions_records)
 
     def close(self):
         if self._exceptions_records:
@@ -267,12 +284,4 @@ class Engine:
             print("😊 Completed! Spydy ran successfully without any excepitons")
 
 
-def init_statsReport(pipeline):
-    """
-    Initialize the StatsReportLog instance in pipeline if exists
-    """
-    statsReportLog_instance = get_step_from_pipeline(pipeline, step_type="statsLog")
-    if statsReportLog_instance:
-        ulrs_instance = get_step_from_pipeline(pipeline, step_type="url")
-        statsReportLog_instance._urls_instance = ulrs_instance
-        statsReportLog_instance.init()
+

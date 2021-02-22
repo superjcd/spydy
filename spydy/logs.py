@@ -4,12 +4,13 @@ import time
 import json
 from pprint import pprint
 from .component import Component
-from .exceptions import UrlsStepNotFound
+from .exceptions import UrlsNotFound, StatsLogNotFound
 from .utils import (
     print_msg,
     convert_seconds_to_standard_format,
     get_total_from_urls,
     print_stats_log,
+    print_table
 )
 
 __all__ = ["SimplePrintLog", "MessageLog", "StatsReportLog"]
@@ -47,12 +48,11 @@ class StatsReportLog(Log):
         self._N = 0
         self._trigger_time = (
             time.time()
-        )  # There is a very small bias(cuz this will be called before Urls pop method), but the bias samll enough to ignore
+        ) 
         self._stats = {}
 
-    def init(self):
-        if not self._urls_instance:
-            raise UrlsStepNotFound
+    def init(self, urls_instance):
+        self._urls_instance = urls_instance
         self._total = get_total_from_urls(urls_instance=self._urls_instance)
 
     def log(self, items):
@@ -78,3 +78,19 @@ class StatsReportLog(Log):
             self._stats["Eta"] = eta
             print_stats_log(self._stats)
         return items
+
+
+class ExceptionLog(Log):
+    def __init__(self, every=1):
+        self._every = int(every)
+        self._exceptions_records =None
+
+    def init(self, excepitons):
+        self._exceptions_records = excepitons
+
+    def log(self, items):
+        if self._N % self._every == 0:
+            print_table(self._exceptions_records)
+        return items
+   
+    

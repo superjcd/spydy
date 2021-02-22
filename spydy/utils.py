@@ -14,7 +14,7 @@ from spydy.defaults import (
     RECOVERY_TYPE,
     VERBOSE,
 )
-from spydy.exceptions import UrlsStepNotFound
+from spydy.exceptions import UrlsNotFound, StatsLogNotFound, ExceptionLogNotFound
 
 
 def class_dispatcher(user_provide_classname: str):
@@ -205,14 +205,22 @@ def get_step_from_pipeline(pipeline, step_type="urls"):
         for step in pipeline:
             if isinstance(step, Urls):
                 return step
-        raise UrlsStepNotFound
-    if step_type == "statsLog":
+        raise UrlsNotFound
+    elif step_type == "statsLog":
         from spydy.logs import StatsReportLog
 
         for step in pipeline:
             if isinstance(step, StatsReportLog):
                 return step
-        return None  # StatsReportLog not found in pipeline
+        raise StatsLogNotFound
+    elif step_type == "exceptionLog":
+        from spydy.logs import ExceptionLog
+
+        for step in pipeline:
+            if isinstance(step, ExceptionLog):
+                return step
+        raise ExceptionLogNotFound
+    
     else:
         raise StepTypeNotSupported
 
