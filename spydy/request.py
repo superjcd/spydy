@@ -23,7 +23,7 @@ def run_if_callable(val):
         return val
 
 
-def prepare_proxies_for_requests(proxies):
+def _prepare_proxies_for_requests(proxies):
     if callable(proxies):
         return proxies
     elif proxies and not callable(proxies):
@@ -57,7 +57,7 @@ class HttpRequest(Request):
     ):  
         self._method = method
         self._headers = headers
-        self._proxies = prepare_proxies_for_requests(proxies)
+        self._proxies = _prepare_proxies_for_requests(proxies)
         self._params = params
         self._data = data
         self._cookies = cookies

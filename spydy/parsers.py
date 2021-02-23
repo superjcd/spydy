@@ -6,19 +6,6 @@ from .component import Component
 
 __all__ = ["XpathParser", "CssParser", "DmozParser"]
 
-"""
-TODO：
-  这里有个很大的问题在于parser的返回类别
-  1 目前主要支出生成单一的dict，
-  2 但结果也可能是：list of dicts [], List[dict]
-  3 links, list
-
-  随着parser的增加， 那么对下游的依赖也要发生改变
-
-  还有一个问题在于， 目前的parser只可以支持单一操作， 如果我要同时做两件事怎么办？比如一边把提取url， 一边获取信息（比如爬取wikipedia， 
-  当然这个问题可以变得非常复杂， 涉及到重复数据的问题）
-"""
-
 
 class Cleaner(object):
     @staticmethod

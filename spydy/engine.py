@@ -33,7 +33,7 @@ _SPYDY_CONFIGS = Union[ConfigParser, dict]
 
 
 
-def init_pipeline(configs:_SPYDY_CONFIGS, pipeline:list):
+def _init_pipeline(configs:_SPYDY_CONFIGS, pipeline:list):
     """
     Initialize the pipeline based on the configs
     """
@@ -55,7 +55,7 @@ def init_pipeline(configs:_SPYDY_CONFIGS, pipeline:list):
         pipeline = configs["PipeLine"]
 
 
-def init_statsReport(pipeline):
+def _init_statsReport(pipeline):
     """
     Initialize the StatsReportLog instance in pipeline if exists
     """
@@ -65,7 +65,7 @@ def init_statsReport(pipeline):
         statsReportLog_instance.init(ulrs_instance)
 
 
-def init_exceptionLog(pipeline, excepitons):
+def _init_exceptionLog(pipeline, excepitons):
     """
     Initialize the ExceptionLog instance in pipeline if exists
     """
@@ -284,9 +284,9 @@ class Engine:
         return tasks
 
     def setup(self):
-        init_pipeline(self._configs, self._pipeline)
-        init_statsReport(pipeline=self._pipeline)
-        init_exceptionLog(pipeline=self._pipeline, excepitons=self._exceptions_records)
+        _init_pipeline(self._configs, self._pipeline)
+        _init_statsReport(pipeline=self._pipeline)
+        _init_exceptionLog(pipeline=self._pipeline, excepitons=self._exceptions_records)
 
     def close(self):
         if self._exceptions_records:
