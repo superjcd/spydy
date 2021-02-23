@@ -32,8 +32,7 @@ from .utils import (
 _SPYDY_CONFIGS = Union[ConfigParser, dict]
 
 
-
-def _init_pipeline(configs:_SPYDY_CONFIGS, pipeline:list):
+def _init_pipeline(configs: _SPYDY_CONFIGS, pipeline: list):
     """
     Initialize the pipeline based on the configs
     """
@@ -45,8 +44,10 @@ def _init_pipeline(configs:_SPYDY_CONFIGS, pipeline:list):
                 try:
                     pipeline.append(step_class(**arguments))
                 except TypeError as e:
-                    err_msg = "Class {!r} encounter an error when instantiating: {}".format(
-                        step_class, e.args
+                    err_msg = (
+                        "Class {!r} encounter an error when instantiating: {}".format(
+                            step_class, e.args
+                        )
                     )
                     raise TypeError(err_msg)
             else:
@@ -77,9 +78,9 @@ def _init_exceptionLog(pipeline, excepitons):
 def handle_erroneous_exceptions(
     exception, verbose_flag, excepitons_records, temp_results, pipeline, recovery_type
 ):
-    '''
+    """
     Handle exceptions while running through the pipeline
-    '''
+    """
     if verbose_flag == True:
         print("{} was encountered, details: {}".format(type(exception), exception.args))
 
@@ -90,6 +91,7 @@ def handle_erroneous_exceptions(
         pipeline=pipeline,
         recovery_type=recovery_type,
     )
+
 
 class Engine:
     def __init__(self, configs: _SPYDY_CONFIGS = None):

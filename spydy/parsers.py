@@ -1,6 +1,7 @@
 import abc
 import re
 from requests_html import HTML, Element
+from .mixins import RuleBasedParserMixin
 from .exceptions import TaskWrong
 from .component import Component
 
@@ -33,17 +34,6 @@ class Parser(Component):
 
     def __call__(self, *args, **kwargs):
         return self.parse(*args, **kwargs)
-
-
-class RuleBasedParserMixin:
-    def rules(self):
-        if not self._rules:
-            self._rules = {
-                attr: getattr(self, attr)
-                for attr in dir(self)
-                if not attr.startswith("_") and not callable(getattr(self, attr))
-            }
-        return self._rules
 
 
 class XpathParser(Parser, RuleBasedParserMixin):

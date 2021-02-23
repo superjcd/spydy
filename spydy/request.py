@@ -3,6 +3,7 @@ import aiohttp
 import requests
 from requests_html import HTML, AsyncHTMLSession
 from .component import Component, AsyncComponent
+from .utils import run_if_callable
 
 __all__ = ["HttpRequest", "AsyncHttpRequest"]
 
@@ -14,13 +15,6 @@ class Request(Component):
 
     def __call__(self, *args, **kwargs):
         return self.request(*args, **kwargs)
-
-
-def run_if_callable(val):
-    if callable(val):
-        return val()
-    else:
-        return val
 
 
 def _prepare_proxies_for_requests(proxies):
@@ -54,7 +48,7 @@ class HttpRequest(Request):
         verify=None,
         cert=None,
         json=None,
-    ):  
+    ):
         self._method = method
         self._headers = headers
         self._proxies = _prepare_proxies_for_requests(proxies)
@@ -77,20 +71,20 @@ class HttpRequest(Request):
                 return session.request(
                     self._method,
                     url,
-                    headers=self._headers,
+                    headers=run_if_callable(self._headers),
                     proxies=run_if_callable(self._proxies),
-                    params=self._params,
-                    data=self._data,
-                    cookies=self._cookies,
-                    files=self._files,
-                    auth=self._auth,
-                    timeout=self._timeout,
-                    allow_redirects=self._allow_redirects,
-                    hooks=self._hooks,
-                    stream=self._stream,
-                    verify=self._verify,
-                    cert=self._cert,
-                    json=self._json,
+                    params=run_if_callable(self._params),
+                    data=run_if_callable(self._data),
+                    cookies=run_if_callable(self._cookies),
+                    files=run_if_callable(self._files),
+                    auth=run_if_callable(self._auth),
+                    timeout=run_if_callable(self._timeout),
+                    allow_redirects=run_if_callable(self._allow_redirects),
+                    hooks=run_if_callable(self._hooks),
+                    stream=run_if_callable(self._stream),
+                    verify=run_if_callable(self._verify),
+                    cert=run_if_callable(self._cert),
+                    json=run_if_callable(self._json),
                 )
 
 
@@ -119,10 +113,7 @@ class AsyncHttpRequest(Request, AsyncComponent):
     ):
         self._method = method
         self._headers = headers
-        if proxies:
-            self._proxies = {"http": proxies, "https": proxies}
-        else:
-            self._proxies = None
+        self._proxies = _prepare_proxies_for_requests(proxies)
         self._params = params
         self._data = data
         self._cookies = cookies
@@ -142,19 +133,19 @@ class AsyncHttpRequest(Request, AsyncComponent):
                 response = await asession.request(
                     self._method,
                     url,
-                    headers=self._headers,
-                    proxies=self._proxies,
-                    params=self._params,
-                    data=self._data,
-                    cookies=self._cookies,
-                    files=self._files,
-                    auth=self._auth,
-                    timeout=self._timeout,
-                    allow_redirects=self._allow_redirects,
-                    hooks=self._hooks,
-                    stream=self._stream,
-                    verify=self._verify,
-                    cert=self._cert,
-                    json=self._json,
+                    headers=run_if_callable(self._headers),
+                    proxies=run_if_callable(self._proxies),
+                    params=run_if_callable(self._params),
+                    data=run_if_callable(self._data),
+                    cookies=run_if_callable(self._cookies),
+                    files=run_if_callable(self._files),
+                    auth=run_if_callable(self._auth),
+                    timeout=run_if_callable(self._timeout),
+                    allow_redirects=run_if_callable(self._allow_redirects),
+                    hooks=run_if_callable(self._hooks),
+                    stream=run_if_callable(self._stream),
+                    verify=run_if_callable(self._verify),
+                    cert=run_if_callable(self._cert),
+                    json=run_if_callable(self._json),
                 )
                 return response
