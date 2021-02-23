@@ -32,19 +32,27 @@ from .utils import (
 _SPYDY_CONFIGS = Union[ConfigParser, dict]
 
 
-def handle_erroneous_exceptions(
-    exception, verbose_flag, excepitons_records, temp_results, pipeline, recovery_type
-):
-    if verbose_flag == True:
-        print("{} was encountered, details: {}".format(type(exception), exception.args))
 
-    excepitons_records[wrap_exceptions_message(exception)] += 1
-
-    handle_exceptions(
-        temp_results=temp_results,
-        pipeline=pipeline,
-        recovery_type=recovery_type,
-    )
+def init_pipeline(configs:_SPYDY_CONFIGS, pipeline:list):
+    """
+    Initialize the pipeline based on the configs
+    """
+    if isinstance(configs, ConfigParser):
+        for k, v in configs["PipeLine"].items():
+            step_class = class_dispatcher(v)
+            if k in configs:
+                arguments = parse_arguments(configs[k])
+                try:
+                    pipeline.append(step_class(**arguments))
+                except TypeError as e:
+                    err_msg = "Class {!r} encounter an error when instantiating: {}".format(
+                        step_class, e.args
+                    )
+                    raise TypeError(err_msg)
+            else:
+                pipeline.append(step_class())
+    if isinstance(configs, dict):
+        pipeline = configs["PipeLine"]
 
 
 def init_statsReport(pipeline):
@@ -58,10 +66,30 @@ def init_statsReport(pipeline):
 
 
 def init_exceptionLog(pipeline, excepitons):
+    """
+    Initialize the ExceptionLog instance in pipeline if exists
+    """
     exceptionLog_instance = get_step_from_pipeline(pipeline, step_type="exceptionLog")
     if exceptionLog_instance:
         exceptionLog_instance.init(excepitons)
 
+
+def handle_erroneous_exceptions(
+    exception, verbose_flag, excepitons_records, temp_results, pipeline, recovery_type
+):
+    '''
+    Handle exceptions while running through the pipeline
+    '''
+    if verbose_flag == True:
+        print("{} was encountered, details: {}".format(type(exception), exception.args))
+
+    excepitons_records[wrap_exceptions_message(exception)] += 1
+
+    handle_exceptions(
+        temp_results=temp_results,
+        pipeline=pipeline,
+        recovery_type=recovery_type,
+    )
 
 class Engine:
     def __init__(self, configs: _SPYDY_CONFIGS = None):
@@ -256,23 +284,7 @@ class Engine:
         return tasks
 
     def setup(self):
-        if isinstance(self._configs, ConfigParser):
-            for k, v in self._configs["PipeLine"].items():
-                step_class = class_dispatcher(v)
-                if k in self._configs:
-                    arguments = parse_arguments(self._configs[k])
-                    try:
-                        self._pipeline.append(step_class(**arguments))
-                    except TypeError as e:
-                        err_msg = "Class {!r} encounter an error when instantiating: {}".format(
-                            step_class, e.args
-                        )
-                        raise TypeError(err_msg)
-                else:
-                    self._pipeline.append(step_class())
-        if isinstance(self._configs, dict):
-            self._pipeline = self._configs["PipeLine"]
-
+        init_pipeline(self._configs, self._pipeline)
         init_statsReport(pipeline=self._pipeline)
         init_exceptionLog(pipeline=self._pipeline, excepitons=self._exceptions_records)
 

@@ -16,6 +16,22 @@ class Request(Component):
         return self.request(*args, **kwargs)
 
 
+def run_if_callable(val):
+    if callable(val):
+        return val()
+    else:
+        return val
+
+
+def prepare_proxies_for_requests(proxies):
+    if callable(proxies):
+        return proxies
+    elif proxies and not callable(proxies):
+        return {"http": proxies, "https": proxies}
+    else:
+        return None
+
+
 class HttpRequest(Request):
     """
     Normal synchronous http request, and its request method is a thin warpper of requests.Request
@@ -38,13 +54,10 @@ class HttpRequest(Request):
         verify=None,
         cert=None,
         json=None,
-    ):
+    ):  
         self._method = method
         self._headers = headers
-        if proxies:
-            self._proxies = {"http": proxies, "https": proxies}
-        else:
-            self._proxies = None
+        self._proxies = prepare_proxies_for_requests(proxies)
         self._params = params
         self._data = data
         self._cookies = cookies
@@ -65,7 +78,7 @@ class HttpRequest(Request):
                     self._method,
                     url,
                     headers=self._headers,
-                    proxies=self._proxies,
+                    proxies=run_if_callable(self._proxies),
                     params=self._params,
                     data=self._data,
                     cookies=self._cookies,

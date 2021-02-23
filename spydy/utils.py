@@ -63,10 +63,7 @@ def get_class_from_moudle(module=None, value=None):  # packge class
 
 def get_value_from_moudle(*args, **kwargs):
     file_value = get_class_from_moudle(*args, **kwargs) 
-    if callable(file_value):  
-        return file_value()  # 如果是这样的话， 只会调用一次！
-    else:
-        return file_value
+    return file_value
 
 
 def parse_arguments(args: dict) -> dict:
@@ -325,8 +322,19 @@ def print_stats_log(stats: dict, add_time_info=True):
 
 
 def wrap_exceptions_message(e):
-    max_display_length = 40
-    return repr(e)[:max_display_length]
+    full_message = repr(e)
+    len_of_message = len(full_message)
+    max_oneline_length = 40
+    num_msg_slices = len_of_message // max_oneline_length + 1
+    last_msg_length = len_of_message % max_oneline_length
+    msg_slices = []
+    for i in range(num_msg_slices):
+        if (i+1) < num_msg_slices:
+            msg_slices.append(full_message[i*max_oneline_length:(i+1)*max_oneline_length])
+        else:
+            msg_slices.append(full_message[i*max_oneline_length:(i*max_oneline_length+last_msg_length)])
+    
+    return '/n'.join(msg_slices)
 
 
 def print_table(infos: dict, add_time_info=True):
