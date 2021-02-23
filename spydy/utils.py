@@ -5,8 +5,9 @@ import reprlib
 import importlib
 import sys
 import spydy
-from tabulate import tabulate
 from spydy.urls import Urls
+from spydy.request import Request
+from tabulate import tabulate
 from spydy.defaults import (
     RUNMODES,
     LEGAL_GLOBALS,
@@ -194,16 +195,20 @@ def get_current_time_string(fmt):
     return datetime.now().strftime(fmt)
 
 
-def get_step_from_pipeline(pipeline, step_type="urls"):
+def get_step_from_pipeline(pipeline, step_type):
     """
-    get a step from pipeline by a given step_type
+    Get a step from pipeline by a given step_type
     """
     if step_type == "url":
         for step in pipeline:
             if isinstance(step, Urls):
                 return step
         raise UrlsNotFound
-
+    if step_type == "request":
+        for step in pipeline:
+            if isinstance(step, Request):
+                return step
+        return None
     elif step_type == "statsLog":
         from spydy.logs import StatsReportLog
         for step in pipeline:
@@ -212,7 +217,6 @@ def get_step_from_pipeline(pipeline, step_type="urls"):
         return None
     elif step_type == "exceptionLog":
         from spydy.logs import ExceptionLog
-
         for step in pipeline:
             if isinstance(step, ExceptionLog):
                 return step
@@ -334,7 +338,7 @@ def wrap_exceptions_message(e):
         else:
             msg_slices.append(full_message[i*max_oneline_length:(i*max_oneline_length+last_msg_length)])
     
-    return '/n'.join(msg_slices)
+    return '\n'.join(msg_slices)
 
 
 def print_table(infos: dict, add_time_info=True):
