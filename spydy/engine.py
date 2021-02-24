@@ -120,7 +120,7 @@ class Engine:
         if run_mode == "async_forever":
             self._run_async_forever()
 
-        self.close()
+        self._close()
 
     def _run(self, run_mode):
         try:
@@ -152,6 +152,8 @@ class Engine:
                         info_header="SUCCESS",
                         verbose=True,
                     )
+                else: 
+                    raise
 
     def run_once(self):
         final_result = None
@@ -290,7 +292,7 @@ class Engine:
         _init_statsReport(pipeline=self._pipeline)
         _init_exceptionLog(pipeline=self._pipeline, excepitons=self._exceptions_records)
 
-    def close(self):
+    def _close(self):
         if self._exceptions_records:
             print("😭 Finished! But encounterd several ecceptions during running:")
             print_table(self._exceptions_records)

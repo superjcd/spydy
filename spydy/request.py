@@ -129,23 +129,24 @@ class AsyncHttpRequest(Request, AsyncComponent):
 
     async def request(self, url):
         if url:
-            with AsyncHTMLSession() as asession:
-                response = await asession.request(
-                    self._method,
-                    url,
-                    headers=run_if_callable(self._headers),
-                    proxies=run_if_callable(self._proxies),
-                    params=run_if_callable(self._params),
-                    data=run_if_callable(self._data),
-                    cookies=run_if_callable(self._cookies),
-                    files=run_if_callable(self._files),
-                    auth=run_if_callable(self._auth),
-                    timeout=run_if_callable(self._timeout),
-                    allow_redirects=run_if_callable(self._allow_redirects),
-                    hooks=run_if_callable(self._hooks),
-                    stream=run_if_callable(self._stream),
-                    verify=run_if_callable(self._verify),
-                    cert=run_if_callable(self._cert),
-                    json=run_if_callable(self._json),
-                )
-                return response
+            asession = AsyncHTMLSession()
+            # with AsyncHTMLSession() as asession:
+            response = await asession.request(
+                self._method,
+                url,
+                headers=run_if_callable(self._headers),
+                proxies=run_if_callable(self._proxies),
+                params=run_if_callable(self._params),
+                data=run_if_callable(self._data),
+                cookies=run_if_callable(self._cookies),
+                files=run_if_callable(self._files),
+                auth=run_if_callable(self._auth),
+                timeout=run_if_callable(self._timeout),
+                allow_redirects=run_if_callable(self._allow_redirects),
+                hooks=run_if_callable(self._hooks),
+                stream=run_if_callable(self._stream),
+                verify=run_if_callable(self._verify),
+                cert=run_if_callable(self._cert),
+                json=run_if_callable(self._json),
+            )
+            return response
