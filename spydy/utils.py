@@ -1,14 +1,13 @@
 from datetime import datetime
 from typing import List
-from functools import reduce
 import reprlib
 import importlib
 import sys
 import spydy
 from spydy.urls import Urls
-from spydy.request import Request
 from tabulate import tabulate
 from spydy.defaults import (
+    SPYDY_DEFUALT_SECTION_NAME,
     RUNMODES,
     LEGAL_GLOBALS,
     LEGAL_RECOVERYS,
@@ -115,6 +114,8 @@ def check_configs(configs):
     if "recovery_type" in global_arguments:
         check_recovery_type_in_default_recoverys(global_arguments["recovery_type"])
 
+    check_custom_section_in_pipeline(configs)
+
 
 def check_globals_has_legal_keys(global_arguments):
     for argument in global_arguments:
@@ -147,6 +148,19 @@ def check_recovery_type_in_default_recoverys(recovery_type):
                 recovery_type, LEGAL_RECOVERYS
             )
         )
+
+
+def check_custom_section_in_pipeline(configs):
+    section_names = list(configs)
+    right_sections = SPYDY_DEFUALT_SECTION_NAME + list(configs["PipeLine"])
+
+    for section in section_names:
+        if section not in right_sections:
+            raise ValueError(
+                "section name {!r} is wrong, please check if it really sit under [PipeLine] section.".format(
+                    section
+                )
+            )
 
 
 def add_defaults(configs):
@@ -206,6 +220,8 @@ def get_step_from_pipeline(pipeline, step_type):
                 return step
         raise UrlsNotFound
     if step_type == "request":
+        from spydy.request import Request
+
         for step in pipeline:
             if isinstance(step, Request):
                 return step

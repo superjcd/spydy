@@ -1,3 +1,5 @@
+SPYDY_DEFUALT_SECTION_NAME = ["Globals", "PipeLine", "DEFAULT"]
+
 RUNMODES = ["once", "forever", "async_once", "async_forever"]
 
 NWORKERS = 4
