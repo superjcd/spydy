@@ -54,16 +54,19 @@ class DbStore(Store):
     def __init__(self, connection_url=None, table_name=None):
         self._connection_url = connection_url
         self._table_name = table_name
-        self.engine = create_engine(connection_url, echo=False)
-        self.metadata = MetaData()
-        self.metadata.reflect(bind=self.engine)
+        self._engine = create_engine(connection_url, echo=False)
+        self._metadata = MetaData()
+        self._metadata.reflect(bind=self._engine)
 
     def store(self, items: Union[dict, List[dict]]):
         if items:
             dblock.acquire()
-            self.engine.execute(self.metadata.tables[self._table_name].insert(), items)
+            self._engine.execute(self._metadata.tables[self._table_name].insert(), items)
             dblock.release()
             return items
+
+    def close(self):
+        self._engine.close()
 
 
 class AsyncDbStore(Store, AsyncComponent):

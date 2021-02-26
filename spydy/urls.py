@@ -163,6 +163,9 @@ class RedisSetUrls(Urls):
             raise UnExpectedHandleType
         return None
 
+    def close(self):
+        self._conn.close()
+
 
 
 class RedisListUrls(Urls):
@@ -210,6 +213,9 @@ class RedisListUrls(Urls):
         else:
             raise UnExpectedHandleType
         return None
+
+    def close(self):
+        self._conn.close()
 
 
 

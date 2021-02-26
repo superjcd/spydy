@@ -344,13 +344,14 @@ def print_stats_log(stats: dict, add_time_info=True):
     print(info_table)
 
 
-def wrap_exceptions_message(e):
+def wrap_exceptions_message(e, max_length=50):
     full_message = repr(e)
     len_of_message = len(full_message)
     max_oneline_length = 40
     num_msg_slices = len_of_message // max_oneline_length + 1
     last_msg_length = len_of_message % max_oneline_length
     msg_slices = []
+
     for i in range(num_msg_slices):
         if (i + 1) < num_msg_slices:
             msg_slices.append(
@@ -363,7 +364,7 @@ def wrap_exceptions_message(e):
                 ]
             )
 
-    return "\n".join(msg_slices)
+    return "\n".join(msg_slices)[:max_length]  
 
 
 def print_table(infos: dict, add_time_info=True):
