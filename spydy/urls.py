@@ -154,9 +154,9 @@ class RedisSetUrls(Urls):
 
     def handle_exception(self, recovery_type, url):
         if recovery_type == "url_back_end":
-            self.sadd(url)
+            self.add(url)
         elif recovery_type == "url_back_front":
-            self.sadd(url)
+            self.add(url)
         elif recovery_type == "skip": 
             pass
         else:
