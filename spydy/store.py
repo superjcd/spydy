@@ -1,14 +1,16 @@
 import abc
 import csv
 import asyncio
+import redis
 from sqlalchemy import create_engine, MetaData, Table
 from threading import RLock
 from .component import Component, AsyncComponent
 from typing import List, Union
+from collections.abc import Iterable
 
 # from sqlalchemy.ext.asyncio import create_async_engine
 
-__all__ = ["Store", "CsvStore", "AsyncCsvStore", "DbStore"]
+__all__ = ["Store", "CsvStore", "AsyncCsvStore", "DbStore", "RedisSetStore"]
 
 
 class Store(Component):
@@ -49,7 +51,6 @@ class AsyncCsvStore(Store, AsyncComponent):
 
 dblock = RLock()
 
-
 class DbStore(Store):
     def __init__(self, connection_url=None, table_name=None):
         self._connection_url = connection_url
@@ -68,6 +69,25 @@ class DbStore(Store):
     def close(self):
         self._engine.close()
 
+class RedisSetStore(Store):
+    def __init__(self, set_name, host="localhost", port=6379):
+        self._set_name = set_name
+        self._conn = redis.Redis(host=host, port=port)
+    
+    @property
+    def total(self):
+        return self._conn.scard(self._set_name)
+
+    def store(self, items):
+        if isinstance(items, Iterable):
+            for item in items:
+                self._conn.sadd(self._set_name, item)
+        else:
+            self._conn.sadd(self._set_name, items)
+
+    def close(self):
+        self._conn.close()
+        
 
 class AsyncDbStore(Store, AsyncComponent):
     def __init__(self, connection_url=None, table_name=None):
