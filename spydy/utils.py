@@ -364,7 +364,7 @@ def wrap_exceptions_message(e, max_length=50):
                 ]
             )
 
-    return "\n".join(msg_slices)[:max_length]  
+    return "\n".join(msg_slices)[:max_length]
 
 
 def print_table(infos: dict, add_time_info=True):

@@ -152,7 +152,7 @@ class Engine:
                         info_header="SUCCESS",
                         verbose=True,
                     )
-                else: 
+                else:
                     raise
 
     def run_once(self):
