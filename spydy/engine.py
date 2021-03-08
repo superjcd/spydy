@@ -82,9 +82,11 @@ def handle_erroneous_exceptions(
     Handle exceptions while running through the pipeline
     """
     if verbose_flag == True:
-        print("{} was encountered, details: {}".format(type(exception), exception.args))
-
-    excepitons_records[wrap_exceptions_message(exception)] += 1
+        if exception:
+            print("{} was encountered, details: {}".format(type(exception), exception.args))
+    
+    if exception:  
+        excepitons_records[wrap_exceptions_message(exception)] += 1
 
     handle_exceptions(
         temp_results=temp_results,
@@ -200,6 +202,16 @@ class Engine:
                         recovery_type="url_back_end",
                     )
                     temp_result = None
+                except:
+                    handle_erroneous_exceptions(
+                        exception=None,
+                        verbose_flag=self._verbose,
+                        excepitons_records=self._exceptions_records,
+                        temp_results=self._temp_results,
+                        pipeline=self._pipeline,
+                        recovery_type="url_back_end",
+                    )
+                    raise                  
                 self._temp_results[type(cur_step)] = temp_result
             final_result = temp_result
             return final_result
@@ -265,8 +277,18 @@ class Engine:
                         temp_results=self._temp_results,
                         pipeline=self._pipeline,
                         recovery_type="url_back_end",
-                    )
+                    )             
                     temp_result = None
+                except :
+                    handle_erroneous_exceptions(
+                        exception=None,
+                        verbose_flag=self._verbose,
+                        excepitons_records=self._exceptions_records,
+                        temp_results=self._temp_results,
+                        pipeline=self._pipeline,
+                        recovery_type="url_back_end",
+                    )
+                    raise 
                 self._temp_results[type(cur_step)] = temp_result
             final_result = temp_result
             return temp_result
