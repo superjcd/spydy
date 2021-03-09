@@ -74,9 +74,9 @@ class DbStore(Store):
 
 
 class RedisSetStore(Store):
-    def __init__(self, set_name, host="localhost", port=6379):
+    def __init__(self, set_name, **kwargs):
         self._set_name = set_name
-        self._conn = redis.Redis(host=host, port=port)
+        self._conn = redis.Redis(**kwargs)
 
     @property
     def total(self):

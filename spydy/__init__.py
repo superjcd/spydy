@@ -5,7 +5,7 @@ from .store import *
 from .logs import *
 
 
-__version__ = "0.1.19"
+__version__ = "0.1.20"
 
 LOGO = r"""
   ____                     _

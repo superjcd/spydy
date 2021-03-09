@@ -121,9 +121,9 @@ class FileUrls(Urls):
 
 
 class RedisSetUrls(Urls):
-    def __init__(self, set_name, host="localhost", port=6379):
+    def __init__(self, set_name, **kwargs):
         self._set_name = set_name
-        self._conn = redis.Redis(host=host, port=port)
+        self._conn = redis.Redis(**kwargs)
 
     @property
     def total(self):
@@ -169,9 +169,9 @@ class RedisSetUrls(Urls):
 
 
 class RedisListUrls(Urls):
-    def __init__(self, list_name, host="localhost", port=6379):
+    def __init__(self, list_name, **kwargs):
         self._list_name = list_name
-        self._conn = redis.Redis(host=host, port=port)
+        self._conn = redis.Redis(**kwargs)
 
     @property
     def total(self):
