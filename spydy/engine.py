@@ -53,7 +53,7 @@ def _init_pipeline(configs: _SPYDY_CONFIGS, pipeline: list):
             else:
                 pipeline.append(step_class())
     if isinstance(configs, dict):
-        pipeline = configs["PipeLine"]
+        pipeline.extend(configs["PipeLine"])
 
 
 def _init_statsReport(pipeline):

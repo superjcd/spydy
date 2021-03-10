@@ -174,7 +174,7 @@ def add_verbose_default(configs):
 
 def get_verbose(configs):
     try:
-        return bool(configs["Globals"]["verbose"])
+        return bool(configs["Globals"].get("verbose", VERBOSE))
     except:
         raise ValueError(
             "Verbose setting in the [Globals] section should can not treated as Bool; Check if you give a right value of verbose"

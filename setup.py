@@ -78,7 +78,7 @@ myconfig = {
                 request.AsyncHttpRequest(), parsers.DmozParser(), logs.MessageLog(), store.CsvStore(file_name=FILE_NAME)]
     }
 
-chech_configs(myconfig)
+check_configs(myconfig)
 spider = Engine.from_dict(myconfig)
 spider.run()
 ```
