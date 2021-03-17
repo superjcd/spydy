@@ -130,7 +130,6 @@ class AsyncHttpRequest(Request, AsyncComponent):
     async def request(self, url):
         if url:
             asession = AsyncHTMLSession()
-            # with AsyncHTMLSession() as asession:
             response = await asession.request(
                 self._method,
                 url,

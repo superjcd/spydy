@@ -183,7 +183,7 @@ def get_verbose(configs):
 
 def get_interval(configs):
     return (
-        int(configs["Globals"].get("interval"))
+        float(configs["Globals"].get("interval"))
         if configs["Globals"].get("interval", None)
         else None
     )
