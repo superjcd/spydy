@@ -13,5 +13,5 @@ class Component(abc.ABC):
         return self.__repr__()
 
 
-class AsyncComponent(object):
+class AsyncComponent(Component):
     Async = True

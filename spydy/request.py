@@ -16,6 +16,15 @@ class Request(Component):
     def __call__(self, *args, **kwargs):
         return self.request(*args, **kwargs)
 
+class AsyncRequest(AsyncComponent):
+    @abc.abstractmethod
+    def request(self):
+        ...
+
+    def __call__(self, *args, **kwargs):
+        return self.request(*args, **kwargs)
+    
+
 
 def _prepare_proxies_for_requests(proxies):
     if callable(proxies):
@@ -88,7 +97,7 @@ class HttpRequest(Request):
                 )
 
 
-class AsyncHttpRequest(Request, AsyncComponent):
+class AsyncHttpRequest(AsyncRequest):
     """
     Asynchronous http request, and its request method is a thin wrapper of requests.Request
     """

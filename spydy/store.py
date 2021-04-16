@@ -3,6 +3,7 @@ import csv
 import asyncio
 import redis
 from sqlalchemy import create_engine, MetaData, Table
+from sqlalchemy.ext.asyncio import create_async_engine
 from threading import RLock
 from .component import Component, AsyncComponent
 from typing import List, Union
@@ -10,10 +11,18 @@ from collections.abc import Iterable
 
 # from sqlalchemy.ext.asyncio import create_async_engine
 
-__all__ = ["Store", "CsvStore", "AsyncCsvStore", "DbStore", "RedisSetStore"]
+__all__ = ["Store", "CsvStore", "AsyncCsvStore", "DbStore", "RedisSetStore", "AsyncDbStore"]
 
 
 class Store(Component):
+    @abc.abstractmethod
+    def store(self):
+        ...
+
+    def __call__(self, *args, **kwargs):
+        return self.store(*args, **kwargs)
+
+class AsyncStore(AsyncComponent):
     @abc.abstractmethod
     def store(self):
         ...
@@ -35,7 +44,7 @@ class CsvStore(Store):
             return items
 
 
-class AsyncCsvStore(Store, AsyncComponent):
+class AsyncCsvStore(AsyncStore):
     def __init__(self, file_name):
         self._filename = file_name
 
@@ -94,11 +103,21 @@ class RedisSetStore(Store):
         self._conn.close()
 
 
-class AsyncDbStore(Store, AsyncComponent):
+class AsyncDbStore(AsyncStore):
     def __init__(self, connection_url=None, table_name=None):
-        ...
+        self._connection_url = connection_url
+        self._table_name = table_name
+        self._engine = create_async_engine(connection_url, echo=False)
+        self._metadata = MetaData()
+        self._metadata.reflect(bind=self._engine)
 
+    async def store(self, items: Union[dict, List[dict]]):
+        if items:
+            await with engine.begin() as conn:
+                await conn.execute(
+                    self._metadata.tables[self._table_name].insert(), items
+                ) # Store
+                return items
 
-class AsyncDbManyStore(Store, AsyncComponent):
-    def __init__(self, connection_url=None, table_name=None):
-        ...
+    def close(self):
+        self._engine.close()
