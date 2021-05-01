@@ -129,23 +129,5 @@ class AsyncDbStore(AsyncStore):
                 await conn.execute(text(sql), [items1, items2, items3])
             return items
 
-
-async def async_main():
-    async with engine.begin() as conn:
-
-        sql = prepare_sql_for_execute(items1, "stats")
-        # sql = prepare_text_for_multiple_data(items=items1, table_name="stats")
-        print(sql)
-        await conn.execute(text(sql), [items1, items2, items3])
-
-
-def prepare_sql_for_dict(items, table_name):
-    item_keys = items.keys()
-    col_names = ",".join(item_keys)
-    placeholders = ",".join([":" + col for col in item_keys])
-    sql = f"INSERT INTO {table_name} ({col_names}) VALUES ({placeholders})"
-    return sql
-
-
-def prepare_sql_for_array_of_dict(items: Iterable, table_name):
-    data_0 = ...
+    def close(self):
+        self._engine.close()
