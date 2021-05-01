@@ -14,4 +14,3 @@ def test_convert_seconds_to_formal():
 
     seconds = 1
     assert convert_seconds_to_standard_format(seconds) == "0h:0m:1s"
-

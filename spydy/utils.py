@@ -16,6 +16,7 @@ from spydy.defaults import (
     LOG_TIME_FORMAT,
 )
 from spydy.exceptions import UrlsNotFound, StatsLogNotFound, ExceptionLogNotFound
+from collections.abc import Iterable
 
 
 def class_dispatcher(user_provide_classname: str):
@@ -380,3 +381,17 @@ def run_if_callable(val):
         return val()
     else:
         return val
+
+
+def prepare_sql_for_dict(items, table_name):
+    item_keys = items.keys()
+    col_names = ",".join(item_keys)
+    placeholders = ",".join([":" + col for col in item_keys])
+    sql = f"INSERT INTO {table_name} ({col_names}) VALUES ({placeholders})"
+    return sql
+
+
+def prepare_sql_for_list_of_dict(items: Iterable, table_name):
+    data = items[0]
+    sql = prepare_sql_for_dict(data)
+    return sql

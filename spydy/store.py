@@ -8,10 +8,18 @@ from threading import RLock
 from .component import Component, AsyncComponent
 from typing import List, Union
 from collections.abc import Iterable
+from .utils import prepare_sql_for_dict, prepare_sql_for_list_of_dict
 
 # from sqlalchemy.ext.asyncio import create_async_engine
 
-__all__ = ["Store", "CsvStore", "AsyncCsvStore", "DbStore", "RedisSetStore", "AsyncDbStore"]
+__all__ = [
+    "Store",
+    "CsvStore",
+    "AsyncCsvStore",
+    "DbStore",
+    "RedisSetStore",
+    "AsyncDbStore",
+]
 
 
 class Store(Component):
@@ -21,6 +29,7 @@ class Store(Component):
 
     def __call__(self, *args, **kwargs):
         return self.store(*args, **kwargs)
+
 
 class AsyncStore(AsyncComponent):
     @abc.abstractmethod
@@ -98,6 +107,7 @@ class RedisSetStore(Store):
                     self._conn.sadd(self._set_name, item)
             else:
                 self._conn.sadd(self._set_name, items)
+            return items
 
     def close(self):
         self._conn.close()
@@ -108,16 +118,34 @@ class AsyncDbStore(AsyncStore):
         self._connection_url = connection_url
         self._table_name = table_name
         self._engine = create_async_engine(connection_url, echo=False)
-        self._metadata = MetaData()
-        self._metadata.reflect(bind=self._engine)
 
     async def store(self, items: Union[dict, List[dict]]):
         if items:
-            await with engine.begin() as conn:
-                await conn.execute(
-                    self._metadata.tables[self._table_name].insert(), items
-                ) # Store
-                return items
+            async with engine.begin() as conn:
+                if isinstance(items, dict):
+                    sql = prepare_sql_for_dict(items, self._table_name)
+                if isinstance(items, list):
+                    sql = prepare_sql_for_list_of_dict(items, self._table_name)
+                await conn.execute(text(sql), [items1, items2, items3])
+            return items
 
-    def close(self):
-        self._engine.close()
+
+async def async_main():
+    async with engine.begin() as conn:
+
+        sql = prepare_sql_for_execute(items1, "stats")
+        # sql = prepare_text_for_multiple_data(items=items1, table_name="stats")
+        print(sql)
+        await conn.execute(text(sql), [items1, items2, items3])
+
+
+def prepare_sql_for_dict(items, table_name):
+    item_keys = items.keys()
+    col_names = ",".join(item_keys)
+    placeholders = ",".join([":" + col for col in item_keys])
+    sql = f"INSERT INTO {table_name} ({col_names}) VALUES ({placeholders})"
+    return sql
+
+
+def prepare_sql_for_array_of_dict(items: Iterable, table_name):
+    data_0 = ...

@@ -16,6 +16,7 @@ class Request(Component):
     def __call__(self, *args, **kwargs):
         return self.request(*args, **kwargs)
 
+
 class AsyncRequest(AsyncComponent):
     @abc.abstractmethod
     def request(self):
@@ -23,7 +24,6 @@ class AsyncRequest(AsyncComponent):
 
     def __call__(self, *args, **kwargs):
         return self.request(*args, **kwargs)
-    
 
 
 def _prepare_proxies_for_requests(proxies):
