@@ -153,12 +153,13 @@ class Engine:
         for task in tasks:
             exception = task.exception()
             for success_exception in Exceptions_Of_Success:
-                if isinstance(exception, success_exception) and self._verbose:
-                    print_msg(
-                        msg="Task Done, Details:" + str(exception),
-                        info_header="SUCCESS",
-                        verbose=True,
-                    )
+                if isinstance(exception, success_exception):
+                    if self._verbose:
+                        print_msg(
+                            msg="Task Done, Details:" + str(exception),
+                            info_header="SUCCESS",
+                            verbose=True,
+                        )
                 else:
                     raise
 

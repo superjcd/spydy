@@ -174,11 +174,14 @@ def add_verbose_default(configs):
 
 
 def get_verbose(configs):
-    try:
-        return bool(configs["Globals"].get("verbose", VERBOSE))
-    except:
+    verbose = str(configs["Globals"].get("verbose", VERBOSE))
+    if verbose.lower() == "true":
+        return True
+    elif verbose.lower() == "false":
+        return False
+    else:
         raise ValueError(
-            "Verbose setting in the [Globals] section should can not treated as Bool; Check if you give a right value of verbose"
+            "Verbose setting in the [Globals] section must be 'ture' or 'false'(case insenstive)"
         )
 
 
